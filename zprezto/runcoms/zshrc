@@ -1,0 +1,150 @@
+autoload zmv
+alias zcp='zmv -C' zln='zmv -L'
+
+setopt EXTENDED_GLOB
+
+export EDITOR="vim"
+export VISUAL=$EDITOR
+
+export TERM="xterm-256color"
+
+#HOSTNAME=$(hostname)
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# less() color output
+export LESS=-iXRj.3
+export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
+
+export JAVA_HOME=/usr
+export PATH=$HOME/Devel/kafka/bin/:/opt/kafka/bin/:$HOME/bin/ranger-1.9.2:$HOME/bin:$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.cargo/bin:$PATH
+
+# Syntax highlighting color overrides
+# Define default styles.
+
+typeset -A ZSH_HIGHLIGHT_STYLES # [[[
+
+ZSH_HIGHLIGHT_STYLES[default]='none'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=black,bold'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan,bold'
+ZSH_HIGHLIGHT_STYLES[suffix-alias]='fg=green,underline'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=black,bold'
+ZSH_HIGHLIGHT_STYLES[function]='fg=red,bold'
+ZSH_HIGHLIGHT_STYLES[command]='fg=green,bold'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=green,bold'
+ZSH_HIGHLIGHT_STYLES[commandseparator]='none'
+ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=green'
+ZSH_HIGHLIGHT_STYLES[path]='bold'
+ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=grey'
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=blue'
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=blue'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='bold'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='none'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='none'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[assign]='none'
+ZSH_HIGHLIGHT_STYLES[redirection]='none'
+ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=yellow,bold'
+# ]]]
+
+source $HOME/.aliases_home.zsh
+
+# local and host-specific overrides.
+
+LOCAL_RC=$HOME/.zshrc.local
+test -f $LOCAL_RC && source $LOCAL_RC
+
+#HOST_RC=$HOME/.zsh/host/$(hostname)
+#test -f $HOST_RC && source $HOST_RC
+
+[ -f ~/.fzf.sh ] && source $HOME/.fzf.sh
+
+[ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
+
+# Map CTRL-u to delete to beginning of
+# line instead of whole line
+bindkey "^u" backward-kill-line
+
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+
+eval "$(fasd --init auto)"
+
+source $HOME/.functions
+
+unsetopt correct
+
+_zlf() {
+    emulate -L zsh
+    local d=$(mktemp -d) || return 1
+    {
+        mkfifo -m 600 $d/fifo || return 1
+        tmux split -bf zsh -c "exec {ZLE_FIFO}>$d/fifo; export ZLE_FIFO; exec lf" || return 1
+        local fd
+        exec {fd}<$d/fifo
+        zle -Fw $fd _zlf_handler
+    } always {
+        rm -rf $d
+    }
+}
+zle -N _zlf
+bindkey '\ek' _zlf
+
+_zlf_handler() {
+    emulate -L zsh
+    local line
+    if ! read -r line <&$1; then
+        zle -F $1
+        exec {1}<&-
+        return 1
+    fi
+    eval $line
+    zle -R
+}
+zle -N _zlf_handler
+
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=234'
+
+export XDG_CONFIG_HOME=$HOME/.config
+
+# PERL libs in home dir
+PATH="~/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="~/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="~/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"~/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=~/perl5"; export PERL_MM_OPT;
+
+export STARDICT_DATA_DIR=$HOME/Documents/stardict
+alias st='sdcv'
+
+export MANPAGER='less'
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+
+# Prompt
+#source ~/.zprezto/modules/prompt/external/powerlevel10k/powerlevel10k.zsh-theme
+eval "$(starship init zsh)"
+#eval "$(oh-my-posh init zsh --config ~/.poshthemes/bertold.omp.json)"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+#[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

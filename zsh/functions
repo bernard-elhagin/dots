@@ -1,0 +1,76 @@
+# Git commit browser
+fshow() {
+    local commit_hash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+    local view_commit="$commit_hash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
+    git log --color=always \
+        --format="%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" "$@" | \
+    fzf --no-sort --tiebreak=index --no-multi --reverse --ansi \
+        --header="enter to view, alt-y to copy hash" --preview="$view_commit" \
+        --bind="enter:execute:$view_commit | less -R" \
+        --bind="alt-y:execute:$commit_hash | xclip -selection clipboard"
+}
+
+# mkdir and change to it
+mkd() {
+    mkdir -p "$@" && cd "$@"
+}
+
+# Go to top dir of current git repo
+function gcd() {
+  topdir=$(git rev-parse --show-toplevel)
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
+  cd "${topdir}/${1}"
+}
+
+## ls after cd
+#ls_after_cd() {
+    #cd $1;
+    #/usr/bin/ls --group-directories-first --color=auto -l;
+    ##exa --group-directories-first --color=always --header --time-style=long-iso -l;
+#}
+
+#alias cd="ls_after_cd"
+
+t() {
+    fasdlist=$( fasd -d -l -r $1 | \
+        fzf --query="$1" --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
+        cd "$fasdlist"
+}
+
+_zlf() {
+    emulate -L zsh
+    local d=$(mktemp -d) || return 1
+    {
+        mkfifo -m 600 $d/fifo || return 1
+        tmux split -fh zsh -c "exec {ZLE_FIFO}>$d/fifo; export ZLE_FIFO; exec lf" || return 1
+        local fd
+        exec {fd}<$d/fifo
+        zle -Fw $fd _zlf_handler
+    } always {
+        rm -rf $d
+    }
+}
+zle -N _zlf
+
+_zlf_handler() {
+    emulate -L zsh
+    local line
+    if ! read -r line <&$1; then
+        zle -F $1
+        exec {1}<&-
+        return 1
+    fi
+    eval $line
+    zle -R
+}
+zle -N _zlf_handler
+
+my-expand() {
+    zle _expand_alias || zle _expand_word || true;
+}
+zle -N my-expand
+
+bindkey '\el' _zlf
+bindkey '^ ' my-expand

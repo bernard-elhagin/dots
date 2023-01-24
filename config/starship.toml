@@ -1,0 +1,26 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$all"
+
+add_newline = true
+
+[directory]
+home_symbol = ' '
+truncation_symbol = ' '
+truncation_length = 10
+style="bold blue"
+
+[character]
+success_symbol = ' '
+
+[package]
+disabled = true
+
+[perl]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[java]
+disabled = true
