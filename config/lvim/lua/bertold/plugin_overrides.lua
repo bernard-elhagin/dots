@@ -12,6 +12,7 @@ lvim.builtin.nvimtree.active = false
 lvim.builtin.bufferline.active = false
 lvim.builtin.lir.show_hidden_files = true
 lvim.builtin.project.active = false
+lvim.builtin.cmp.cmdline.enable = true
 
 lvim.builtin.alpha.startify.section.header.val = {
   [[  _  _  ____   ]],
