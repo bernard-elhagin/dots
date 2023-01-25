@@ -28,7 +28,7 @@ vim.keymap.set('i', '<c-j>', '<esc>A', nore)
 vim.keymap.set('i', '<c-o>', '<esc>I', nore)
 
 -- Map dot to repeat last edit over entire visual selection
-vim.keymap.set('x', '.', ':normal .<CR>', nore)
+vim.keymap.set('v', '.', ':normal .<CR>', nore)
 
 vim.keymap.set('o', 'i/', ':<C-U>normal! T/vt/<CR>', { noremap = true, silent = true })
 vim.keymap.set('o', 'a/', ':<C-U>normal! F/vf/<CR>', { noremap = true, silent = true })
