@@ -63,7 +63,7 @@ ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=yellow,bold'
 # ]]]
 
-source $HOME/.aliases_home.zsh
+source $HOME/.aliases.zsh
 
 # local and host-specific overrides.
 

@@ -76,15 +76,6 @@ else
     echo "done."
 fi
 
-# fonts
-echo -n "Copying fonts.."
-if [[ -d $HOME/.local/share/fonts ]]; then
-    echo "$HOME/.local/share/fonts already exists...skipping."
-else
-    ln -s "$HOME/dots/fonts" "$HOME/.local/share/fonts"
-    echo "done."
-fi
-
 declare -a FILES_TO_SYMLINK=(
   'zprezto/runcoms/zlogin'
   'zprezto/runcoms/zlogout'
@@ -96,10 +87,9 @@ declare -a FILES_TO_SYMLINK=(
   'vimrc'
   'tmux/tmux.conf'
   'zsh/functions'
-  'zsh/aliases_home.zsh'
+  'zsh/aliases.zsh'
   'git/gitconfig'
   'git/gitignore'
-  'config/nvim/init.vim'
   'config/starship.toml'
 )
 
