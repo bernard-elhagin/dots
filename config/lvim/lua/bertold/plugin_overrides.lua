@@ -13,6 +13,21 @@ lvim.builtin.bufferline.active = false
 lvim.builtin.lir.show_hidden_files = true
 lvim.builtin.project.active = false
 lvim.builtin.cmp.cmdline.enable = true
+lvim.builtin.cmp.cmdline.options = {
+  {
+    type = ":",
+    sources = {
+      { name = "cmdline" },
+      { name = "path" },
+    },
+  },
+  {
+    type = { "/", "?" },
+    sources = {
+      { name = "buffer" },
+    },
+  },
+}
 
 lvim.builtin.alpha.startify.section.header.val = {
   [[  _  _  ____   ]],

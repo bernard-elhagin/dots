@@ -42,4 +42,8 @@ lvim.plugins = {
     'rest-nvim/rest.nvim'
   },
 
+  {
+    'hrsh7th/cmp-cmdline'
+  },
+
 }
