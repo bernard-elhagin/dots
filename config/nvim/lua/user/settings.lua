@@ -34,7 +34,7 @@ o.autoindent = true
 o.smartindent = true
 o.wrap = false
 o.laststatus = 2
-o.path = { '.', '/usr/include', '~/Devel/Projects/**' }
+o.path = { '.', '/usr/include', "$HOME/Devel/Projects/**" }
 o.suffixesadd = { '.lua', '.xml' }
 o.autochdir = true
 o.synmaxcol = 200
@@ -70,14 +70,6 @@ o.listchars:append('trail:•')       -- BULLET (U+2022, UTF-8: E2 80 A2)
 o.wildignore = { '*\\tmp\\*', '*.sw?', '*.zip', '*.settings', '*.esb_diagram', '*\\*sandbox\\*', '*.classpath', '*\\.meta\\*', '.git', '*.orig', '*.exe', '*.o', '*.obj', '*.dll', '*.manifest', '*.jpg', '*.jpeg', '*.bmp', '*.gif', '*.png' }
 
 vim.cmd [[
-  if !isdirectory('~/tmp/.NVIM_UNDO_FILES')
-      call mkdir('~/tmp/.NVIM_UNDO_FILES', "p")
-  endif
-
-  set undodir=~/tmp/.NVIM_UNDO_FILES
-  set undolevels=5000
-  set undofile
-
   " Goto last location in non-empty files
   autocmd BufReadPost *  if line("'\"") > 1 && line("'\"") <= line("$")
                      \|     exe "normal! g`\""

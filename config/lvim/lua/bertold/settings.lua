@@ -38,6 +38,7 @@ vim.opt.scrolloff = 4
 vim.opt.shiftwidth = 2
 vim.opt.showmatch = true
 vim.opt.showmode = false
+vim.opt.showtabline = 0
 vim.opt.signcolumn = 'yes'
 vim.opt.smartcase = true
 vim.opt.smartindent = true

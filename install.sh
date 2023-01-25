@@ -4,8 +4,8 @@
 # Utils
 #
 
-# Change to the dotfiles directory
-cd "$HOME/dotfiles" || exit
+# Change to the dots directory
+cd "$HOME/dots" || exit
 
 #
 # Actual symlink stuff
@@ -16,7 +16,7 @@ echo -n "Copying VIM settings.."
 if [[ -d $HOME/.vim ]]; then
     echo "$HOME/.vim already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/vim" "$HOME/.vim"
+    ln -s "$HOME/dots/vim" "$HOME/.vim"
     echo "done."
 fi
 
@@ -25,7 +25,7 @@ echo -n "Copying Neovim settings.."
 if [[ -d $HOME/.config/nvim ]]; then
     echo "$HOME/.config/nvim already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/config/nvim" "$HOME/.config/nvim"
+    ln -s "$HOME/dots/config/nvim" "$HOME/.config/nvim"
     echo "done."
 fi
 
@@ -33,10 +33,10 @@ fi
 echo -n "Copying Lunarvim settings.."
 if [[ -d $HOME/.config/lvim ]]; then
     rm -rf $HOME/.config/lvim
-    ln -s "$HOME/dotfiles/config/lvim" "$HOME/.config/lvim"
+    ln -s "$HOME/dots/config/lvim" "$HOME/.config/lvim"
     echo "done."
 else
-    ln -s "$HOME/dotfiles/config/lvim" "$HOME/.config/lvim"
+    ln -s "$HOME/dots/config/lvim" "$HOME/.config/lvim"
     echo "done."
 fi
 
@@ -44,7 +44,7 @@ fi
 echo -n "Copying zprezto.."
 if [[ -d $HOME/.zprezto ]]; then
     rm -f $HOME/.zprezto/runcoms
-    ln -s "$HOME/dotfiles/zprezto/runcoms" "$HOME/.zprezto/runcoms"
+    ln -s "$HOME/dots/zprezto/runcoms" "$HOME/.zprezto/runcoms"
     echo "done."
 else
     echo "Install zprezto first"
@@ -55,7 +55,7 @@ echo -n "Copying bin.."
 if [[ -d $HOME/bin ]]; then
     echo "$HOME/bin already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/bin" "$HOME/bin"
+    ln -s "$HOME/dots/bin" "$HOME/bin"
     echo "done."
 fi
 
@@ -64,7 +64,7 @@ echo -n "Copying tmux settings.."
 if [[ -d $HOME/.tmux ]]; then
     echo "$HOME/.tmux already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/tmux" "$HOME/.tmux"
+    ln -s "$HOME/dots/tmux" "$HOME/.tmux"
     echo "done."
 fi
 
@@ -73,7 +73,7 @@ echo -n "Copying tmuxinator settings.."
 if [[ -d $HOME/.tmuxinator ]]; then
     echo "$HOME/.tmuxinator already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/tmuxinator" "$HOME/.tmuxinator"
+    ln -s "$HOME/dots/tmuxinator" "$HOME/.tmuxinator"
     echo "done."
 fi
 
@@ -82,7 +82,7 @@ echo -n "Copying i3 settings.."
 if [[ -d $HOME/.i3 ]]; then
     echo "$HOME/.i3 already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/i3" "$HOME/.i3"
+    ln -s "$HOME/dots/i3" "$HOME/.i3"
     echo "done."
 fi
 
@@ -91,7 +91,7 @@ echo -n "Copying fonts.."
 if [[ -d $HOME/.local/share/fonts ]]; then
     echo "$HOME/.local/share/fonts already exists...skipping."
 else
-    ln -s "$HOME/dotfiles/fonts" "$HOME/.local/share/fonts"
+    ln -s "$HOME/dots/fonts" "$HOME/.local/share/fonts"
     echo "done."
 fi
 
@@ -138,7 +138,7 @@ main() {
   unset FILES_TO_SYMLINK
 
   mv $HOME/.starship.toml $HOME/.config/starship.toml
-  cp $HOME/dotfiles/fzf/*.zsh $HOME/.fzf
+  cp $HOME/dots/fzf/*.zsh $HOME/.fzf
 }
 
 main

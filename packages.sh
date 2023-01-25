@@ -15,6 +15,7 @@ declare -a PACKAGES_TO_INSTALL=(
   'xsel'
   'exa'
   'fd'
+  'tree'
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

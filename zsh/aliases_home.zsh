@@ -23,7 +23,7 @@ alias ga='git commit --amend --no-edit'
 
 alias GPF='gaa && ga && gpf'
 
-alias d='cd ~/dotfiles'
+alias d='cd ~/dots'
 
 alias mci='mvn clean install -DskipTests'
 

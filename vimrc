@@ -1,7 +1,7 @@
 " .vimrc
 "
 " Author: Bernard El-Hagin <bernard.elhagin@gmail.com>
-" http://github.com/bernard-elhagin/dotfiles
+" http://github.com/bernard-elhagin/dots
 "
 set nocompatible
 
