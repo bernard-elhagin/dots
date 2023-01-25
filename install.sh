@@ -40,16 +40,6 @@ else
     echo "done."
 fi
 
-# prezto
-echo -n "Copying zprezto.."
-if [[ -d $HOME/.zprezto ]]; then
-    rm -f $HOME/.zprezto/runcoms
-    ln -s "$HOME/dots/zprezto/runcoms" "$HOME/.zprezto/runcoms"
-    echo "done."
-else
-    echo "Install zprezto first"
-fi
-
 # bin
 echo -n "Copying bin.."
 if [[ -d $HOME/bin ]]; then
@@ -102,14 +92,11 @@ declare -a FILES_TO_SYMLINK=(
   'zprezto/runcoms/zprofile'
   'zprezto/runcoms/zshenv'
   'zprezto/runcoms/zshrc'
-  'p10k.zsh'
   'fzf.sh'
   'vimrc'
   'tmux/tmux.conf'
   'zsh/functions'
   'zsh/aliases_home.zsh'
-  'zsh/aliases_work.zsh'
-  'zsh/aliases_ssh.zsh'
   'git/gitconfig'
   'git/gitignore'
   'config/nvim/init.vim'
@@ -137,7 +124,6 @@ main() {
 
   unset FILES_TO_SYMLINK
 
-  mv $HOME/.starship.toml $HOME/.config/starship.toml
   cp $HOME/dots/fzf/*.zsh $HOME/.fzf
 }
 
