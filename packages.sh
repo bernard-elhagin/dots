@@ -25,11 +25,13 @@ main() {
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  sudo pacman -Sy
+
   for i in "${PACKAGES_TO_INSTALL[@]}"; do
 
       echo "pacman -S $i"
       echo -e "\n"
-      sudo pacman -S $i
+      sudo pacman --noconfirm -S $i
 
   done
 

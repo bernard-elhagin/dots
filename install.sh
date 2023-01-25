@@ -138,6 +138,7 @@ main() {
   unset FILES_TO_SYMLINK
 
   mv $HOME/.starship.toml $HOME/.config/starship.toml
+  cp $HOME/dotfiles/fzf/*.zsh $HOME/.fzf
 }
 
 main
