@@ -26,7 +26,7 @@ export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
 export JAVA_HOME=/usr
-export PATH=$HOME/Devel/kafka/bin/:/opt/kafka/bin/:$HOME/bin/ranger-1.9.2:$HOME/bin:$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.cargo/bin:$PATH
+export PATH=$HOME/bin:$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.cargo/bin:$HOME/bin:$PATH
 
 # Syntax highlighting color overrides
 # Define default styles.
