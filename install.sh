@@ -88,6 +88,7 @@ declare -a FILES_TO_SYMLINK=(
   'tmux/tmux.conf'
   'zsh/functions'
   'zsh/aliases.zsh'
+  'zsh/aliases_work.zsh'
   'git/gitconfig'
   'git/gitignore'
   'config/starship.toml'
@@ -113,9 +114,9 @@ main() {
   done
 
   unset FILES_TO_SYMLINK
-
-  cp $HOME/dots/fzf/*.zsh $HOME/.fzf
 }
 
 main
+
+cp $HOME/dots/fzf/*.zsh $HOME/.fzf
 #source $HOME/.zshrc

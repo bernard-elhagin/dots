@@ -27,8 +27,6 @@ alias d='cd ~/dots'
 
 alias mci='mvn clean install -DskipTests'
 
-alias sshp='ssh el-hbe1@10.111.36.100'
-
 alias c='clear'
 
 # TMUX aliases
