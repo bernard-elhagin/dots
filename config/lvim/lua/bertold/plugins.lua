@@ -1,4 +1,18 @@
 lvim.plugins = {
+
+  { 'rest-nvim/rest.nvim' },
+  { 'hrsh7th/cmp-cmdline' },
+  { 'catppuccin/nvim' },
+  { 'kevinhwang91/nvim-bqf' },
+
+  {
+    'kylechui/nvim-surround',
+    tag = '*',
+    config = function()
+      require('nvim-surround').setup({})
+    end
+  },
+
   { 'phaazon/hop.nvim',
 
     config = function()
@@ -11,14 +25,6 @@ lvim.plugins = {
           "<cmd>lua require'hop'.hint_words({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = false })<CR>", { noremap = true }),
       }
     end
-  },
-
-  {
-    'catppuccin/nvim'
-  },
-
-  {
-    'kevinhwang91/nvim-bqf'
   },
 
   {
@@ -36,14 +42,6 @@ lvim.plugins = {
           }
           vim.cmd('ColorizerAttachToBuffer')
       end
-  },
-
-  {
-    'rest-nvim/rest.nvim'
-  },
-
-  {
-    'hrsh7th/cmp-cmdline'
   },
 
 }
