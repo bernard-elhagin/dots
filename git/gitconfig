@@ -117,7 +117,7 @@
     autocrlf = input
     editor = vim
     excludesfile = ~/.gitignore
-    pager = delta
+	pager = delta --dark --paging=never --syntax-theme base16-256 --diff-so-fancy
 [advice]
     statusHints = false
 [diff]
