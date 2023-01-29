@@ -16,6 +16,7 @@ declare -a PACKAGES_TO_INSTALL=(
   'exa'
   'fd'
   'tree'
+  'unzip'
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
