@@ -26,6 +26,7 @@ vim.keymap.set('i', '<c-l>', '<right>', nore)
 vim.keymap.set('i', '<c-h>', '<left>', nore)
 vim.keymap.set('i', '<c-j>', '<esc>A', nore)
 vim.keymap.set('i', '<c-o>', '<esc>I', nore)
+vim.keymap.set('n', '<up>', '<c-^>', nore)
 
 -- Map dot to repeat last edit over entire visual selection
 vim.keymap.set('v', '.', ':normal .<CR>', nore)

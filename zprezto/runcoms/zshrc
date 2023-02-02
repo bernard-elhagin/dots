@@ -33,12 +33,12 @@ export PATH=$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.car
 
 typeset -A ZSH_HIGHLIGHT_STYLES # [[[
 
-ZSH_HIGHLIGHT_STYLES[default]='none'
+#ZSH_HIGHLIGHT_STYLES[default]='none'
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
-ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=black,bold'
+#ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=black,bold'
 ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan,bold'
 ZSH_HIGHLIGHT_STYLES[suffix-alias]='fg=green,underline'
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=black,bold'
+#ZSH_HIGHLIGHT_STYLES[builtin]='fg=black,bold'
 ZSH_HIGHLIGHT_STYLES[function]='fg=red,bold'
 ZSH_HIGHLIGHT_STYLES[command]='fg=green,bold'
 ZSH_HIGHLIGHT_STYLES[precommand]='fg=green,bold'
@@ -59,9 +59,9 @@ ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]='fg=cyan'
 ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]='fg=cyan'
 ZSH_HIGHLIGHT_STYLES[assign]='none'
 ZSH_HIGHLIGHT_STYLES[redirection]='none'
-ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
+#ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=yellow,bold'
-# ]]]
+## ]]]
 
 source $HOME/.aliases.zsh
 [ -f ~/.aliases_work.zsh ] && source $HOME/.aliases_work.zsh

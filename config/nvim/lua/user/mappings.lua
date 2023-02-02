@@ -159,3 +159,5 @@ nnoremap <leader>d :new \| read ! sdcv <c-r><c-w> <cr>:call ScratchBuffer() <cr>
 -- create empty line below or above in Normal mode
 map('n', 'go', 'o<ESC>k^', noresi)
 map('n', 'gO', 'O<ESC>j^', noresi)
+
+map('n', '<up>', '<c-^>', noresi)
