@@ -6,5 +6,8 @@
         "after",
         "JAVA_DAP_ACTIVE",
         "lsp_keymaps"
+    ],
+    "diagnostics.disable": [
+        "undefined-doc-name"
     ]
 }

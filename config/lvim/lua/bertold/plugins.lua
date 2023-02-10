@@ -4,6 +4,8 @@ lvim.plugins = {
   { 'hrsh7th/cmp-cmdline' },
   { 'catppuccin/nvim' },
   { 'kevinhwang91/nvim-bqf' },
+  { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  { 'tamago324/lir-bookmark.nvim' },
 
   {
     'kylechui/nvim-surround',

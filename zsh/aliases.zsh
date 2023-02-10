@@ -5,6 +5,7 @@ alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
+alias  ll='ls -lg'
 alias lll='ls -crtlg'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
@@ -48,3 +49,5 @@ fi
 alias cll='clear && ll'
 
 alias tl='tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'
+
+alias l='lvim'
