@@ -139,7 +139,7 @@ alias st='sdcv'
 
 export MANPAGER='less'
 
-#export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
 # Prompt
 #source ~/.zprezto/modules/prompt/external/powerlevel10k/powerlevel10k.zsh-theme
