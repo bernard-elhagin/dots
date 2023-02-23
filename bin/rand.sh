@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Sprawdzenie ilości argumentów
+# Check amount of arguments
 if [ -z "$2" ]; then ARG_ERR=ERR; fi
 if [ -z "$1" ]; then ARG_ERR=ERR; fi
 if [ -n "$ARG_ERR" ];
