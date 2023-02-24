@@ -24,15 +24,6 @@ function gcd() {
   cd "${topdir}/${1}"
 }
 
-## ls after cd
-#ls_after_cd() {
-    #cd $1;
-    #/usr/bin/ls --group-directories-first --color=auto -l;
-    ##exa --group-directories-first --color=always --header --time-style=long-iso -l;
-#}
-
-#alias cd="ls_after_cd"
-
 t() {
     fasdlist=$( fasd -d -l -r $1 | \
         fzf --query="$1" --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
@@ -74,3 +65,41 @@ zle -N my-expand
 
 bindkey '\el' _zlf
 bindkey '^ ' my-expand
+
+setopt extendedglob
+typeset -Ag abbreviations
+abbreviations=(
+  "a"     "awk '{"
+  "ab"    "awk 'BEGIN {"
+  "ia"    "| awk '{"
+  "ae"    "awk '__CURSOR__ END { }"
+  "gcm"   "git commit -m '__CURSOR__'"
+  "gh"    "git clone https://github.com/__CURSOR__"
+)
+
+magic-abbrev-expand() {
+    local MATCH
+    LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
+    command=${abbreviations[$MATCH]}
+    LBUFFER+=${command:-$MATCH}
+
+    if [[ "${command}" =~ "__CURSOR__" ]]
+    then
+        RBUFFER=${LBUFFER[(ws:__CURSOR__:)2]}
+        LBUFFER=${LBUFFER[(ws:__CURSOR__:)1]}
+    else
+        zle self-insert
+    fi
+}
+
+no-magic-abbrev-expand() {
+  LBUFFER+=' '
+}
+
+zle -N magic-abbrev-expand
+zle -N no-magic-abbrev-expand
+bindkey " " magic-abbrev-expand
+bindkey "^x " no-magic-abbrev-expand
+bindkey -M isearch " " self-insert
+
+# vim: set ft=zsh:

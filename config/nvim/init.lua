@@ -1,9 +1,2 @@
-require 'user.plugins'
-require 'user.settings'
-require 'user.mappings'
-require 'user.cmp'
-require 'user.theme'
-require 'user.lualine'
-require 'user.treesitter'
-require 'user.lsp'
-require 'user.telescope'
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")

@@ -9,7 +9,7 @@ alias  ll='ls -lg'
 alias lll='ls -crtlg'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
-alias github='git clone https://github.com/'
+#alias github='git clone https://github.com/'
 
 alias p='cd ~/Devel/Projects'
 

@@ -6,6 +6,8 @@ lvim.plugins = {
   { 'kevinhwang91/nvim-bqf' },
   { 'nvim-treesitter/nvim-treesitter-textobjects' },
   { 'tamago324/lir-bookmark.nvim' },
+  { 'pineapplegiant/spaceduck' },
+  { 'rafi/awesome-vim-colorschemes' },
 
   {
     'kylechui/nvim-surround',
