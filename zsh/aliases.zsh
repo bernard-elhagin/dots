@@ -1,7 +1,7 @@
 # Package manager aliases
 alias pacman='pacman --color=always'
 alias pac="pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S"
-alias yac="yay -Slq | fzf --multi --preview 'yay -Si {1}' | xargs -ro sudo yay -S"
+alias yac="yay -Slq | fzf --multi --preview 'yay -Si {1}' | xargs -ro yay -S"
 alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
