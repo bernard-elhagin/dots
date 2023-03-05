@@ -67,9 +67,11 @@ bindkey '\el' _zlf
 bindkey '^ ' my-expand
 
 setopt extendedglob
+
 typeset -Ag abbreviations
 abbreviations=(
   "a"     "awk '{"
+  "aa"    "awk '__CURSOR__"
   "ab"    "awk 'BEGIN {"
   "ia"    "| awk '{"
   "ae"    "awk '__CURSOR__ END { }"
