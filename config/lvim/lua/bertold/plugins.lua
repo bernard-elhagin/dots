@@ -8,6 +8,7 @@ lvim.plugins = {
   { 'tamago324/lir-bookmark.nvim' },
   { 'pineapplegiant/spaceduck' },
   { 'rafi/awesome-vim-colorschemes' },
+  { 'sindrets/diffview.nvim' },
 
   {
     'kylechui/nvim-surround',

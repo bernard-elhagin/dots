@@ -313,12 +313,15 @@ nnoremap <leader>w :%s/\s\+$//<CR>
 
 " execute "!perl ~/Devel/Projects/wso2tools/add_artifact.pl " . system("git rev-parse --show-toplevel | tr -d '\\n'")
 
-" Change/select object between //
-onoremap <silent> i/ :<C-U>normal! T/vt/<CR>
-onoremap <silent> a/ :<C-U>normal! F/vf/<CR>
+" Change/select objects between pairs of characters
+let s:chars = [ '_', '.', ':', ',', ';', '<bar>', '/', '<bslash>', '*', '+', '%', '`', '?' ]
 
-xnoremap <silent> i/ :<C-U>normal! T/vt/<CR>
-xnoremap <silent> a/ :<C-U>normal! F/vf/<CR>
+for char in s:chars
+    for mode in [ 'xnoremap', 'onoremap' ]
+        execute printf('%s <silent> i%s :<c-u>normal! T%svt%s<cr>', mode, char, char, char)
+        execute printf('%s <silent> a%s :<c-u>normal! F%svf%s<cr>', mode, char, char, char)
+    endfor
+endfor
 
 onoremap <silent> iy :<C-U>execute "normal!?^---\r:nohlsearch\rjV/^---\rk"<cr>
 onoremap <silent> ay :<C-U>execute "normal!?^---\r:nohlsearch\rV/^---\r"<cr>

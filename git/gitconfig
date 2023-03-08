@@ -45,6 +45,7 @@
     d = diff HEAD~1 HEAD
     dc = diff --cached                # diff staged changes
     last = diff HEAD^                 # diff last committed change
+    dt = "! args=$@; shift $#; lvim -c \"DiffviewOpen $args\""
 
   # log
     l = log --oneline --all --decorate --graph

@@ -31,11 +31,6 @@ vim.keymap.set('n', '<up>', '<c-^>', nore)
 -- Map dot to repeat last edit over entire visual selection
 vim.keymap.set('v', '.', ':normal .<CR>', nore)
 
-vim.keymap.set('o', 'i/', ':<C-U>normal! T/vt/<CR>', { noremap = true, silent = true })
-vim.keymap.set('o', 'a/', ':<C-U>normal! F/vf/<CR>', { noremap = true, silent = true })
-vim.keymap.set('x', 'i/', ':<C-U>normal! T/vt/<CR>', { noremap = true, silent = true })
-vim.keymap.set('x', 'a/', ':<C-U>normal! F/vf/<CR>', { noremap = true, silent = true })
-
 vim.keymap.set('n', '<leader>j', '<C-w>j', nore)
 vim.keymap.set('n', '<leader>k', '<C-w>k', nore)
 vim.keymap.set('n', '<leader>l', '<C-w>l', nore)
@@ -85,3 +80,25 @@ function ToggleHighlight()
 end
 
 vim.keymap.set('n', '<backspace>', ':lua ToggleHighlight()<cr>', nore)
+
+vim.keymap.set('n', '<leader><leader>d', function()
+   if next(require('diffview.lib').views) == nil then
+      vim.cmd('DiffviewOpen')
+   else
+      vim.cmd('DiffviewClose')
+   end
+end)
+
+function basic_text_objects()
+   local chars = { '_', '.', ':', ',', ';', '|', '/', '\\', '*', '+', '%', '`', '?' }
+   for _,char in ipairs(chars) do
+      for _,mode in ipairs({ 'x', 'o' }) do
+         vim.api.nvim_set_keymap(mode, 'i' .. char, string.format(':<c-u>normal! T%svt%s<cr>', char, char, char), { noremap = true, silent = true })
+         vim.api.nvim_set_keymap(mode, 'a' .. char, string.format(':<c-u>normal! F%svf%s<cr>', char, char, char), { noremap = true, silent = true })
+      end
+   end
+end
+
+return {
+   basic_text_objects = basic_text_objects
+}
