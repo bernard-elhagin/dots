@@ -373,9 +373,9 @@ noremap <c-m> m
 noremap go o<ESC>k^
 noremap gO O<ESC>j^
 
-noremap <up> <c-^>
-
 iabbr hw Hello, World!
+
+"map <c-r> yiwvip;s/"//g<left><left>
 
 " ]]]
 

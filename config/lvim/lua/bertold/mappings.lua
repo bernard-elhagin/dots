@@ -9,7 +9,7 @@ vim.keymap.set('v', '<c-j><c-k>', '<ESC>', nore)
 vim.keymap.set('n', ';', ':', nore)
 vim.keymap.set('v', ';', ':', nore)
 vim.keymap.set('n', ':', ';', nore)
-vim.keymap.set('n', 'H', '^',  nore)
+vim.keymap.set('n', 'H', '0^', nore)
 vim.keymap.set('n', 'L', 'g_', nore)
 vim.keymap.set('i', '{{', '{' .. '<enter>' .. '}<esc>O', nore)
 vim.keymap.set('n', '-', ":lua require'lir.float'.toggle()<CR>", nore)
@@ -26,7 +26,6 @@ vim.keymap.set('i', '<c-l>', '<right>', nore)
 vim.keymap.set('i', '<c-h>', '<left>', nore)
 vim.keymap.set('i', '<c-j>', '<esc>A', nore)
 vim.keymap.set('i', '<c-o>', '<esc>I', nore)
-vim.keymap.set('n', '<up>', '<c-^>', nore)
 
 -- Map dot to repeat last edit over entire visual selection
 vim.keymap.set('v', '.', ':normal .<CR>', nore)
@@ -41,6 +40,8 @@ vim.keymap.set('n', '<leader>_', '<C-w>_', nore)
 
 vim.keymap.set('n', '=x', ':exe ":silent %!xmllint --format --recover - 2>/dev/null"<cr>:set filetype=xml<cr>', nore)
 
+vim.keymap.set('n', '<F10>', ':TSHighlightCapturesUnderCursor<cr>', nore)
+
 vim.cmd [[
 function! ScratchBuffer()
     setlocal buftype=nofile
@@ -50,6 +51,8 @@ endfu
 
 nnoremap <leader>d :new \| read ! sdcv <c-r><c-w> <cr>:call ScratchBuffer() <cr>:normal gg<cr>
 ]]
+
+vim.keymap.set('n', '<leader>r', 'yiwvip:s/<c-r>"//g<left><left>')
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern='*',

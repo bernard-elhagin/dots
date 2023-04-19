@@ -41,6 +41,10 @@ lvim.builtin.lualine.sections.lualine_c = {
    components.filename
 }
 
+lvim.builtin.lualine.options = {
+   theme = 'dracula-nvim'
+}
+
 lvim.builtin.treesitter.ensure_installed = {
    "bash",
    "c",

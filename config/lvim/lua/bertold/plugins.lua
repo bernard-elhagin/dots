@@ -5,10 +5,12 @@ lvim.plugins = {
   { 'catppuccin/nvim' },
   { 'kevinhwang91/nvim-bqf' },
   { 'nvim-treesitter/nvim-treesitter-textobjects' },
+  { 'nvim-treesitter/playground' },
   { 'tamago324/lir-bookmark.nvim' },
   { 'pineapplegiant/spaceduck' },
   { 'rafi/awesome-vim-colorschemes' },
   { 'sindrets/diffview.nvim' },
+  { 'Mofiqul/dracula.nvim' },
 
   {
     'kylechui/nvim-surround',
