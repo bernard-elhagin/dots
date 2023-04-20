@@ -25,7 +25,7 @@ export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
-export PATH=$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.cargo/bin:$HOME/.local/bin:$HOME/bin:$PATH
+export PATH=$HOME/npm/bin:$HOME/.gem/ruby/3.0.0/bin:$HOME/bin/arduino:$HOME/.cargo/bin:$HOME/.local/bin:$HOME/bin:$HOME/.tmuxifier/bin:$PATH
 
 # Syntax highlighting color overrides
 # Define default styles.
@@ -143,6 +143,7 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
 # Prompt
 #source ~/.zprezto/modules/prompt/external/powerlevel10k/powerlevel10k.zsh-theme
+eval "$(tmuxifier init -)"
 eval "$(starship init zsh)"
 #eval "$(oh-my-posh init zsh --config ~/.poshthemes/bertold.omp.json)"
 

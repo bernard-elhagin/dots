@@ -66,6 +66,7 @@ Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 "Plug 'preservim/vim-markdown'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
