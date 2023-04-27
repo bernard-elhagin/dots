@@ -6,8 +6,8 @@ alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
-alias  ll='ls -lg'
-alias lll='ls -crtlg'
+alias  ll='lsd -l --group-directories-first'
+alias lll='lsd -al --group-directories-first'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
 #alias github='git clone https://github.com/'
@@ -42,10 +42,10 @@ alias -g G='| grep --color=always'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
 
-if (command -v exa >/dev/null); then
-    alias ll='exa  -gl --header --time-style=long-iso --group-directories-first --git'
-    alias lll='exa -al --header --time-style=long-iso --group-directories-first --git'
-fi
+#if (command -v exa >/dev/null); then
+    #alias ll='exa  -gl --header --time-style=long-iso --group-directories-first --git'
+    #alias lll='exa -al --header --time-style=long-iso --group-directories-first --git'
+#fi
 
 alias cll='clear && ll'
 
