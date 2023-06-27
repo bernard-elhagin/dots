@@ -4,11 +4,11 @@ lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "startify"
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = true
 lvim.builtin.illuminate.active = false
 lvim.builtin.autopairs.active = false
 lvim.builtin.indentlines.active = false
-lvim.builtin.nvimtree.active = false
+lvim.builtin.nvimtree.active = true
 lvim.builtin.bufferline.active = false
 lvim.builtin.project.active = false
 lvim.builtin.lir.active = false
@@ -49,17 +49,17 @@ lvim.builtin.lualine.options = {
 lvim.builtin.treesitter.ensure_installed = {
    "bash",
    "c",
+   "css",
+   "http",
+   "java",
    "javascript",
    "json",
    "lua",
    "python",
-   "typescript",
-   "tsx",
-   "css",
    "rust",
-   "java",
+   "tsx",
+   "typescript",
    "yaml",
-   "http",
 }
 
 lvim.builtin.treesitter.highlight.enable = true
