@@ -38,6 +38,8 @@ vim.keymap.set('n', '<leader>x', '<C-w>c', nore)
 vim.keymap.set('n', '<leader>o', '<C-w>o', nore)
 vim.keymap.set('n', '<leader>_', '<C-w>_', nore)
 
+vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', nore)
+
 vim.keymap.set('n', '=x', ':exe ":silent %!xmllint --format --recover - 2>/dev/null"<cr>:set filetype=xml<cr>', nore)
 
 vim.keymap.set('n', '<F10>', ':TSHighlightCapturesUnderCursor<cr>', nore)
