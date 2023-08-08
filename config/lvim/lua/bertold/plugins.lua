@@ -10,6 +10,7 @@ lvim.plugins = {
   { 'rafi/awesome-vim-colorschemes' },
   { 'sindrets/diffview.nvim' },
   { 'Mofiqul/dracula.nvim' },
+  { 'AlexvZyl/nordic.nvim' },
 
   {
     'kylechui/nvim-surround',
@@ -67,6 +68,10 @@ lvim.plugins = {
         { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
         { 'nvim-telescope/telescope-fzy-native.nvim' },
      },
+  },
+
+  {
+     'godlygeek/tabular'
   },
 
 }

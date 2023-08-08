@@ -26,8 +26,12 @@ telescope.setup({
     selection_caret = "  ",
     multi_icon = "",
     sorting_strategy = "ascending",
-    layout_strategy = nil,
-    layout_config = nil,
+    layout_strategy = 'vertical',
+    layout_config = {
+       vertical = { width = 0.6, height = 0.6 },
+       preview = false,
+       prompt_position = top
+    },
     borderchars = {
       "─",
       "│",
@@ -81,6 +85,14 @@ telescope.setup({
         prompt_position = "top",
       },
     },
+    smart_open = {
+      previewer = false,
+      layout_config = {
+        width = 0.7,
+        height = 0.9,
+        prompt_position = "top",
+      },
+    },
     help_tags = {
       layout_config = {
         prompt_position = "top",
@@ -127,6 +139,4 @@ telescope.setup({
   },
 })
 
-if not require("config.utils").running_android() then
-  telescope.load_extension("fzf")
-end
+telescope.load_extension("fzf")

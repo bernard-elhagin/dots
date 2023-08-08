@@ -323,12 +323,12 @@ set $c_magenta_l  #d3869b
 set $c_cyan_d     #689d6a
 set $c_cyan_l     #8ec07c
 
-#class					background?		border			text			split
-client.focused			$c_black_l		$c_black_l		$c_white_d		$c_white_d
-client.focused_inactive	$c_background	$c_background	$c_black_l		$c_black_d
-client.unfocused		$c_black_d		$c_background	$c_white_d		$c_black_d
-client.urgent			$c_red_d		$c_red_d		$c_foreground	$c_red_d
-client.background		$c_background
+#class                  background?     border          text            split
+client.focused          $c_black_l      $c_black_l      $c_white_d      $c_white_d
+client.focused_inactive $c_background   $c_background   $c_black_l      $c_black_d
+client.unfocused        $c_black_d      $c_background   $c_white_d      $c_black_d
+client.urgent           $c_red_d        $c_red_d        $c_foreground   $c_red_d
+client.background       $c_background
 
 #############################
 ### settings for i3-gaps: ###
@@ -397,10 +397,10 @@ exec xmodmap -e "keysym Caps_Lock = Escape" # set Caps Lock to Esc
 
 bar {
     font xft:xos4 Terminus Regular 9
-	position top
-	set $height 16
-	tray_output none
-	status_command bumblebee-status -m uptime arch-update date time -p date.format="%a, %d. %b %Y" time.format="%H:%M:%S" -t iceberg-dark-powerline
+    position top
+    set $height 16
+    tray_output none
+    status_command bumblebee-status -m uptime arch-update date time -p date.format="%a, %d. %b %Y" time.format="%H:%M:%S" -t iceberg-dark-powerline
     colors{
         background #232323
         statusline #DCDCDC
@@ -409,13 +409,15 @@ bar {
 
 bar {
     font xft:xos4 Terminus Regular 9
-	position bottom
-	set $height 16
-	colors {
-		background #1d2021
-		focused_workspace  #cb9e83 #665c54 #ebdbb2
-		active_workspace   #665c54 #463c34 #dbae93
-		inactive_workspace #383838 #1d2021 #766c64
-		urgent_workspace   #fb4934 #cc241d #ebdbb2
-	}
+    position bottom
+    set $height 16
+    colors {
+        background #1d2021
+        focused_workspace  #cb9e83 #665c54 #ebdbb2
+        active_workspace   #665c54 #463c34 #dbae93
+        inactive_workspace #383838 #1d2021 #766c64
+        urgent_workspace   #fb4934 #cc241d #ebdbb2
+    }
 }
+
+exec "sudo VBoxClient --clipboard"
