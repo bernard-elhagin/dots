@@ -74,4 +74,8 @@ lvim.plugins = {
      'godlygeek/tabular'
   },
 
+  {
+     'DNLHC/glance.nvim'
+  },
+
 }
