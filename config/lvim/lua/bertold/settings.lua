@@ -76,3 +76,19 @@ vim.cmd [[
                      \|  endif
 
 ]]
+
+vim.api.nvim_create_autocmd("CmdlineEnter", {
+  group = vim.api.nvim_create_augroup("cmd-line-relnum-toggle", { clear = false }),
+  callback = function ()
+    vim.wo.relativenumber = not vim.wo.relativenumber
+    vim.cmd [[ redraw ]]
+  end
+})
+
+vim.api.nvim_create_autocmd("CmdlineLeave", {
+  group = vim.api.nvim_create_augroup("cmd-line-relnum-toggle", { clear = false }),
+  callback = function ()
+    vim.wo.relativenumber = not vim.wo.relativenumber
+    vim.cmd [[ redraw ]]
+  end
+})
