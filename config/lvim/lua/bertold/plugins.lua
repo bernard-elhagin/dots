@@ -78,4 +78,12 @@ lvim.plugins = {
      'DNLHC/glance.nvim'
   },
 
+  {
+     'tpope/vim-fugitive'
+  },
+
+  {
+     'rbong/vim-flog'
+  },
+
 }
