@@ -26,6 +26,7 @@ vim.keymap.set('i', '<c-l>', '<right>', nore)
 vim.keymap.set('i', '<c-h>', '<left>', nore)
 vim.keymap.set('i', '<c-j>', '<esc>A', nore)
 vim.keymap.set('i', '<c-o>', '<esc>I', nore)
+vim.keymap.set('n', '<c-n>', 'm', nore)
 
 -- Map dot to repeat last edit over entire visual selection
 vim.keymap.set('v', '.', ':normal .<CR>', nore)
@@ -41,6 +42,7 @@ vim.keymap.set('n', '<leader>_', '<C-w>_', nore)
 vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', nore)
 
 vim.keymap.set('n', '=x', ':exe ":silent %!xmllint --format --recover - 2>/dev/null"<cr>:set filetype=xml<cr>', nore)
+vim.keymap.set('n', '=j', ':%!jq<cr>', nore)
 
 vim.keymap.set('n', '<F10>', ':TSHighlightCapturesUnderCursor<cr>', nore)
 
