@@ -106,6 +106,8 @@ function basic_text_objects()
    end
 end
 
+vim.keymap.set('n', '<leader>gg', ':Telescope git_grep live_grep<CR>', nore)
+
 return {
    basic_text_objects = basic_text_objects
 }

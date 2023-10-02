@@ -82,8 +82,13 @@ local itos = s("itos", {
    t(");"),
 })
 
+local exit = s("ex", {
+   t("System.exit(0);")
+})
+
 table.insert(snippets, stoi)
 table.insert(snippets, itos)
+table.insert(snippets, exit)
 
 -- End --
 

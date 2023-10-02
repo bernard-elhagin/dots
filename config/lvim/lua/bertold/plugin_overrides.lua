@@ -66,6 +66,7 @@ lvim.builtin.treesitter.highlight.enable = true
 lvim.builtin.treesitter.indent.enable = false
 
 lvim.builtin.which_key.mappings.c = lvim.builtin.which_key.mappings.s
+lvim.builtin.which_key.mappings.g.g = { }
 lvim.builtin.which_key.mappings.d = { }
 lvim.builtin.which_key.mappings.s = { }
 lvim.builtin.which_key.mappings.b = { }

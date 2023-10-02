@@ -1,3 +1,5 @@
+require('telescope').setup()
+require('telescope').load_extension('git_grep')
 --local ok, telescope, actions_layout
 --
 --ok, telescope = pcall(require, "telescope")

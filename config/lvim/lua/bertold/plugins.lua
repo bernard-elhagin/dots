@@ -86,4 +86,9 @@ lvim.plugins = {
      'rbong/vim-flog'
   },
 
+  {
+     'davvid/telescope-git-grep.nvim',
+     branch = 'main'
+  },
+
 }
