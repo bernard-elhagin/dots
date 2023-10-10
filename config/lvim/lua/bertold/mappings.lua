@@ -11,6 +11,8 @@ vim.keymap.set('v', ';', ':', nore)
 vim.keymap.set('n', ':', ';', nore)
 vim.keymap.set('n', 'H', '0^', nore)
 vim.keymap.set('n', 'L', 'g_', nore)
+vim.keymap.set('v', 'H', '0^', nore)
+vim.keymap.set('v', 'L', 'g_', nore)
 vim.keymap.set('i', '{{', '{' .. '<enter>' .. '}<esc>O', nore)
 vim.keymap.set('n', '-', ":Oil<CR>", nore)
 vim.keymap.set('n', '<leader>v', ':e $HOME/.config/lvim/config.lua<cr>', nore)
@@ -106,7 +108,7 @@ function basic_text_objects()
    end
 end
 
-vim.keymap.set('n', '<leader>gg', ':Telescope git_grep live_grep<CR>', nore)
+vim.keymap.set('n', '<leader>gg', ':Telescope git_grep live_grep regex=perl<CR>', nore)
 
 return {
    basic_text_objects = basic_text_objects
