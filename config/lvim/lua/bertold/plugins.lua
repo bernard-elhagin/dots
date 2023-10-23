@@ -3,7 +3,7 @@ lvim.plugins = {
   { 'rest-nvim/rest.nvim' },
   { 'hrsh7th/cmp-cmdline' },
   { 'catppuccin/nvim' },
-  -- { 'kevinhwang91/nvim-bqf' },
+  { 'kevinhwang91/nvim-bqf' },
   { 'nvim-treesitter/nvim-treesitter-textobjects' },
   { 'nvim-treesitter/playground' },
   { 'pineapplegiant/spaceduck' },
@@ -89,10 +89,6 @@ lvim.plugins = {
   {
      'davvid/telescope-git-grep.nvim',
      branch = 'main'
-  },
-
-  {
-     'gabrielpoca/replacer.nvim',
   },
 
 }
