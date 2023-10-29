@@ -6,7 +6,7 @@ vim.opt.backup = false
 vim.opt.clipboard = 'unnamed'
 vim.opt.cmdheight = 1
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
-vim.opt.cursorline = false
+vim.opt.cursorline = true
 vim.opt.diffopt = { 'internal', 'filler', 'context:3', 'indent-heuristic', 'algorithm:patience' }
 vim.opt.encoding = 'utf-8'
 vim.opt.errorbells = false
@@ -40,7 +40,7 @@ vim.opt.shiftwidth = 3
 vim.opt.showmatch = true
 vim.opt.showmode = false
 vim.opt.showtabline = 0
-vim.opt.signcolumn = 'yes'
+vim.opt.signcolumn = 'no'
 vim.opt.smartcase = true
 vim.opt.smartindent = true
 vim.opt.smarttab = true
@@ -89,6 +89,22 @@ vim.api.nvim_create_autocmd("CmdlineLeave", {
   group = vim.api.nvim_create_augroup("cmd-line-relnum-toggle", { clear = false }),
   callback = function ()
     vim.cmd [[ set relativenumber ]]
+    vim.cmd [[ redraw ]]
+  end
+})
+
+vim.api.nvim_create_autocmd("InsertEnter", {
+  group = vim.api.nvim_create_augroup("cmd-line-cursorline-toggle", { clear = false }),
+  callback = function ()
+    vim.cmd [[ set nocursorline ]]
+    vim.cmd [[ redraw ]]
+  end
+})
+
+vim.api.nvim_create_autocmd("InsertLeave", {
+  group = vim.api.nvim_create_augroup("cmd-line-cursorline-toggle", { clear = false }),
+  callback = function ()
+    vim.cmd [[ set cursorline ]]
     vim.cmd [[ redraw ]]
   end
 })

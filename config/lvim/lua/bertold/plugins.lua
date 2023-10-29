@@ -91,4 +91,21 @@ lvim.plugins = {
      branch = 'main'
   },
 
+  {
+     'Integralist/hart-foundation',
+  },
+
+  {
+     'chaoren/vim-wordmotion',
+  },
+
+  {
+     'rose-pine/neovim',
+     name = 'rose-pine'
+  },
+
+  {
+     'junegunn/fzf.vim',
+  },
+
 }
