@@ -71,6 +71,7 @@ lvim.builtin.which_key.mappings.g.g = { }
 lvim.builtin.which_key.mappings.d = { }
 lvim.builtin.which_key.mappings.s = { }
 lvim.builtin.which_key.mappings.b = { }
+lvim.builtin.which_key.mappings.w = { }
 
 lvim.builtin.treesitter.textobjects.select = {
    enable = true,
