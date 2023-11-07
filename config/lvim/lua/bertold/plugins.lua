@@ -37,7 +37,12 @@ lvim.plugins = {
   {
       'NvChad/nvim-colorizer.lua',
       config = function()
-         require('colorizer').setup()
+         require('colorizer').setup({
+            user_default_options = {
+               names = true,
+               mode = 'background',
+            }
+         })
       end
   },
 
