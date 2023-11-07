@@ -40,7 +40,7 @@ lvim.plugins = {
          require('colorizer').setup({
             user_default_options = {
                names = true,
-               mode = 'background',
+               mode = 'foreground',
             }
          })
       end
@@ -101,6 +101,10 @@ lvim.plugins = {
 
   {
      'junegunn/fzf.vim',
+  },
+
+  {
+     'Matsuuu/pinkmare',
   },
 
 }

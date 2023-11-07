@@ -1,6 +1,6 @@
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
-lvim.colorscheme = 'rose-pine-moon'
+lvim.colorscheme = 'pinkmare'
 
 reload("bertold.settings")
 reload("bertold.mappings")
