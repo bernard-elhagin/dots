@@ -12,7 +12,7 @@ lvim.builtin.nvimtree.active = true
 lvim.builtin.bufferline.active = false
 lvim.builtin.project.active = false
 lvim.builtin.lir.active = false
-lvim.builtin.gitsigns.active = false
+lvim.builtin.gitsigns.active = true
 lvim.builtin.cmp.cmdline.enable = true
 lvim.builtin.cmp.cmdline.options = {
    {

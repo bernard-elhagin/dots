@@ -20,7 +20,7 @@ lvim.plugins = {
     end
   },
 
-  { 'phaazon/hop.nvim',
+  { 'smoka7/hop.nvim',
 
     config = function()
       require('hop').setup { keys = 'asdfjkl;weio' }
@@ -40,7 +40,7 @@ lvim.plugins = {
          require('colorizer').setup({
             user_default_options = {
                names = true,
-               mode = 'foreground',
+               mode = 'background',
             }
          })
       end
@@ -105,6 +105,10 @@ lvim.plugins = {
 
   {
      'Matsuuu/pinkmare',
+  },
+
+  {
+     'folke/tokyonight.nvim',
   },
 
 }
