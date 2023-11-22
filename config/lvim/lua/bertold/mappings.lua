@@ -35,6 +35,7 @@ vim.keymap.set('v', '<c-t>', ':Tabularize /=', nore)
 vim.keymap.set('n', '<c-t>', 'vip:Tabularize /=<cr>', nore)
 vim.keymap.set('n', '<leader>w', ':%s/\\s\\+$//<cr>', nore)
 vim.keymap.set('n', '<leader><leader>f', 'Ofunction <esc>maa() {<esc>}O}<esc>=%`aa', nore)
+vim.keymap.set('n', 'Q', '!!bash', nore)
 
 -- Map dot to repeat last edit over entire visual selection
 vim.keymap.set('v', '.', ':normal .<CR>', nore)
