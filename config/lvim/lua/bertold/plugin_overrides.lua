@@ -80,5 +80,28 @@ lvim.builtin.treesitter.textobjects.select = {
       ['if'] = '@function.inner',
       ['ac'] = '@class.outer',
       ['ic'] = '@class.inner',
+      ['ai'] = '@conditional.outer',
+      ['ii'] = '@conditional.inner',
+      ['al'] = '@loop.outer',
+      ['il'] = '@loop.inner',
+      ['aa'] = '@attribute.outer',
+      ['ia'] = '@attribute.inner',
+   }
+}
+
+lvim.builtin.treesitter.textobjects.move = {
+   enable = true,
+   set_jumps = true,
+   goto_next_start = {
+      [']f'] = '@function.outer',
+   },
+   goto_previous_start = {
+      ['[f'] = '@function.outer',
+   },
+   goto_next_end = {
+      [']F'] = '@function.outer',
+   },
+   goto_previous_end = {
+      ['[F'] = '@function.outer',
    }
 }
