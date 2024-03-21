@@ -70,6 +70,8 @@ vim.opt.listchars:append('trail:•')
 
 vim.opt.wildignore = { '*\\tmp\\*', '*.sw?', '*.zip', '*.settings', '*.esb_diagram', '*\\*sandbox\\*', '*.classpath', '*\\.meta\\*', '.git', '*.orig', '*.exe', '*.o', '*.obj', '*.dll', '*.manifest', '*.jpg', '*.jpeg', '*.bmp', '*.gif', '*.png' }
 
+vim.opt.spelllang = 'en_us'
+
 vim.cmd [[
   autocmd BufReadPost *  if line("'\"") > 1 && line("'\"") <= line("$")
                      \|     exe "normal! g`\""

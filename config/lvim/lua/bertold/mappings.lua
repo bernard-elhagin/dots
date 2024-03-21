@@ -4,6 +4,7 @@ local nore = { noremap = true }
 
 vim.keymap.set('n', '<leader>s', ':w<cr>', nore)
 vim.keymap.set('i', 'jk', '<ESC>', nore)
+vim.keymap.set('i', 'jj', '<ESC>o', nore)
 vim.keymap.set('c', 'jk', '<c-u><ESC>', nore)
 vim.keymap.set('v', '<c-j><c-k>', '<ESC>', nore)
 vim.keymap.set('n', ';', ':', nore)
