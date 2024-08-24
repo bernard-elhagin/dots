@@ -154,7 +154,3 @@ eval "$(starship init zsh)"
 #[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 export GREP_COLORS='sl=49;39:cx=49;39:mt=49;38;5;199;1:fn=49;39:ln=49;39:bn=49;39:se=49;39';
-
-unalias rm
-
-source /home/bertold/.config/broot/launcher/bash/br

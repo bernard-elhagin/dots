@@ -376,6 +376,8 @@ noremap gO O<ESC>j^
 
 iabbr hw Hello, World!
 
+map <c-c> <cmd>e ~/dots/configs.md<CR>
+
 "map <c-r> yiwvip;s/"//g<left><left>
 
 " ]]]
