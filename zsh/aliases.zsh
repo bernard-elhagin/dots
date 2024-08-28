@@ -6,6 +6,7 @@ alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
+alias ls='ls --color'
 alias  ll='lsd -l --group-directories-first'
 alias lll='lsd -al --group-directories-first'
 alias zs='vim $HOME/.zshrc'
@@ -22,6 +23,7 @@ alias gc='git commit'
 alias gaa='git add --all'
 alias grh='git reset --hard'
 alias ga='git commit --amend --no-edit'
+alias gcg='git config --global'
 
 alias GPF='gaa && ga && gpf'
 

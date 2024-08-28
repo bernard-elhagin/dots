@@ -64,44 +64,39 @@ my-expand() {
 zle -N my-expand
 
 bindkey '\el' _zlf
-bindkey '^ ' my-expand
+bindkey '\e ' my-expand
 
 setopt extendedglob
 
-typeset -Ag abbreviations
-abbreviations=(
-  "a"     "awk '{"
-  "aa"    "awk '__CURSOR__"
-  "ab"    "awk 'BEGIN {"
-  "ia"    "| awk '{"
-  "ae"    "awk '__CURSOR__ END { }"
-  "gcm"   "git commit -m '__CURSOR__'"
-  "gh"    "git clone https://github.com/__CURSOR__"
-)
+#typeset -Ag abbreviations
+#abbreviations=(
+#  "gcm"   "git commit -m '__CURSOR__'"
+#  "gh"    "git clone https://github.com/__CURSOR__"
+#)
 
-magic-abbrev-expand() {
-    local MATCH
-    LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
-    command=${abbreviations[$MATCH]}
-    LBUFFER+=${command:-$MATCH}
-
-    if [[ "${command}" =~ "__CURSOR__" ]]
-    then
-        RBUFFER=${LBUFFER[(ws:__CURSOR__:)2]}
-        LBUFFER=${LBUFFER[(ws:__CURSOR__:)1]}
-    else
-        zle self-insert
-    fi
-}
-
-no-magic-abbrev-expand() {
-  LBUFFER+=' '
-}
-
-zle -N magic-abbrev-expand
-zle -N no-magic-abbrev-expand
-bindkey " " magic-abbrev-expand
-bindkey "^x " no-magic-abbrev-expand
-bindkey -M isearch " " self-insert
+#magic-abbrev-expand() {
+#    local MATCH
+#    LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
+#    command=${abbreviations[$MATCH]}
+#    LBUFFER+=${command:-$MATCH}
+#
+#    if [[ "${command}" =~ "__CURSOR__" ]]
+#    then
+#        RBUFFER=${LBUFFER[(ws:__CURSOR__:)2]}
+#        LBUFFER=${LBUFFER[(ws:__CURSOR__:)1]}
+#    else
+#        zle self-insert
+#    fi
+#}
+#
+#no-magic-abbrev-expand() {
+#  LBUFFER+=' '
+#}
+#
+#zle -N magic-abbrev-expand
+#zle -N no-magic-abbrev-expand
+#bindkey " " magic-abbrev-expand
+#bindkey "^x " no-magic-abbrev-expand
+#bindkey -M isearch " " self-insert
 
 # vim: set ft=zsh:

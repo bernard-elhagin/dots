@@ -91,10 +91,10 @@
     svnr = svn rebase
     svnd = svn dcommit
     svnl = svn log --oneline --show-commit
-	g = grep --break --heading
-	undo = reset --hard \"HEAD@{1}\"
+    g = grep --break --heading
+    undo = reset --hard \"HEAD@{1}\"
 [format]
-    pretty = %C(blue)%as%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
+    #pretty = %C(blue)%as%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
 [mergetool]
     prompt = false
     keepBackup = false
@@ -104,8 +104,8 @@
 [merge]
     summary = true
     verbosity = 1
-    tool = lvim
-	conflictstyle = merge
+	tool = meld
+    conflictstyle = merge
 [apply]
     whitespace = nowarn
 [branch]
@@ -116,9 +116,9 @@
     default = upstream
 [core]
     autocrlf = input
-    editor = vim
+    editor = lvim
     excludesfile = ~/.gitignore
-	pager = delta --dark --paging=auto --syntax-theme base16-256 --diff-so-fancy
+    pager = delta --dark --paging=auto --syntax-theme base16-256 --diff-so-fancy
 [advice]
     statusHints = false
 [diff]
@@ -130,12 +130,12 @@
 [rerere]
   # Remember my merges
   # http://gitfu.wordpress.com/2008/04/20/git-rerere-rereremember-what-you-did-last-time/
-	enabled = true
+    enabled = true
 [include]
     path = .gitconfig.user
 [user]
     email = bernard.elhagin@gmail.com
-    name = Bernard El-Hagin
+	name = Bernard El-Hagin
 [color "diff-highlight"]
     oldNormal = red bold
     oldHighlight = cyan bold 55
@@ -153,7 +153,7 @@
 [credential]
     helper = cache --timeout=360000
 [pull]
-    rebase = true
+	rebase = true
 [init]
     defaultBranch = master
 [interactive]
@@ -165,3 +165,5 @@
     commit-decoration-style = bold yellow box ul
     file-style = bold yellow ul
     file-decoration-style = none
+[rebase]
+    pull = true
