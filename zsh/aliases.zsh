@@ -6,9 +6,8 @@ alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
-alias ls='ls --color'
-alias  ll='lsd -l --group-directories-first'
-alias lll='lsd -al --group-directories-first'
+alias  ll='ls -l --group-directories-first'
+alias lll='ls -al --group-directories-first'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
 #alias github='git clone https://github.com/'
@@ -43,11 +42,6 @@ alias tmu='tmuxinator start $(basename -s .yml $(ls ~/.tmuxinator | fzf))'
 alias -g G='| grep --color=always'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
-
-#if (command -v exa >/dev/null); then
-    #alias ll='exa  -gl --header --time-style=long-iso --group-directories-first --git'
-    #alias lll='exa -al --header --time-style=long-iso --group-directories-first --git'
-#fi
 
 alias cll='clear && ll'
 
