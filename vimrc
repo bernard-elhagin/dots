@@ -783,3 +783,5 @@ cnoremap <expr> <cr> CCR()
 
 " ]]]
 "]]]
+
+autocmd CmdwinEnter * unmap <CR>

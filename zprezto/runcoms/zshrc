@@ -16,6 +16,8 @@ fi
 # Source zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
+export PATH=$PATH:$HOME/bin
+
 # Add powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
