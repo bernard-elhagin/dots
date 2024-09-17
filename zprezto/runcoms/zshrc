@@ -5,38 +5,59 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+#ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
 # Download zinit if it's not there yet
-if [ ! -d "$ZINIT_HOME" ]; then
-    mkdir -p "$(dirname $ZINIT_HOME)"
-    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-fi
+#if [ ! -d "$ZINIT_HOME" ]; then
+#    mkdir -p "$(dirname $ZINIT_HOME)"
+#    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+#fi
+
+# less() color output
+export LESS=-iXFR
+export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
+export LESS_TERMCAP_md=$'\E[1;36m'     # begin blink
+export LESS_TERMCAP_me=$'\E[0m'        # reset bold/blink
+export LESS_TERMCAP_so=$'\E[01;44;33m' # begin reverse video
+export LESS_TERMCAP_se=$'\E[0m'        # reset reverse video
+export LESS_TERMCAP_us=$'\E[1;32m'     # begin underline
+export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
 # Source zinit
-source "${ZINIT_HOME}/zinit.zsh"
+#source "${ZINIT_HOME}/zinit.zsh"
 
-export PATH=$PATH:$HOME/bin
+export EDITOR=vim
+export VISUAL=vim
+
+export VIM=$HOME/.vim
+export VIMRUNTIME=/usr/share/vim/vim91
+
+export TERM="xterm-256color"
 
 # Add powerlevel10k
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+#zinit ice depth=1; zinit light romkatv/powerlevel10k
+#
+## Add plugins
+#zinit light zsh-users/zsh-syntax-highlighting
+#zinit light zsh-users/zsh-completions
+#zinit light zsh-users/zsh-autosuggestions
+#zinit light Aloxaf/fzf-tab
+#
+## Snippets
+#zinit snippet OMZP::git
+#zinit snippet OMZP::sudo
+#zinit snippet OMZP::archlinux
+#zinit snippet OMZP::command-not-found
 
-# Add plugins
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
-
-# Snippets
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::archlinux
-zinit snippet OMZP::command-not-found
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
 
 # Load completions
 autoload -U compinit && compinit
 
-zinit cdreplay -q
+#zinit cdreplay -q
 
 export GREP_COLORS='sl=49;39:cx=49;39:mt=49;38;5;199;1:fn=49;39:ln=49;39:bn=49;39:se=49;39';
 
@@ -53,6 +74,7 @@ HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
+setopt EXTENDED_GLOB
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
@@ -73,8 +95,9 @@ source ~/.aliases.zsh
 
 # Shell integrations
 eval "$(fzf --zsh)"
-#eval "$(zoxide init --cmd cd zsh)"
+eval "$(fasd --init auto)"
+
+export PATH=$PATH:$HOME/bin
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-

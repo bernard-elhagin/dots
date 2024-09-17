@@ -48,3 +48,8 @@ alias cll='clear && ll'
 alias tl='tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'
 
 alias l='export JAVA_HOME=/usr/lib/jvm/java-17-openjdk && lvim'
+
+# Kafka
+alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
+
+source ~/.kafka_aliases.zsh

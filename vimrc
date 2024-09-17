@@ -449,7 +449,7 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme catppuccin_mocha
+colorscheme ayu
 
 set bg=dark
 
