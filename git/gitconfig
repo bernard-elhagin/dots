@@ -149,7 +149,7 @@
     extendedRegexp = true
     lineNumber = false
 [http]
-    sslVerify = false
+	sslVerify = false
 [credential]
     helper = cache --timeout=360000
 [pull]

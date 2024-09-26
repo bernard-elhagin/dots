@@ -29,9 +29,6 @@ export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 export EDITOR=vim
 export VISUAL=vim
 
-export VIM=$HOME/.vim
-export VIMRUNTIME=/usr/share/vim/vim91
-
 export TERM="xterm-256color"
 
 # Add powerlevel10k

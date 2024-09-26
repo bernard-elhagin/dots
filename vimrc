@@ -67,6 +67,7 @@ Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'EdenEast/nightfox.nvim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'rose-pine/vim'
 
 call plug#end()
 
@@ -449,7 +450,7 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme ayu
+colorscheme rosepine
 
 set bg=dark
 
