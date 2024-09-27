@@ -1,0 +1,20 @@
+[Unit]
+Description=Kafka distributed streaming platform
+After=network.target
+
+[Service]
+LimitNOFILE=20240
+LimitNOFILESoft=20240
+Type=forking
+Restart=on-failure
+Environment=KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:/opt/kafka/conf/log4j.properties
+Environment="KAFKA_HEAP_OPTS=-Xmx4096m -Xms4096m"
+Environment=JMX_PORT=9010
+Environment=KAFKA_OPTS=-javaagent:/opt/kafka/libs/jmx_prometheus_javaagent.jar=7071:/opt/kafka/libs/kafka-2_0_0.yml
+ExecStart=/opt/kafka/bin/kafka-server-start.sh -daemon /opt/kafka/conf/server.properties
+ExecStop=/opt/kafka/bin/kafka-server-stop.sh
+User=kafka
+User=kafka
+
+[Install]
+WantedBy=multi-user.target
