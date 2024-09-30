@@ -1,17 +1,17 @@
-**Broker Configs**
+##Broker Configs##
 
 
-*advertised.listeners*
+#advertised.listeners#
 ----------------------
 
 Listeners to publish to ZooKeeper for clients to use, if different than the
-listeners config property. In IaaS environments, this may need to be different
-from the interface to which the broker binds.  If this is not set, the value
-for listeners will be used. Unlike listeners, it is not valid to advertise the
-0.0.0.0 meta-address.  Also unlike listeners, there can be duplicated ports in
-this property, so that one listener can be configured to advertise another
-listener's address. This can be useful in some cases where external load
-balancers are used.
+`listeners` config property. In IaaS environments, this may need to be
+different from the interface to which the broker binds. If this is not set, the
+value for `listeners` will be used. Unlike `listeners`, it is not valid to
+advertise the 0.0.0.0 meta-address. Also unlike `listeners`, there can be
+duplicated ports in this property, so that one listener can be configured to
+advertise another listener's address. This can be useful in some cases where
+external load balancers are used.
 
 
 Type: string
@@ -21,7 +21,7 @@ Importance: high
 Update Mode: per-broker
 
 
-*auto.create.topics.enable*
+#auto.create.topics.enable#
 ---------------------------
 
 Enable auto creation of topic on the server.
@@ -34,7 +34,7 @@ Importance: high
 Update Mode: read-only
 
 
-*auto.leader.rebalance.enable*
+#auto.leader.rebalance.enable#
 ------------------------------
 
 Enables auto leader balancing. A background thread checks the distribution of
@@ -51,23 +51,26 @@ Importance: high
 Update Mode: read-only
 
 
-*background.threads*
+#background.threads#
 --------------------
 
 The number of threads to use for various background processing tasks
 
 
-Type: int Default: 10 Valid Values: [1,...] Importance: high Update Mode:
-cluster-wide
+Type: int
+Default: 10
+Valid Values: [1,...]
+Importance: high
+Update Mode: cluster-wide
 
 
-*broker.id*
+#broker.id#
 -----------
 
 The broker id for this server. If unset, a unique broker id will be
 generated.To avoid conflicts between ZooKeeper generated broker id's and user
 configured broker id's, generated broker ids start from reserved.broker.max.id
-+ 1.
+1.
 
 
 Type: int
@@ -77,7 +80,7 @@ Importance: high
 Update Mode: read-only
 
 
-*compression.type*
+#compression.type#
 ------------------
 
 Specify the final compression type for a given topic. This configuration
@@ -94,45 +97,31 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*control.plane.listener.name*
+#control.plane.listener.name#
 -----------------------------
 
 Name of listener used for communication between controller and brokers. A
-broker will use the control.plane.listener.name to locate the endpoint in
+broker will use the `control.plane.listener.name` to locate the endpoint in
 listeners list, to listen for connections from the controller. For example, if
-a broker's config is:
+a broker's config is:`listeners = INTERNAL://192.1.1.8:9092,
+EXTERNAL://10.1.1.5:9093,
+CONTROLLER://192.1.1.8:9094listener.security.protocol.map = INTERNAL:PLAINTEXT,
+EXTERNAL:SSL, CONTROLLER:SSLcontrol.plane.listener.name = CONTROLLER`On
+startup, the broker will start listening on "192.1.1.8:9094" with security
+protocol "SSL".On the controller side, when it discovers a broker's
+published endpoints through ZooKeeper, it will use the
+`control.plane.listener.name` to find the endpoint, which it will use to
+establish connection to the broker.For example, if the broker's published
+endpoints on ZooKeeper are: `"endpoints" :
+["INTERNAL://broker1.example.com:9092","EXTERNAL://broker1.example.com:9093","CONTROLLER://broker1.example.com:9094"]`
+and the controller's config is:`listener.security.protocol.map =
+INTERNAL:PLAINTEXT, EXTERNAL:SSL, CONTROLLER:SSLcontrol.plane.listener.name =
+CONTROLLER`then the controller will use "broker1.example.com:9094" with
+security protocol "SSL" to connect to the broker.If not explicitly
+configured, the default value will be null and there will be no dedicated
+endpoints for controller connections.If explicitly configured, the value
+cannot be the same as the value of `inter.broker.listener.name`.
 
-
-listeners=INTERNAL://192.1.1.8:9092,EXTERNAL://10.1.1.5:9093,CONTROLLER://192.1.1.8:9094
-listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:SSL,CONTROLLER:SSL
-control.plane.listener.name=CONTROLLER
-
-On startup, the broker will start listening on "192.1.1.8:9094" with
-security protocol "SSL".
-
-On the controller side, when it discovers a broker's published endpoints
-through ZooKeeper, it will use the control.plane.listener.name to find the
-endpoint, which it will use to establish connection to the broker.  For
-example, if the broker's published endpoints on ZooKeeper are:
-
-endpoints:
-
-[
-    "INTERNAL://broker1.example.com:9092",
-    "EXTERNAL://broker1.example.com:9093",
-    "CONTROLLER://broker1.example.com:9094"
-]
-
-and the controller's config is:
-
-listener.security.protocol.map = INTERNAL:PLAINTEXT, EXTERNAL:SSL, CONTROLLER:SSL
-control.plane.listener.name = CONTROLLER
-
-then the controller will use "broker1.example.com:9094" with security protocol
-"SSL" to connect to the broker.  If not explicitly configured, the default
-value will be null and there will be no dedicated endpoints for controller
-connections.  If explicitly configured, the value cannot be the same as the
-value of inter.broker.listener.name.
 
 Type: string
 Default: null
@@ -141,13 +130,14 @@ Importance: high
 Update Mode: read-only
 
 
-*controller.listener.names*
+#controller.listener.names#
 ---------------------------
 
 A comma-separated list of the names of the listeners used by the controller.
 This is required if running in KRaft mode. When communicating with the
-controller quorum, the broker will always use the first listener in this list.
-Note: The ZooKeeper-based controller should not set this configuration.
+controller quorum, the broker will always use the first listener in this
+list. Note: The ZooKeeper-based controller should not set this
+configuration.
 
 
 Type: string
@@ -157,7 +147,7 @@ Importance: high
 Update Mode: read-only
 
 
-*controller.quorum.election.backoff.max.ms*
+#controller.quorum.election.backoff.max.ms#
 -------------------------------------------
 
 Maximum time in milliseconds before starting new elections. This is used in the
@@ -171,7 +161,7 @@ Importance: high
 Update Mode: read-only
 
 
-*controller.quorum.election.timeout.ms*
+#controller.quorum.election.timeout.ms#
 ---------------------------------------
 
 Maximum time in milliseconds to wait without being able to fetch from the
@@ -185,7 +175,7 @@ Importance: high
 Update Mode: read-only
 
 
-*controller.quorum.fetch.timeout.ms*
+#controller.quorum.fetch.timeout.ms#
 ------------------------------------
 
 Maximum time without a successful fetch from the current leader before becoming
@@ -201,12 +191,12 @@ Importance: high
 Update Mode: read-only
 
 
-*controller.quorum.voters*
+#controller.quorum.voters#
 --------------------------
 
-Map of id/endpoint information for the set of voters in a comma- separated list
-of {id}@{host}:{port} entries. For example:
-1@localhost:9092,2@localhost:9093,3@localhost:9094
+Map of id/endpoint information for the set of voters in a comma-separated list
+of `{id}@{host}:{port}` entries. For example:
+`1@localhost:9092,2@localhost:9093,3@localhost:9094`
 
 
 Type: list
@@ -216,7 +206,7 @@ Importance: high
 Update Mode: read-only
 
 
-*delete.topic.enable*
+#delete.topic.enable#
 ---------------------
 
 Enables delete topic. Delete topic through the admin tool will have no effect
@@ -230,7 +220,7 @@ Importance: high
 Update Mode: read-only
 
 
-*early.start.listeners*
+#early.start.listeners#
 -----------------------
 
 A comma-separated list of listener names which may be started before the
@@ -249,7 +239,7 @@ Importance: high
 Update Mode: read-only
 
 
-*eligible.leader.replicas.enable*
+#eligible.leader.replicas.enable#
 ---------------------------------
 
 Enable the Eligible leader replicas
@@ -262,7 +252,7 @@ Importance: high
 Update Mode: read-only
 
 
-*leader.imbalance.check.interval.seconds*
+#leader.imbalance.check.interval.seconds#
 -----------------------------------------
 
 The frequency with which the partition rebalance check is triggered by the
@@ -276,7 +266,7 @@ Importance: high
 Update Mode: read-only
 
 
-*leader.imbalance.per.broker.percentage*
+#leader.imbalance.per.broker.percentage#
 ----------------------------------------
 
 The ratio of leader imbalance allowed per broker. The controller would trigger
@@ -291,22 +281,20 @@ Importance: high
 Update Mode: read-only
 
 
-*listeners*
+#listeners#
 -----------
 
 Listener List - Comma-separated list of URIs we will listen on and the listener
 names. If the listener name is not a security protocol,
-listener.security.protocol.map must also be set.  Listener names and port
-numbers must be unique unless one listener is an IPv4 address and the other
-listener is an IPv6 address (for the same port). Specify hostname as
-0.0.0.0 to bind to all interfaces.Leave hostname empty to bind to default
-interface.
+`listener.security.protocol.map` must also be set. Listener names and port
+numbers must be unique unless %n one listener is an IPv4 address and the other
+listener is %n an IPv6 address (for the same port).%n Specify hostname as
+0.0.0.0 to bind to all interfaces.%n Leave hostname empty to bind to default
+interface.%n Examples of legal listener lists:%n
+`PLAINTEXT://myhost:9092,SSL://:9091`%n
+`CLIENT://0.0.0.0:9092,REPLICATION://localhost:9093`%n
+`PLAINTEXT://127.0.0.1:9092,SSL://[::1]:9092`%n
 
-
-Examples of legal listener lists:
-
-PLAINTEXT://myhost:9092,SSL://:9091CLIENT://0.0.0.0:9092,REPLICATION://localhost:9093
-PLAINTEXT://127.0.0.1:9092,SSL://[::1]:9092
 
 Type: string
 Default: PLAINTEXT://:9092
@@ -315,7 +303,7 @@ Importance: high
 Update Mode: per-broker
 
 
-*log.dir*
+#log.dir#
 ---------
 
 The directory in which the log data is kept (supplemental for log.dirs
@@ -329,7 +317,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.dirs*
+#log.dirs#
 ----------
 
 A comma-separated list of the directories where the log data is stored. If not
@@ -343,7 +331,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.flush.interval.messages*
+#log.flush.interval.messages#
 -----------------------------
 
 The number of messages accumulated on a log partition before messages are
@@ -357,7 +345,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*log.flush.interval.ms*
+#log.flush.interval.ms#
 -----------------------
 
 The maximum time in ms that a message in any topic is kept in memory before
@@ -372,7 +360,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*log.flush.offset.checkpoint.interval.ms*
+#log.flush.offset.checkpoint.interval.ms#
 -----------------------------------------
 
 The frequency with which we update the persistent record of the last flush
@@ -386,7 +374,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.flush.scheduler.interval.ms*
+#log.flush.scheduler.interval.ms#
 ---------------------------------
 
 The frequency in ms that the log flusher checks whether any log needs to be
@@ -400,7 +388,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.flush.start.offset.checkpoint.interval.ms*
+#log.flush.start.offset.checkpoint.interval.ms#
 -----------------------------------------------
 
 The frequency with which we update the persistent record of log start offset
@@ -413,16 +401,20 @@ Importance: high
 Update Mode: read-only
 
 
-*log.retention.bytes*
+#log.retention.bytes#
 ---------------------
 
 The maximum size of the log before deleting it
 
 
-Type: long Default: -1 Valid Values: Importance: high Update Mode: cluster-wide
+Type: long
+Default: -1
+Valid Values:
+Importance: high
+Update Mode: cluster-wide
 
 
-*log.retention.hours*
+#log.retention.hours#
 ---------------------
 
 The number of hours to keep a log file before deleting it (in hours), tertiary
@@ -436,7 +428,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.retention.minutes*
+#log.retention.minutes#
 -----------------------
 
 The number of minutes to keep a log file before deleting it (in minutes),
@@ -451,7 +443,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.retention.ms*
+#log.retention.ms#
 ------------------
 
 The number of milliseconds to keep a log file before deleting it (in
@@ -466,7 +458,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*log.roll.hours*
+#log.roll.hours#
 ----------------
 
 The maximum time before a new log segment is rolled out (in hours), secondary
@@ -480,7 +472,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.roll.jitter.hours*
+#log.roll.jitter.hours#
 -----------------------
 
 The maximum jitter to subtract from logRollTimeMillis (in hours), secondary to
@@ -494,7 +486,7 @@ Importance: high
 Update Mode: read-only
 
 
-*log.roll.jitter.ms*
+#log.roll.jitter.ms#
 --------------------
 
 The maximum jitter to subtract from logRollTimeMillis (in milliseconds). If not
@@ -508,7 +500,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*log.roll.ms*
+#log.roll.ms#
 -------------
 
 The maximum time before a new log segment is rolled out (in milliseconds). If
@@ -522,17 +514,20 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*log.segment.bytes*
+#log.segment.bytes#
 -------------------
 
 The maximum size of a single log file
 
 
-Type: int Default: 1073741824 (1 gibibyte) Valid Values: [14,...] Importance:
-high Update Mode: cluster-wide
+Type: int
+Default: 1073741824 (1 gibibyte)
+Valid Values: [14,...]
+Importance: high
+Update Mode: cluster-wide
 
 
-*log.segment.delete.delay.ms*
+#log.segment.delete.delay.ms#
 -----------------------------
 
 The amount of time to wait before deleting a file from the filesystem. If the
@@ -547,7 +542,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*message.max.bytes*
+#message.max.bytes#
 -------------------
 
 The largest record batch size allowed by Kafka (after compression if
@@ -557,7 +552,7 @@ fetch record batches this large. In the latest message format version, records
 are always grouped into batches for efficiency. In previous message format
 versions, uncompressed records are not grouped into batches and this limit only
 applies to a single record in that case.This can be set per topic with the
-topic level max.message.bytes config.
+topic level `max.message.bytes` config.
 
 
 Type: int
@@ -567,7 +562,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*metadata.log.dir*
+#metadata.log.dir#
 ------------------
 
 This configuration determines where we put the metadata log for clusters in
@@ -582,13 +577,13 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.log.max.record.bytes.between.snapshots*
+#metadata.log.max.record.bytes.between.snapshots#
 -------------------------------------------------
 
 This is the maximum number of bytes in the log between the latest snapshot and
 the high-watermark needed before generating a new snapshot. The default value
 is 20971520. To generate snapshots based on the time elapsed, see the
-metadata.log.max.snapshot.interval.ms configuration. The Kafka node will
+`metadata.log.max.snapshot.interval.ms` configuration. The Kafka node will
 generate a snapshot when either the maximum time interval is reached or the
 maximum bytes limit is reached.
 
@@ -600,14 +595,14 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.log.max.snapshot.interval.ms*
+#metadata.log.max.snapshot.interval.ms#
 ---------------------------------------
 
 This is the maximum number of milliseconds to wait to generate a snapshot if
 there are committed records in the log that are not included in the latest
 snapshot. A value of zero disables time based snapshot generation. The default
 value is 3600000. To generate snapshots based on the number of metadata bytes,
-see the metadata.log.max.record.bytes.between.snapshots configuration. The
+see the `metadata.log.max.record.bytes.between.snapshots` configuration. The
 Kafka node will generate a snapshot when either the maximum time interval is
 reached or the maximum bytes limit is reached.
 
@@ -619,7 +614,7 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.log.segment.bytes*
+#metadata.log.segment.bytes#
 ----------------------------
 
 The maximum size of a single metadata log file.
@@ -632,7 +627,7 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.log.segment.ms*
+#metadata.log.segment.ms#
 -------------------------
 
 The maximum time before a new metadata log file is rolled out (in
@@ -646,7 +641,7 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.max.retention.bytes*
+#metadata.max.retention.bytes#
 ------------------------------
 
 The maximum combined size of the metadata log and snapshots before deleting old
@@ -661,7 +656,7 @@ Importance: high
 Update Mode: read-only
 
 
-*metadata.max.retention.ms*
+#metadata.max.retention.ms#
 ---------------------------
 
 The number of milliseconds to keep a metadata log file or snapshot before
@@ -676,18 +671,19 @@ Importance: high
 Update Mode: read-only
 
 
-*min.insync.replicas*
+#min.insync.replicas#
 ---------------------
 
-When a producer sets acks to "all" (or "-1"), min.insync.replicas specifies the
-minimum number of replicas that must acknowledge a write for the write to be
-considered successful. If this minimum cannot be met, then the producer will
-raise an exception (either NotEnoughReplicas or NotEnoughReplicasAfterAppend).
-When used together, min.insync.replicas and acks allow you to enforce greater
-durability guarantees. A typical scenario would be to create a topic with a
-replication factor of 3, set min.insync.replicas to 2, and produce with acks of
-"all". This will ensure that the producer raises an exception if a majority of
-replicas do not receive a write.
+When a producer sets acks to "all" (or "-1"), `min.insync.replicas` specifies
+the minimum number of replicas that must acknowledge a write for the write to
+be considered successful. If this minimum cannot be met, then the producer will
+raise an exception (either `NotEnoughReplicas` or
+`NotEnoughReplicasAfterAppend`).When used together, `min.insync.replicas`
+and acks allow you to enforce greater durability guarantees. A typical scenario
+would be to create a topic with a replication factor of 3, set
+`min.insync.replicas` to 2, and produce with acks of "all". This will ensure
+that the producer raises an exception if a majority of replicas do not receive
+a write.
 
 
 Type: int
@@ -697,11 +693,11 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*node.id*
+#node.id#
 ---------
 
 The node ID associated with the roles this process is playing when
-process.roles is non-empty. This is required configuration when running in
+`process.roles` is non-empty. This is required configuration when running in
 KRaft mode.
 
 
@@ -712,7 +708,7 @@ Importance: high
 Update Mode: read-only
 
 
-*num.io.threads*
+#num.io.threads#
 ----------------
 
 The number of threads that the server uses for processing requests, which may
@@ -726,7 +722,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*num.network.threads*
+#num.network.threads#
 ---------------------
 
 The number of threads that the server uses for receiving requests from the
@@ -741,7 +737,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*num.recovery.threads.per.data.dir*
+#num.recovery.threads.per.data.dir#
 -----------------------------------
 
 The number of threads per data directory to be used for log recovery at startup
@@ -755,7 +751,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*num.replica.alter.log.dirs.threads*
+#num.replica.alter.log.dirs.threads#
 ------------------------------------
 
 The number of threads that can move replicas between log directories, which may
@@ -769,11 +765,11 @@ Importance: high
 Update Mode: read-only
 
 
-*num.replica.fetchers*
+#num.replica.fetchers#
 ----------------------
 
 Number of fetcher threads used to replicate records from each source broker.
-The total number of fetchers on each broker is bound by num.replica.fetchers
+The total number of fetchers on each broker is bound by `num.replica.fetchers`
 multiplied by the number of brokers in the cluster.Increasing this value can
 increase the degree of I/O parallelism in the follower and leader broker at the
 cost of higher CPU and memory utilization.
@@ -786,7 +782,7 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*offset.metadata.max.bytes*
+#offset.metadata.max.bytes#
 ---------------------------
 
 The maximum size for a metadata entry associated with an offset commit.
@@ -799,7 +795,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.commit.required.acks*
+#offsets.commit.required.acks#
 ------------------------------
 
 DEPRECATED: The required acks before the commit can be accepted. In general,
@@ -813,7 +809,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.commit.timeout.ms*
+#offsets.commit.timeout.ms#
 ---------------------------
 
 Offset commit will be delayed until all replicas for the offsets topic receive
@@ -828,7 +824,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.load.buffer.size*
+#offsets.load.buffer.size#
 --------------------------
 
 Batch size for reading from the offsets segments when loading offsets into the
@@ -842,7 +838,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.retention.check.interval.ms*
+#offsets.retention.check.interval.ms#
 -------------------------------------
 
 Frequency at which to check for stale offsets
@@ -855,27 +851,22 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.retention.minutes*
+#offsets.retention.minutes#
 ---------------------------
 
 For subscribed consumers, committed offset of a specific partition will be
-expired and discarded when:
+expired and discarded when 1) this retention period has elapsed after the
+consumer group loses all its consumers (i.e. becomes empty); 2) this retention
+period has elapsed since the last time an offset is committed for the partition
+and the group is no longer subscribed to the corresponding topic. For
+standalone consumers (using manual assignment), offsets will be expired after
+this retention period has elapsed since the time of last commit. Note that when
+a group is deleted via the delete-group request, its committed offsets will
+also be deleted without extra retention period; also when a topic is deleted
+via the delete-topic request, upon propagated metadata update any group's
+committed offsets for that topic will also be deleted without extra retention
+period.
 
-
-1) this retention period has elapsed after the consumer group loses all its
-consumers (i.e. becomes empty);
-
-2) this retention period has elapsed since the last time an offset is committed
-for the partition and the group is no longer subscribed to the corresponding
-topic.
-
-For standalone consumers (using manual assignment), offsets will be expired
-after this retention period has elapsed since the time of last commit.  Note
-that when a group is deleted via the delete-group request, its committed
-offsets will also be deleted without extra retention period; also when a topic
-is deleted via the delete-topic request, upon propagated metadata update any
-group's committed offsets for that topic will also be deleted without extra
-retention period.
 
 Type: int
 Default: 10080
@@ -884,7 +875,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.topic.compression.codec*
+#offsets.topic.compression.codec#
 ---------------------------------
 
 Compression codec for the offsets topic - compression may be used to achieve
@@ -898,7 +889,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.topic.num.partitions*
+#offsets.topic.num.partitions#
 ------------------------------
 
 The number of partitions for the offset commit topic (should not change after
@@ -912,7 +903,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.topic.replication.factor*
+#offsets.topic.replication.factor#
 ----------------------------------
 
 The replication factor for the offsets topic (set higher to ensure
@@ -927,7 +918,7 @@ Importance: high
 Update Mode: read-only
 
 
-*offsets.topic.segment.bytes*
+#offsets.topic.segment.bytes#
 -----------------------------
 
 The offsets topic segment bytes should be kept relatively small in order to
@@ -941,7 +932,7 @@ Importance: high
 Update Mode: read-only
 
 
-*process.roles*
+#process.roles#
 ---------------
 
 The roles that this process plays: 'broker', 'controller', or
@@ -957,7 +948,7 @@ Importance: high
 Update Mode: read-only
 
 
-*queued.max.requests*
+#queued.max.requests#
 ---------------------
 
 The number of queued requests allowed for data-plane, before blocking the
@@ -971,11 +962,11 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.fetch.min.bytes*
+#replica.fetch.min.bytes#
 -------------------------
 
 Minimum bytes expected for each fetch response. If not enough bytes, wait up to
-replica.fetch.wait.max.ms (broker config).
+`replica.fetch.wait.max.ms` (broker config).
 
 
 Type: int
@@ -985,7 +976,7 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.fetch.wait.max.ms*
+#replica.fetch.wait.max.ms#
 ---------------------------
 
 The maximum wait time for each fetcher request issued by follower replicas.
@@ -1000,7 +991,7 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.high.watermark.checkpoint.interval.ms*
+#replica.high.watermark.checkpoint.interval.ms#
 -----------------------------------------------
 
 The frequency with which the high watermark is saved out to disk
@@ -1013,7 +1004,7 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.lag.time.max.ms*
+#replica.lag.time.max.ms#
 -------------------------
 
 If a follower hasn't sent any fetch requests or hasn't consumed up to the
@@ -1028,7 +1019,7 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.socket.receive.buffer.bytes*
+#replica.socket.receive.buffer.bytes#
 -------------------------------------
 
 The socket receive buffer for network requests to the leader for replicating
@@ -1042,7 +1033,7 @@ Importance: high
 Update Mode: read-only
 
 
-*replica.socket.timeout.ms*
+#replica.socket.timeout.ms#
 ---------------------------
 
 The socket timeout for network requests. Its value should be at least
@@ -1056,7 +1047,7 @@ Importance: high
 Update Mode: read-only
 
 
-*request.timeout.ms*
+#request.timeout.ms#
 --------------------
 
 The configuration controls the maximum amount of time the client will wait for
@@ -1072,7 +1063,7 @@ Importance: high
 Update Mode: read-only
 
 
-*sasl.mechanism.controller.protocol*
+#sasl.mechanism.controller.protocol#
 ------------------------------------
 
 SASL mechanism used for communication with controllers. Default is GSSAPI.
@@ -1085,7 +1076,7 @@ Importance: high
 Update Mode: read-only
 
 
-*socket.receive.buffer.bytes*
+#socket.receive.buffer.bytes#
 -----------------------------
 
 The SO_RCVBUF buffer of the socket server sockets. If the value is -1, the OS
@@ -1099,7 +1090,7 @@ Importance: high
 Update Mode: read-only
 
 
-*socket.request.max.bytes*
+#socket.request.max.bytes#
 --------------------------
 
 The maximum number of bytes in a socket request
@@ -1112,7 +1103,7 @@ Importance: high
 Update Mode: read-only
 
 
-*socket.send.buffer.bytes*
+#socket.send.buffer.bytes#
 --------------------------
 
 The SO_SNDBUF buffer of the socket server sockets. If the value is -1, the OS
@@ -1126,7 +1117,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.max.timeout.ms*
+#transaction.max.timeout.ms#
 ----------------------------
 
 The maximum allowed timeout for transactions. If a client’s requested
@@ -1142,7 +1133,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.state.log.load.buffer.size*
+#transaction.state.log.load.buffer.size#
 ----------------------------------------
 
 Batch size for reading from the transaction log segments when loading producer
@@ -1157,7 +1148,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.state.log.min.isr*
+#transaction.state.log.min.isr#
 -------------------------------
 
 The minimum number of replicas that must acknowledge a write to transaction
@@ -1171,7 +1162,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.state.log.num.partitions*
+#transaction.state.log.num.partitions#
 --------------------------------------
 
 The number of partitions for the transaction topic (should not change after
@@ -1185,7 +1176,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.state.log.replication.factor*
+#transaction.state.log.replication.factor#
 ------------------------------------------
 
 The replication factor for the transaction topic (set higher to ensure
@@ -1200,7 +1191,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transaction.state.log.segment.bytes*
+#transaction.state.log.segment.bytes#
 -------------------------------------
 
 The transaction topic segment bytes should be kept relatively small in order to
@@ -1214,7 +1205,7 @@ Importance: high
 Update Mode: read-only
 
 
-*transactional.id.expiration.ms*
+#transactional.id.expiration.ms#
 --------------------------------
 
 The time in ms that the transaction coordinator will wait without receiving any
@@ -1230,7 +1221,7 @@ Importance: high
 Update Mode: read-only
 
 
-*unclean.leader.election.enable*
+#unclean.leader.election.enable#
 --------------------------------
 
 Indicates whether to enable replicas not in the ISR set to be elected as leader
@@ -1244,18 +1235,18 @@ Importance: high
 Update Mode: cluster-wide
 
 
-*zookeeper.connect*
+#zookeeper.connect#
 -------------------
 
-Specifies the ZooKeeper connection string in the form hostname:port where host
-and port are the host and port of a ZooKeeper server. To allow connecting
+Specifies the ZooKeeper connection string in the form `hostname:port` where
+host and port are the host and port of a ZooKeeper server. To allow connecting
 through other ZooKeeper nodes when that ZooKeeper machine is down you can also
 specify multiple hosts in the form
-hostname1:port1,hostname2:port2,hostname3:port3.  The server can also have a
-ZooKeeper chroot path as part of its ZooKeeper connection string which puts its
-data under some path in the global ZooKeeper namespace. For example to give a
-chroot path of /chroot/path you would give the connection string as
-hostname1:port1,hostname2:port2,hostname3:port3/chroot/path.
+`hostname1:port1,hostname2:port2,hostname3:port3`.The server can also have
+a ZooKeeper chroot path as part of its ZooKeeper connection string which puts
+its data under some path in the global ZooKeeper namespace. For example to give
+a chroot path of `/chroot/path` you would give the connection string as
+`hostname1:port1,hostname2:port2,hostname3:port3/chroot/path`.
 
 
 Type: string
@@ -1265,7 +1256,7 @@ Importance: high
 Update Mode: read-only
 
 
-*zookeeper.connection.timeout.ms*
+#zookeeper.connection.timeout.ms#
 ---------------------------------
 
 The max time that the client waits to establish a connection to ZooKeeper. If
@@ -1279,7 +1270,7 @@ Importance: high
 Update Mode: read-only
 
 
-*zookeeper.max.in.flight.requests*
+#zookeeper.max.in.flight.requests#
 ----------------------------------
 
 The maximum number of unacknowledged requests the client will send to ZooKeeper
@@ -1293,7 +1284,7 @@ Importance: high
 Update Mode: read-only
 
 
-*zookeeper.metadata.migration.enable*
+#zookeeper.metadata.migration.enable#
 -------------------------------------
 
 Enable ZK to KRaft migration
@@ -1306,7 +1297,7 @@ Importance: high
 Update Mode: read-only
 
 
-*zookeeper.session.timeout.ms*
+#zookeeper.session.timeout.ms#
 ------------------------------
 
 Zookeeper session timeout
@@ -1319,17 +1310,20 @@ Importance: high
 Update Mode: read-only
 
 
-*zookeeper.set.acl*
+#zookeeper.set.acl#
 -------------------
 
 Set client to use secure ACLs
 
 
-Type: boolean Default: false Valid Values: Importance: high Update Mode:
-read-only
+Type: boolean
+Default: false
+Valid Values:
+Importance: high
+Update Mode: read-only
 
 
-*broker.heartbeat.interval.ms*
+#broker.heartbeat.interval.ms#
 ------------------------------
 
 The length of time in milliseconds between broker heartbeats. Used when running
@@ -1343,7 +1337,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*broker.id.generation.enable*
+#broker.id.generation.enable#
 -----------------------------
 
 Enable automatic broker id generation on the server. When enabled the value
@@ -1357,11 +1351,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*broker.rack*
+#broker.rack#
 -------------
 
 Rack of the broker. This will be used in rack aware replication assignment for
-fault tolerance. Examples: RACK1, us-east-1d
+fault tolerance. Examples: `RACK1`, `us-east-1d`
 
 
 Type: string
@@ -1371,7 +1365,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*broker.session.timeout.ms*
+#broker.session.timeout.ms#
 ---------------------------
 
 The length of time in milliseconds that a broker lease lasts if no heartbeats
@@ -1385,37 +1379,46 @@ Importance: medium
 Update Mode: read-only
 
 
-*compression.gzip.level*
+#compression.gzip.level#
 ------------------------
 
 The compression level to use if compression.type is set to 'gzip'.
 
 
-Type: int Default: -1 Valid Values: [1,...,9] or -1 Importance: medium Update
-Mode: cluster-wide
+Type: int
+Default: -1
+Valid Values: [1,...,9] or -1
+Importance: medium
+Update Mode: cluster-wide
 
 
-*compression.lz4.level*
+#compression.lz4.level#
 -----------------------
 
 The compression level to use if compression.type is set to 'lz4'.
 
 
-Type: int Default: 9 Valid Values: [1,...,17] Importance: medium Update Mode:
-cluster-wide
+Type: int
+Default: 9
+Valid Values: [1,...,17]
+Importance: medium
+Update Mode: cluster-wide
 
 
-*compression.zstd.level*
+#compression.zstd.level#
 ------------------------
 
 The compression level to use if compression.type is set to 'zstd'.
 
 
-Type: int Default: 3 Valid Values: [-131072,...,22] Importance: medium Update
-Mode: cluster-wide
+Type: int
+Default: 3
+Valid Values: [-131072,...,22]
+Importance: medium
+Update Mode: cluster-wide
 
 
-*connections.max.idle.ms*
+#connections.max.idle.ms#
 -------------------------
 
 Idle connections timeout: the server socket processor threads close the
@@ -1429,15 +1432,15 @@ Importance: medium
 Update Mode: read-only
 
 
-*connections.max.reauth.ms*
+#connections.max.reauth.ms#
 ---------------------------
 
 When explicitly set to a positive number (the default is 0, not a positive
 number), a session lifetime that will not exceed the configured value will be
 communicated to v2.2.0 or later clients when they authenticate. The broker will
 disconnect any such connection that is not re-authenticated within the session
-lifetime and that is then subsequently used for any purpose other than re-
-authentication. Configuration names can optionally be prefixed with listener
+lifetime and that is then subsequently used for any purpose other than
+re-authentication. Configuration names can optionally be prefixed with listener
 prefix and SASL mechanism name in lower-case. For example,
 listener.name.sasl_ssl.oauthbearer.connections.max.reauth.ms=3600000
 
@@ -1449,7 +1452,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controlled.shutdown.enable*
+#controlled.shutdown.enable#
 ----------------------------
 
 Enable controlled shutdown of the server.
@@ -1462,7 +1465,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controlled.shutdown.max.retries*
+#controlled.shutdown.max.retries#
 ---------------------------------
 
 Controlled shutdown can fail for multiple reasons. This determines the number
@@ -1476,7 +1479,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controlled.shutdown.retry.backoff.ms*
+#controlled.shutdown.retry.backoff.ms#
 --------------------------------------
 
 Before each retry, the system needs time to recover from the state that caused
@@ -1491,7 +1494,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controller.quorum.append.linger.ms*
+#controller.quorum.append.linger.ms#
 ------------------------------------
 
 The duration in milliseconds that the leader will wait for writes to accumulate
@@ -1505,7 +1508,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controller.quorum.request.timeout.ms*
+#controller.quorum.request.timeout.ms#
 --------------------------------------
 
 The configuration controls the maximum amount of time the client will wait for
@@ -1521,7 +1524,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*controller.socket.timeout.ms*
+#controller.socket.timeout.ms#
 ------------------------------
 
 The socket timeout for controller-to-broker channels.
@@ -1534,7 +1537,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*default.replication.factor*
+#default.replication.factor#
 ----------------------------
 
 The default replication factors for automatically created topics.
@@ -1547,7 +1550,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*delegation.token.expiry.time.ms*
+#delegation.token.expiry.time.ms#
 ---------------------------------
 
 The token validity time in milliseconds before the token needs to be renewed.
@@ -1561,7 +1564,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*delegation.token.master.key*
+#delegation.token.master.key#
 -----------------------------
 
 DEPRECATED: An alias for delegation.token.secret.key, which should be used
@@ -1575,7 +1578,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*delegation.token.max.lifetime.ms*
+#delegation.token.max.lifetime.ms#
 ----------------------------------
 
 The token has a maximum lifetime beyond which it cannot be renewed anymore.
@@ -1589,13 +1592,13 @@ Importance: medium
 Update Mode: read-only
 
 
-*delegation.token.secret.key*
+#delegation.token.secret.key#
 -----------------------------
 
 Secret key to generate and verify delegation tokens. The same key must be
-configured across all the brokers. If using Kafka with KRaft, the key must also
-be set across all controllers. If the key is not set or set to empty string,
-brokers will disable the delegation token support.
+configured across all the brokers.  If using Kafka with KRaft, the key must
+also be set across all controllers.  If the key is not set or set to empty
+string, brokers will disable the delegation token support.
 
 
 Type: password
@@ -1605,7 +1608,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*delete.records.purgatory.purge.interval.requests*
+#delete.records.purgatory.purge.interval.requests#
 --------------------------------------------------
 
 The purge interval (in number of requests) of the delete records request
@@ -1614,12 +1617,11 @@ purgatory
 
 Type: int
 Default: 1
-Valid Values:
 Importance: medium
 Update Mode: read-only
 
 
-*fetch.max.bytes*
+#fetch.max.bytes#
 -----------------
 
 The maximum number of bytes we will return for a fetch request. Must be at
@@ -1633,7 +1635,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*fetch.purgatory.purge.interval.requests*
+#fetch.purgatory.purge.interval.requests#
 -----------------------------------------
 
 The purge interval (in number of requests) of the fetch request purgatory
@@ -1646,7 +1648,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.assignors*
+#group.consumer.assignors#
 --------------------------
 
 The server side assignors as a list of full class names. The first one in the
@@ -1655,14 +1657,13 @@ consumer does not specify an assignor.
 
 
 Type: list
-Default:
-org.apache.kafka.coordinator.group.assignor.UniformAssignor,org.apache.kafka.coordinator.group.assignor.RangeAssignor
+Default: org.apache.kafka.coordinator.group.assignor.UniformAssignor,org.apache.kafka.coordinator.group.assignor.RangeAssignor
 Valid Values:
 Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.heartbeat.interval.ms*
+#group.consumer.heartbeat.interval.ms#
 --------------------------------------
 
 The heartbeat interval given to the members of a consumer group.
@@ -1675,7 +1676,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.max.heartbeat.interval.ms*
+#group.consumer.max.heartbeat.interval.ms#
 ------------------------------------------
 
 The maximum heartbeat interval for registered consumers.
@@ -1688,7 +1689,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.max.session.timeout.ms*
+#group.consumer.max.session.timeout.ms#
 ---------------------------------------
 
 The maximum allowed session timeout for registered consumers.
@@ -1701,7 +1702,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.max.size*
+#group.consumer.max.size#
 -------------------------
 
 The maximum number of consumers that a single consumer group can accommodate.
@@ -1716,7 +1717,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.migration.policy*
+#group.consumer.migration.policy#
 ---------------------------------
 
 The config that enables converting the non-empty classic group using the
@@ -1731,13 +1732,12 @@ enabled, disabled: neither upgrade nor downgrade is enabled.
 
 Type: string
 Default: disabled
-Valid Values: (case insensitive) [DISABLED, DOWNGRADE, UPGRADE,
-BIDIRECTIONAL]
+Valid Values: (case insensitive) [DISABLED, DOWNGRADE, UPGRADE, BIDIRECTIONAL]
 Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.min.heartbeat.interval.ms*
+#group.consumer.min.heartbeat.interval.ms#
 ------------------------------------------
 
 The minimum heartbeat interval for registered consumers.
@@ -1750,7 +1750,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.min.session.timeout.ms*
+#group.consumer.min.session.timeout.ms#
 ---------------------------------------
 
 The minimum allowed session timeout for registered consumers.
@@ -1763,7 +1763,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.consumer.session.timeout.ms*
+#group.consumer.session.timeout.ms#
 -----------------------------------
 
 The timeout to detect client failures when using the consumer group protocol.
@@ -1776,7 +1776,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.coordinator.append.linger.ms*
+#group.coordinator.append.linger.ms#
 ------------------------------------
 
 The duration in milliseconds that the coordinator will wait for writes to
@@ -1791,7 +1791,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.coordinator.rebalance.protocols*
+#group.coordinator.rebalance.protocols#
 ---------------------------------------
 
 The list of enabled rebalance protocols. Supported protocols:
@@ -1806,7 +1806,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.coordinator.threads*
+#group.coordinator.threads#
 ---------------------------
 
 The number of threads used by the group coordinator.
@@ -1819,11 +1819,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.initial.rebalance.delay.ms*
+#group.initial.rebalance.delay.ms#
 ----------------------------------
 
 The amount of time the group coordinator will wait for more consumers to join a
-new group before performing the first rebalance.  A longer delay means
+new group before performing the first rebalance. A longer delay means
 potentially fewer rebalances, but increases the time until processing begins.
 
 
@@ -1834,7 +1834,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.max.session.timeout.ms*
+#group.max.session.timeout.ms#
 ------------------------------
 
 The maximum allowed session timeout for registered consumers. Longer timeouts
@@ -1849,7 +1849,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.max.size*
+#group.max.size#
 ----------------
 
 The maximum number of consumers that a single consumer group can accommodate.
@@ -1862,10 +1862,10 @@ Importance: medium
 Update Mode: read-only
 
 
-*group.min.session.timeout.ms*
+#group.min.session.timeout.ms#
 ------------------------------
 
-The minimum allowed session timeout for registered consumers.  Shorter timeouts
+The minimum allowed session timeout for registered consumers. Shorter timeouts
 result in quicker failure detection at the cost of more frequent consumer
 heartbeating, which can overwhelm broker resources.
 
@@ -1877,7 +1877,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*initial.broker.registration.timeout.ms*
+#initial.broker.registration.timeout.ms#
 ----------------------------------------
 
 When initially registering with the controller quorum, the number of
@@ -1891,7 +1891,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*inter.broker.listener.name*
+#inter.broker.listener.name#
 ----------------------------
 
 Name of listener used for communication between brokers. If this is unset, the
@@ -1906,40 +1906,36 @@ Importance: medium
 Update Mode: read-only
 
 
-*inter.broker.protocol.version*
+#inter.broker.protocol.version#
 -------------------------------
 
-Specify which version of the inter-broker protocol will be used.  . This is
-typically bumped after all brokers were upgraded to a new version.  Example of
-some valid values are: 0.8.0, 0.8.1, 0.8.1.1, 0.8.2, 0.8.2.0, 0.8.2.1, 0.9.0.0,
-0.9.0.1 Check MetadataVersion for the full list.
+Specify which version of the inter-broker protocol will be used.. This is
+typically bumped after all brokers were upgraded to a new version. Example
+of some valid values are: 0.8.0, 0.8.1, 0.8.1.1, 0.8.2, 0.8.2.0, 0.8.2.1,
+0.9.0.0, 0.9.0.1 Check MetadataVersion for the full list.
 
 
 Type: string
 Default: 3.8-IV0
-Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1,
-0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-
-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-
-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1,
-2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-
-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3,
-3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-
-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
+Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1, 0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1, 2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3, 3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
 Importance: medium
 Update Mode: read-only
 
 
-*log.cleaner.backoff.ms*
+#log.cleaner.backoff.ms#
 ------------------------
 
 The amount of time to sleep when there are no logs to clean
 
 
-Type: long Default: 15000 (15 seconds) Valid Values: [0,...] Importance: medium
+Type: long
+Default: 15000 (15 seconds)
+Valid Values: [0,...]
+Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.dedupe.buffer.size*
+#log.cleaner.dedupe.buffer.size#
 --------------------------------
 
 The total memory used for log deduplication across all cleaner threads
@@ -1952,13 +1948,13 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.delete.retention.ms*
+#log.cleaner.delete.retention.ms#
 ---------------------------------
 
 The amount of time to retain tombstone message markers for log compacted
 topics. This setting also gives a bound on the time in which a consumer must
 complete a read if they begin from offset 0 to ensure that they get a valid
-snapshot of the final stage (otherwise tombstones messages may be collected
+snapshot of the final stage (otherwise  tombstones messages may be collected
 before a consumer completes their scan).
 
 
@@ -1969,7 +1965,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.enable*
+#log.cleaner.enable#
 --------------------
 
 Enable the log cleaner process to run on the server. Should be enabled if using
@@ -1984,7 +1980,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*log.cleaner.io.buffer.load.factor*
+#log.cleaner.io.buffer.load.factor#
 -----------------------------------
 
 Log cleaner dedupe buffer load factor. The percentage full the dedupe buffer
@@ -1999,7 +1995,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.io.buffer.size*
+#log.cleaner.io.buffer.size#
 ----------------------------
 
 The total memory used for log cleaner I/O buffers across all cleaner threads
@@ -2012,7 +2008,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.io.max.bytes.per.second*
+#log.cleaner.io.max.bytes.per.second#
 -------------------------------------
 
 The log cleaner will be throttled so that the sum of its read and write i/o
@@ -2026,7 +2022,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.max.compaction.lag.ms*
+#log.cleaner.max.compaction.lag.ms#
 -----------------------------------
 
 The maximum time a message will remain ineligible for compaction in the log.
@@ -2040,7 +2036,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.min.cleanable.ratio*
+#log.cleaner.min.cleanable.ratio#
 ---------------------------------
 
 The minimum ratio of dirty log to total log for a log to eligible for cleaning.
@@ -2060,7 +2056,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.min.compaction.lag.ms*
+#log.cleaner.min.compaction.lag.ms#
 -----------------------------------
 
 The minimum time a message will remain uncompacted in the log. Only applicable
@@ -2074,20 +2070,23 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.cleaner.threads*
+#log.cleaner.threads#
 ---------------------
 
 The number of background threads to use for log cleaning
 
 
-Type: int Default: 1 Valid Values: [0,...] Importance: medium Update Mode:
-cluster-wide
+Type: int
+Default: 1
+Valid Values: [0,...]
+Importance: medium
+Update Mode: cluster-wide
 
 
-*log.cleanup.policy*
+#log.cleanup.policy#
 --------------------
 
-The default cleanup policy for segments beyond the retention window.  A comma
+The default cleanup policy for segments beyond the retention window. A comma
 separated list of valid policies. Valid policies are: "delete" and "compact"
 
 
@@ -2098,7 +2097,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.index.interval.bytes*
+#log.index.interval.bytes#
 --------------------------
 
 The interval with which we add an entry to the offset index.
@@ -2111,7 +2110,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.index.size.max.bytes*
+#log.index.size.max.bytes#
 --------------------------
 
 The maximum size in bytes of the offset index
@@ -2124,7 +2123,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.local.retention.bytes*
+#log.local.retention.bytes#
 ---------------------------
 
 The maximum size of local log segments that can grow for a partition before it
@@ -2140,7 +2139,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.local.retention.ms*
+#log.local.retention.ms#
 ------------------------
 
 The number of milliseconds to keep the local log segments before it gets
@@ -2156,11 +2155,11 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.message.format.version*
+#log.message.format.version#
 ----------------------------
 
 Specify the message format version the broker will use to append messages to
-the logs. The value should be a valid MetadataVersion.  Some examples are:
+the logs. The value should be a valid MetadataVersion. Some examples are:
 0.8.2, 0.9.0.0, 0.10.0, check MetadataVersion for more details. By setting a
 particular message format version, the user is certifying that all the existing
 messages on disk are smaller or equal than the specified version. Setting this
@@ -2170,19 +2169,12 @@ will receive messages with a format that they don't understand.
 
 Type: string
 Default: 3.0-IV1
-Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1,
-0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-
-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-
-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1,
-2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-
-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3,
-3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-
-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
+Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1, 0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1, 2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3, 3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
 Importance: medium
 Update Mode: read-only
 
 
-*log.message.timestamp.after.max.ms*
+#log.message.timestamp.after.max.ms#
 ------------------------------------
 
 This configuration sets the allowable timestamp difference between the message
@@ -2201,7 +2193,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.message.timestamp.before.max.ms*
+#log.message.timestamp.before.max.ms#
 -------------------------------------
 
 This configuration sets the allowable timestamp difference between the broker's
@@ -2220,7 +2212,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.message.timestamp.difference.max.ms*
+#log.message.timestamp.difference.max.ms#
 -----------------------------------------
 
 [DEPRECATED] The maximum difference allowed between the timestamp when a broker
@@ -2239,11 +2231,11 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.message.timestamp.type*
+#log.message.timestamp.type#
 ----------------------------
 
 Define whether the timestamp in the message is message create time or log
-append time. The value should be either CreateTime or LogAppendTime.
+append time. The value should be either `CreateTime` or `LogAppendTime`.
 
 
 Type: string
@@ -2253,7 +2245,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.preallocate*
+#log.preallocate#
 -----------------
 
 Should pre allocate file when create new segment? If you are using Kafka on
@@ -2267,7 +2259,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*log.retention.check.interval.ms*
+#log.retention.check.interval.ms#
 ---------------------------------
 
 The frequency in milliseconds that the log cleaner checks whether any log is
@@ -2281,14 +2273,14 @@ Importance: medium
 Update Mode: read-only
 
 
-*max.connection.creation.rate*
+#max.connection.creation.rate#
 ------------------------------
 
 The maximum connection creation rate we allow in the broker at any time.
 Listener-level limits may also be configured by prefixing the config name with
 the listener prefix, for example,
-listener.name.internal.max.connection.creation.rate.Broker-wide connection rate
-limit should be configured based on broker capacity while listener limits
+`listener.name.internal.max.connection.creation.rate`.Broker-wide connection
+rate limit should be configured based on broker capacity while listener limits
 should be configured based on application requirements. New connections will be
 throttled if either the listener or the broker limit is reached, with the
 exception of inter-broker listener. Connections on the inter-broker listener
@@ -2302,14 +2294,14 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*max.connections*
+#max.connections#
 -----------------
 
 The maximum number of connections we allow in the broker at any time. This
 limit is applied in addition to any per-ip limits configured using
 max.connections.per.ip. Listener-level limits may also be configured by
 prefixing the config name with the listener prefix, for example,
-listener.name.internal.max.connections.per.ip. Broker-wide limit should be
+`listener.name.internal.max.connections.per.ip`. Broker-wide limit should be
 configured based on broker capacity while listener limits should be configured
 based on application requirements. New connections are blocked if either the
 listener or broker limit is reached. Connections on the inter-broker listener
@@ -2324,10 +2316,10 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*max.connections.per.ip*
+#max.connections.per.ip#
 ------------------------
 
-The maximum number of connections we allow from each ip address.  This can be
+The maximum number of connections we allow from each ip address. This can be
 set to 0 if there are overrides configured using
 max.connections.per.ip.overrides property. New connections from the ip address
 are dropped if the limit is reached.
@@ -2340,7 +2332,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*max.connections.per.ip.overrides*
+#max.connections.per.ip.overrides#
 ----------------------------------
 
 A comma-separated list of per-ip or hostname overrides to the default maximum
@@ -2354,7 +2346,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*max.incremental.fetch.session.cache.slots*
+#max.incremental.fetch.session.cache.slots#
 -------------------------------------------
 
 The maximum number of total incremental fetch sessions that we will maintain.
@@ -2370,7 +2362,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*max.request.partition.size.limit*
+#max.request.partition.size.limit#
 ----------------------------------
 
 The maximum number of partitions can be served in one request.
@@ -2383,17 +2375,20 @@ Importance: medium
 Update Mode: read-only
 
 
-*num.partitions*
+#num.partitions#
 ----------------
 
 The default number of log partitions per topic
 
 
-Type: int Default: 1 Valid Values: [1,...] Importance: medium Update Mode:
-read-only
+Type: int
+Default: 1
+Valid Values: [1,...]
+Importance: medium
+Update Mode: read-only
 
 
-*password.encoder.old.secret*
+#password.encoder.old.secret#
 -----------------------------
 
 The old secret that was used for encoding dynamically configured passwords.
@@ -2409,7 +2404,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*password.encoder.secret*
+#password.encoder.secret#
 -------------------------
 
 The secret used for encoding dynamically configured passwords for this broker.
@@ -2422,31 +2417,30 @@ Importance: medium
 Update Mode: read-only
 
 
-*principal.builder.class*
+#principal.builder.class#
 -------------------------
 
 The fully qualified name of a class that implements the KafkaPrincipalBuilder
 interface, which is used to build the KafkaPrincipal object used during
 authorization. If no principal builder is defined, the default behavior depends
-on the security protocol in use. For SSL authentication, the principal will be
-derived using the rules defined by ssl.principal.mapping.rules applied on the
+on the security protocol in use. For SSL authentication,  the principal will be
+derived using the rules defined by `ssl.principal.mapping.rules` applied on the
 distinguished name from the client certificate if one is provided; otherwise,
 if client authentication is not required, the principal name will be ANONYMOUS.
 For SASL authentication, the principal will be derived using the rules defined
-by sasl.kerberos.principal.to.local.rules if GSSAPI is in use, and the SASL
+by `sasl.kerberos.principal.to.local.rules` if GSSAPI is in use, and the SASL
 authentication ID for other mechanisms. For PLAINTEXT, the principal will be
 ANONYMOUS.
 
 
 Type: class
-Default:
-org.apache.kafka.common.security.authenticator.DefaultKafkaPrincipalBuilder
+Default: org.apache.kafka.common.security.authenticator.DefaultKafkaPrincipalBuilder
 Valid Values:
 Importance: medium
 Update Mode: per-broker
 
 
-*producer.purgatory.purge.interval.requests*
+#producer.purgatory.purge.interval.requests#
 --------------------------------------------
 
 The purge interval (in number of requests) of the producer request purgatory
@@ -2459,7 +2453,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*queued.max.request.bytes*
+#queued.max.request.bytes#
 --------------------------
 
 The number of queued bytes allowed before no more requests are read
@@ -2472,7 +2466,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.fetch.max.wait.ms*
+#remote.fetch.max.wait.ms#
 --------------------------
 
 The maximum amount of time the server will wait before answering the remote
@@ -2486,7 +2480,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*remote.log.manager.copy.max.bytes.per.second*
+#remote.log.manager.copy.max.bytes.per.second#
 ----------------------------------------------
 
 The maximum number of bytes that can be copied from local storage to remote
@@ -2503,7 +2497,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*remote.log.manager.copy.quota.window.num*
+#remote.log.manager.copy.quota.window.num#
 ------------------------------------------
 
 The number of samples to retain in memory for remote copy quota management. The
@@ -2517,7 +2511,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.manager.copy.quota.window.size.seconds*
+#remote.log.manager.copy.quota.window.size.seconds#
 ---------------------------------------------------
 
 The time span of each sample for remote copy quota management. The default
@@ -2531,7 +2525,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.manager.fetch.max.bytes.per.second*
+#remote.log.manager.fetch.max.bytes.per.second#
 -----------------------------------------------
 
 The maximum number of bytes that can be fetched from remote storage to local
@@ -2548,7 +2542,7 @@ Importance: medium
 Update Mode: cluster-wide
 
 
-*remote.log.manager.fetch.quota.window.num*
+#remote.log.manager.fetch.quota.window.num#
 -------------------------------------------
 
 The number of samples to retain in memory for remote fetch quota management.
@@ -2563,7 +2557,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.manager.fetch.quota.window.size.seconds*
+#remote.log.manager.fetch.quota.window.size.seconds#
 ----------------------------------------------------
 
 The time span of each sample for remote fetch quota management. The default
@@ -2577,7 +2571,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.manager.thread.pool.size*
+#remote.log.manager.thread.pool.size#
 -------------------------------------
 
 Size of the thread pool used in scheduling tasks to copy segments, fetch remote
@@ -2591,21 +2585,20 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.metadata.manager.class.name*
+#remote.log.metadata.manager.class.name#
 ----------------------------------------
 
 Fully qualified class name of `RemoteLogMetadataManager` implementation.
 
 
 Type: string
-Default:
-org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManager
+Default: org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManager
 Valid Values: non-empty string
 Importance: medium
 Update Mode: read-only
 
 
-*remote.log.metadata.manager.class.path*
+#remote.log.metadata.manager.class.path#
 ----------------------------------------
 
 Class path of the `RemoteLogMetadataManager` implementation. If specified, the
@@ -2622,7 +2615,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.metadata.manager.impl.prefix*
+#remote.log.metadata.manager.impl.prefix#
 -----------------------------------------
 
 Prefix used for properties to be passed to RemoteLogMetadataManager
@@ -2636,7 +2629,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.metadata.manager.listener.name*
+#remote.log.metadata.manager.listener.name#
 -------------------------------------------
 
 Listener name of the local broker to which it should get connected if needed by
@@ -2650,7 +2643,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.reader.max.pending.tasks*
+#remote.log.reader.max.pending.tasks#
 -------------------------------------
 
 Maximum remote log reader thread pool task queue size. If the task queue is
@@ -2664,7 +2657,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.reader.threads*
+#remote.log.reader.threads#
 ---------------------------
 
 Size of the thread pool that is allocated for handling remote log reads.
@@ -2677,7 +2670,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.storage.manager.class.name*
+#remote.log.storage.manager.class.name#
 ---------------------------------------
 
 Fully qualified class name of `RemoteStorageManager` implementation.
@@ -2690,7 +2683,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.storage.manager.class.path*
+#remote.log.storage.manager.class.path#
 ---------------------------------------
 
 Class path of the `RemoteStorageManager` implementation. If specified, the
@@ -2707,7 +2700,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.storage.manager.impl.prefix*
+#remote.log.storage.manager.impl.prefix#
 ----------------------------------------
 
 Prefix used for properties to be passed to RemoteStorageManager implementation.
@@ -2721,12 +2714,12 @@ Importance: medium
 Update Mode: read-only
 
 
-*remote.log.storage.system.enable*
+#remote.log.storage.system.enable#
 ----------------------------------
 
-Whether to enable tiered storage functionality in a broker or not.  Valid
-values are `true` or `false` and the default value is false.  When it is true
-broker starts all the services required for the tiered storage functionality.
+Whether to enable tiered storage functionality in a broker or not. Valid values
+are `true` or `false` and the default value is false. When it is true broker
+starts all the services required for the tiered storage functionality.
 
 
 Type: boolean
@@ -2736,7 +2729,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*replica.fetch.backoff.ms*
+#replica.fetch.backoff.ms#
 --------------------------
 
 The amount of time to sleep when fetch partition error occurs.
@@ -2749,15 +2742,15 @@ Importance: medium
 Update Mode: read-only
 
 
-*replica.fetch.max.bytes*
+#replica.fetch.max.bytes#
 -------------------------
 
 The number of bytes of messages to attempt to fetch for each partition. This is
 not an absolute maximum, if the first record batch in the first non-empty
 partition of the fetch is larger than this value, the record batch will still
 be returned to ensure that progress can be made. The maximum record batch size
-accepted by the broker is defined via message.max.bytes (broker config) or
-max.message.bytes (topic config).
+accepted by the broker is defined via `message.max.bytes` (broker config) or
+`max.message.bytes` (topic config).
 
 
 Type: int
@@ -2767,15 +2760,15 @@ Importance: medium
 Update Mode: read-only
 
 
-*replica.fetch.response.max.bytes*
+#replica.fetch.response.max.bytes#
 ----------------------------------
 
 Maximum bytes expected for the entire fetch response. Records are fetched in
-batches, and if the first record batch in the first non- empty partition of the
+batches, and if the first record batch in the first non-empty partition of the
 fetch is larger than this value, the record batch will still be returned to
 ensure that progress can be made. As such, this is not an absolute maximum. The
 maximum record batch size accepted by the broker is defined via
-message.max.bytes (broker config) or max.message.bytes (topic config).
+`message.max.bytes` (broker config) or `max.message.bytes` (topic config).
 
 
 Type: int
@@ -2785,7 +2778,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*replica.selector.class*
+#replica.selector.class#
 ------------------------
 
 The fully qualified class name that implements ReplicaSelector. This is used by
@@ -2800,17 +2793,20 @@ Importance: medium
 Update Mode: read-only
 
 
-*reserved.broker.max.id*
+#reserved.broker.max.id#
 ------------------------
 
 Max number that can be used for a broker.id
 
 
-Type: int Default: 1000 Valid Values: [0,...] Importance: medium Update Mode:
-read-only
+Type: int
+Default: 1000
+Valid Values: [0,...]
+Importance: medium
+Update Mode: read-only
 
 
-*sasl.client.callback.handler.class*
+#sasl.client.callback.handler.class#
 ------------------------------------
 
 The fully qualified name of a SASL client callback handler class that
@@ -2824,7 +2820,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.enabled.mechanisms*
+#sasl.enabled.mechanisms#
 -------------------------
 
 The list of SASL mechanisms enabled in the Kafka server. The list may contain
@@ -2839,17 +2835,16 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.jaas.config*
+#sasl.jaas.config#
 ------------------
 
 JAAS login context parameters for SASL connections in the format used by JAAS
-configuration files. JAAS configuration file format is described here
-<https://docs.oracle.com/javase/8/docs/technotes/
-guides/security/jgss/tutorials/LoginConfigFile.html>. The format for the value
-is: loginModuleClass controlFlag (optionName=optionValue)*;. For brokers, the
-config must be prefixed with listener prefix and SASL mechanism name in
-lower-case.  For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;
+configuration files. JAAS configuration file format is described . The format
+for the value is: `loginModuleClass controlFlag (optionName=optionValue)#;`.
+For brokers, the config must be prefixed with listener prefix and SASL
+mechanism name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule
+required;
 
 
 Type: password
@@ -2859,17 +2854,20 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.kerberos.kinit.cmd*
+#sasl.kerberos.kinit.cmd#
 -------------------------
 
 Kerberos kinit command path.
 
 
-Type: string Default: /usr/bin/kinit Valid Values: Importance: medium Update
-Mode: per-broker
+Type: string
+Default: /usr/bin/kinit
+Valid Values:
+Importance: medium
+Update Mode: per-broker
 
 
-*sasl.kerberos.min.time.before.relogin*
+#sasl.kerberos.min.time.before.relogin#
 ---------------------------------------
 
 Login thread sleep time between refresh attempts.
@@ -2882,17 +2880,17 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.kerberos.principal.to.local.rules*
+#sasl.kerberos.principal.to.local.rules#
 ----------------------------------------
 
 A list of rules for mapping from principal names to short names (typically
 operating system usernames). The rules are evaluated in order and the first
 rule that matches a principal name is used to map it to a short name. Any later
 rules in the list are ignored. By default, principal names of the form
-{username}/{hostname}@{REALM} are mapped to {username}. For more details on the
-format please see security authorization and acls. Note that this configuration
-is ignored if an extension of KafkaPrincipalBuilder is provided by the
-principal.builder.class configuration.
+`{username}/{hostname}@{REALM}` are mapped to `{username}`. For more details on
+the format please see . Note that this configuration is ignored if an extension
+of `KafkaPrincipalBuilder` is provided by the `principal.builder.class`
+configuration.
 
 
 Type: list
@@ -2902,7 +2900,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.kerberos.service.name*
+#sasl.kerberos.service.name#
 ----------------------------
 
 The Kerberos principal name that Kafka runs as. This can be defined either in
@@ -2916,7 +2914,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.kerberos.ticket.renew.jitter*
+#sasl.kerberos.ticket.renew.jitter#
 -----------------------------------
 
 Percentage of random jitter added to the renewal time.
@@ -2929,7 +2927,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.kerberos.ticket.renew.window.factor*
+#sasl.kerberos.ticket.renew.window.factor#
 ------------------------------------------
 
 Login thread will sleep until the specified window factor of time from last
@@ -2944,14 +2942,14 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.login.callback.handler.class*
+#sasl.login.callback.handler.class#
 -----------------------------------
 
 The fully qualified name of a SASL login callback handler class that implements
 the AuthenticateCallbackHandler interface. For brokers, login callback handler
 config must be prefixed with listener prefix and SASL mechanism name in
-lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
+lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
 
 
 Type: class
@@ -2961,13 +2959,13 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.login.class*
+#sasl.login.class#
 ------------------
 
 The fully qualified name of a class that implements the Login interface. For
 brokers, login config must be prefixed with listener prefix and SASL mechanism
-name in lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.class=com.example.CustomScramLogin
+name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.class=com.example.CustomScramLogin
 
 
 Type: class
@@ -2977,14 +2975,14 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.login.refresh.buffer.seconds*
+#sasl.login.refresh.buffer.seconds#
 -----------------------------------
 
 The amount of buffer time before credential expiration to maintain when
 refreshing a credential, in seconds. If a refresh would otherwise occur closer
 to expiration than the number of buffer seconds then the refresh will be moved
 up to maintain as much of the buffer time as possible. Legal values are between
-0 and 3600 (1 hour); a default value of 300 (5 minutes) is used if no value is
+0 and 3600 (1 hour); a default value of  300 (5 minutes) is used if no value is
 specified. This value and sasl.login.refresh.min.period.seconds are both
 ignored if their sum exceeds the remaining lifetime of a credential. Currently
 applies only to OAUTHBEARER.
@@ -2997,14 +2995,14 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.login.refresh.min.period.seconds*
+#sasl.login.refresh.min.period.seconds#
 ---------------------------------------
 
 The desired minimum time for the login refresh thread to wait before refreshing
 a credential, in seconds. Legal values are between 0 and 900 (15 minutes); a
-default value of 60 (1 minute) is used if no value is specified. This value and
-sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds the
-remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
+default value of 60 (1 minute) is used if no value is specified.  This value
+and  sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds
+the remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
 
 
 Type: short
@@ -3014,7 +3012,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.login.refresh.window.factor*
+#sasl.login.refresh.window.factor#
 ----------------------------------
 
 Login refresh thread will sleep until the specified window factor relative to
@@ -3031,11 +3029,11 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.login.refresh.window.jitter*
+#sasl.login.refresh.window.jitter#
 ----------------------------------
 
 The maximum amount of random jitter relative to the credential's lifetime that
-is added to the login refresh thread's sleep time.  Legal values are between 0
+is added to the login refresh thread's sleep time. Legal values are between 0
 and 0.25 (25%) inclusive; a default value of 0.05 (5%) is used if no value is
 specified. Currently applies only to OAUTHBEARER.
 
@@ -3047,7 +3045,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.mechanism.inter.broker.protocol*
+#sasl.mechanism.inter.broker.protocol#
 --------------------------------------
 
 SASL mechanism used for inter-broker communication. Default is GSSAPI.
@@ -3060,19 +3058,19 @@ Importance: medium
 Update Mode: per-broker
 
 
-*sasl.oauthbearer.jwks.endpoint.url*
+#sasl.oauthbearer.jwks.endpoint.url#
 ------------------------------------
 
-The OAuth/OIDC provider URL from which the provider's JWKS (JSON Web Key Set)
-can be retrieved. The URL can be HTTP(S)-based or file-based. If the URL is
-HTTP(S)-based, the JWKS data will be retrieved from the OAuth/OIDC provider via
-the configured URL on broker startup. All then-current keys will be cached on
-the broker for incoming requests. If an authentication request is received for
-a JWT that includes a "kid" header claim value that isn't yet in the cache, the
-JWKS endpoint will be queried again on demand. However, the broker polls the
-URL every sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the
-cache with any forthcoming keys before any JWT requests that include them are
-received. If the URL is file- based, the broker will load the JWKS file from a
+The OAuth/OIDC provider URL from which the provider's  can be retrieved. The
+URL can be HTTP(S)-based or file-based. If the URL is HTTP(S)-based, the JWKS
+data will be retrieved from the OAuth/OIDC provider via the configured URL on
+broker startup. All then-current keys will be cached on the broker for incoming
+requests. If an authentication request is received for a JWT that includes a
+"kid" header claim value that isn't yet in the cache, the JWKS endpoint will be
+queried again on demand. However, the broker polls the URL every
+sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the cache
+with any forthcoming keys before any JWT requests that include them are
+received. If the URL is file-based, the broker will load the JWKS file from a
 configured location on startup. In the event that the JWT includes a "kid"
 header value that isn't in the JWKS file, the broker will reject the JWT and
 authentication will fail.
@@ -3085,10 +3083,10 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.oauthbearer.token.endpoint.url*
+#sasl.oauthbearer.token.endpoint.url#
 -------------------------------------
 
-The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)- based, it
+The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)-based, it
 is the issuer's token endpoint URL to which requests will be made to login
 based on the configuration in sasl.jaas.config. If the URL is file-based, it
 specifies a file containing an access token (in JWT serialized form) issued by
@@ -3102,7 +3100,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.server.callback.handler.class*
+#sasl.server.callback.handler.class#
 ------------------------------------
 
 The fully qualified name of a SASL server callback handler class that
@@ -3119,7 +3117,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*sasl.server.max.receive.size*
+#sasl.server.max.receive.size#
 ------------------------------
 
 The maximum receive size allowed before and during initial SASL authentication.
@@ -3135,7 +3133,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*security.inter.broker.protocol*
+#security.inter.broker.protocol#
 --------------------------------
 
 Security protocol used to communicate between brokers. Valid values are:
@@ -3150,7 +3148,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*socket.connection.setup.timeout.max.ms*
+#socket.connection.setup.timeout.max.ms#
 ----------------------------------------
 
 The maximum amount of time the client will wait for the socket connection to be
@@ -3167,14 +3165,14 @@ Importance: medium
 Update Mode: read-only
 
 
-*socket.connection.setup.timeout.ms*
+#socket.connection.setup.timeout.ms#
 ------------------------------------
 
 The amount of time the client will wait for the socket connection to be
 established. If the connection is not built before the timeout elapses, clients
 will close the socket channel. This value is the initial backoff value and will
 increase exponentially for each consecutive connection failure, up to the
-socket.connection.setup.timeout.max.ms value.
+`socket.connection.setup.timeout.max.ms` value.
 
 
 Type: long
@@ -3184,11 +3182,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*socket.listen.backlog.size*
+#socket.listen.backlog.size#
 ----------------------------
 
 The maximum number of pending connections on the socket. In Linux, you may also
-need to configure somaxconn and tcp_max_syn_backlog kernel parameters
+need to configure `somaxconn` and `tcp_max_syn_backlog` kernel parameters
 accordingly to make the configuration takes effect.
 
 
@@ -3199,7 +3197,7 @@ Importance: medium
 Update Mode: read-only
 
 
-*ssl.cipher.suites*
+#ssl.cipher.suites#
 -------------------
 
 A list of cipher suites. This is a named combination of authentication,
@@ -3215,20 +3213,16 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.client.auth*
+#ssl.client.auth#
 -----------------
 
 Configures kafka broker to request client authentication. The following
-settings are common:
+settings are common:   `ssl.client.auth=required` If set to required
+client authentication is required. `ssl.client.auth=requested` This means
+client authentication is optional. unlike required, if this option is set
+client can choose not to provide authentication information about itself
+`ssl.client.auth=none` This means client authentication is not needed.
 
-
-o ssl.client.auth=required If set to required client
-authentication is required.
-o ssl.client.auth=requested This means client authentication is
-optional. unlike required, if this option is set client can
-choose not to provide authentication information about itself
-o ssl.client.auth=none This means client authentication is not
-needed.
 
 Type: string
 Default: none
@@ -3237,7 +3231,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.enabled.protocols*
+#ssl.enabled.protocols#
 -----------------------
 
 The list of protocols enabled for SSL connections. The default is
@@ -3255,7 +3249,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.key.password*
+#ssl.key.password#
 ------------------
 
 The password of the private key in the key store file or the PEM key specified
@@ -3269,11 +3263,11 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keymanager.algorithm*
+#ssl.keymanager.algorithm#
 --------------------------
 
-The algorithm used by key manager factory for SSL connections.  Default value
-is the key manager factory algorithm configured for the Java Virtual Machine.
+The algorithm used by key manager factory for SSL connections. Default value is
+the key manager factory algorithm configured for the Java Virtual Machine.
 
 
 Type: string
@@ -3283,10 +3277,10 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keystore.certificate.chain*
+#ssl.keystore.certificate.chain#
 --------------------------------
 
-Certificate chain in the format specified by 'ssl.keystore.type'.  Default SSL
+Certificate chain in the format specified by 'ssl.keystore.type'. Default SSL
 engine factory supports only PEM format with a list of X.509 certificates
 
 
@@ -3297,7 +3291,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keystore.key*
+#ssl.keystore.key#
 ------------------
 
 Private key in the format specified by 'ssl.keystore.type'. Default SSL engine
@@ -3312,7 +3306,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keystore.location*
+#ssl.keystore.location#
 -----------------------
 
 The location of the key store file. This is optional for client and can be used
@@ -3326,7 +3320,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keystore.password*
+#ssl.keystore.password#
 -----------------------
 
 The store password for the key store file. This is optional for client and only
@@ -3341,10 +3335,10 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.keystore.type*
+#ssl.keystore.type#
 -------------------
 
-The file format of the key store file. This is optional for client.  The values
+The file format of the key store file. This is optional for client. The values
 currently supported by the default `ssl.engine.factory.class` are [JKS, PKCS12,
 PEM].
 
@@ -3356,11 +3350,11 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.protocol*
+#ssl.protocol#
 --------------
 
 The SSL protocol used to generate the SSLContext. The default is 'TLSv1.3' when
-running with Java 11 or newer, 'TLSv1.2' otherwise.  This value should be fine
+running with Java 11 or newer, 'TLSv1.2' otherwise. This value should be fine
 for most use cases. Allowed values in recent JVMs are 'TLSv1.2' and 'TLSv1.3'.
 'TLS', 'TLSv1.1', 'SSL', 'SSLv2' and 'SSLv3' may be supported in older JVMs,
 but their usage is discouraged due to known security vulnerabilities. With the
@@ -3377,7 +3371,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.provider*
+#ssl.provider#
 --------------
 
 The name of the security provider used for SSL connections. Default value is
@@ -3391,10 +3385,10 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.trustmanager.algorithm*
+#ssl.trustmanager.algorithm#
 ----------------------------
 
-The algorithm used by trust manager factory for SSL connections.  Default value
+The algorithm used by trust manager factory for SSL connections. Default value
 is the trust manager factory algorithm configured for the Java Virtual Machine.
 
 
@@ -3405,7 +3399,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.truststore.certificates*
+#ssl.truststore.certificates#
 -----------------------------
 
 Trusted certificates in the format specified by 'ssl.truststore.type'. Default
@@ -3419,17 +3413,20 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.truststore.location*
+#ssl.truststore.location#
 -------------------------
 
 The location of the trust store file.
 
 
-Type: string Default: null Valid Values: Importance: medium Update Mode:
-per-broker
+Type: string
+Default: null
+Valid Values:
+Importance: medium
+Update Mode: per-broker
 
 
-*ssl.truststore.password*
+#ssl.truststore.password#
 -------------------------
 
 The password for the trust store file. If a password is not set, trust store
@@ -3444,7 +3441,7 @@ Importance: medium
 Update Mode: per-broker
 
 
-*ssl.truststore.type*
+#ssl.truststore.type#
 ---------------------
 
 The file format of the trust store file. The values currently supported by the
@@ -3458,12 +3455,12 @@ Importance: medium
 Update Mode: per-broker
 
 
-*zookeeper.clientCnxnSocket*
+#zookeeper.clientCnxnSocket#
 ----------------------------
 
-Typically set to org.apache.zookeeper.ClientCnxnSocketNetty when using TLS
+Typically set to `org.apache.zookeeper.ClientCnxnSocketNetty` when using TLS
 connectivity to ZooKeeper. Overrides any explicit value set via the same-named
-zookeeper.clientCnxnSocket system property.
+`zookeeper.clientCnxnSocket` system property.
 
 
 Type: string
@@ -3473,21 +3470,21 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.client.enable*
+#zookeeper.ssl.client.enable#
 -----------------------------
 
 Set client to use TLS when connecting to ZooKeeper. An explicit value overrides
-any value set via the zookeeper.client.secure system property (note the
+any value set via the `zookeeper.client.secure` system property (note the
 different name). Defaults to false if neither is set; when true,
-zookeeper.clientCnxnSocket must be set (typically to
-org.apache.zookeeper.ClientCnxnSocketNetty); other values to set may include
-zookeeper.ssl.cipher.suites, zookeeper.ssl.crl.enable,
-zookeeper.ssl.enabled.protocols,
-zookeeper.ssl.endpoint.identification.algorithm,
-zookeeper.ssl.keystore.location, zookeeper.ssl.keystore.password,
-zookeeper.ssl.keystore.type, zookeeper.ssl.ocsp.enable, zookeeper.ssl.protocol,
-zookeeper.ssl.truststore.location, zookeeper.ssl.truststore.password,
-zookeeper.ssl.truststore.type
+`zookeeper.clientCnxnSocket` must be set (typically to
+`org.apache.zookeeper.ClientCnxnSocketNetty`); other values to set may include
+`zookeeper.ssl.cipher.suites`, `zookeeper.ssl.crl.enable`,
+`zookeeper.ssl.enabled.protocols`,
+`zookeeper.ssl.endpoint.identification.algorithm`,
+`zookeeper.ssl.keystore.location`, `zookeeper.ssl.keystore.password`,
+`zookeeper.ssl.keystore.type`, `zookeeper.ssl.ocsp.enable`,
+`zookeeper.ssl.protocol`, `zookeeper.ssl.truststore.location`,
+`zookeeper.ssl.truststore.password`, `zookeeper.ssl.truststore.type`
 
 
 Type: boolean
@@ -3497,12 +3494,12 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.keystore.location*
+#zookeeper.ssl.keystore.location#
 ---------------------------------
 
 Keystore location when using a client-side certificate with TLS connectivity to
 ZooKeeper. Overrides any explicit value set via the
-zookeeper.ssl.keyStore.location system property (note the camelCase).
+`zookeeper.ssl.keyStore.location` system property (note the camelCase).
 
 
 Type: string
@@ -3512,15 +3509,15 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.keystore.password*
+#zookeeper.ssl.keystore.password#
 ---------------------------------
 
 Keystore password when using a client-side certificate with TLS connectivity to
 ZooKeeper. Overrides any explicit value set via the
-zookeeper.ssl.keyStore.password system property (note the camelCase). Note that
-ZooKeeper does not support a key password different from the keystore password,
-so be sure to set the key password in the keystore to be identical to the
-keystore password; otherwise the connection attempt to Zookeeper will fail.
+`zookeeper.ssl.keyStore.password` system property (note the camelCase). Note
+that ZooKeeper does not support a key password different from the keystore
+password, so be sure to set the key password in the keystore to be identical to
+the keystore password; otherwise the connection attempt to Zookeeper will fail.
 
 
 Type: password
@@ -3530,13 +3527,14 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.keystore.type*
+#zookeeper.ssl.keystore.type#
 -----------------------------
 
 Keystore type when using a client-side certificate with TLS connectivity to
-ZooKeeper. Overrides any explicit value set via the zookeeper.ssl.keyStore.type
-system property (note the camelCase).  The default value of null means the type
-will be auto-detected based on the filename extension of the keystore.
+ZooKeeper. Overrides any explicit value set via the
+`zookeeper.ssl.keyStore.type` system property (note the camelCase). The default
+value of `null` means the type will be auto-detected based on the filename
+extension of the keystore.
 
 
 Type: string
@@ -3546,11 +3544,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.truststore.location*
+#zookeeper.ssl.truststore.location#
 -----------------------------------
 
-Truststore location when using TLS connectivity to ZooKeeper.  Overrides any
-explicit value set via the zookeeper.ssl.trustStore.location system property
+Truststore location when using TLS connectivity to ZooKeeper. Overrides any
+explicit value set via the `zookeeper.ssl.trustStore.location` system property
 (note the camelCase).
 
 
@@ -3561,11 +3559,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.truststore.password*
+#zookeeper.ssl.truststore.password#
 -----------------------------------
 
-Truststore password when using TLS connectivity to ZooKeeper.  Overrides any
-explicit value set via the zookeeper.ssl.trustStore.password system property
+Truststore password when using TLS connectivity to ZooKeeper. Overrides any
+explicit value set via the `zookeeper.ssl.trustStore.password` system property
 (note the camelCase).
 
 
@@ -3576,13 +3574,13 @@ Importance: medium
 Update Mode: read-only
 
 
-*zookeeper.ssl.truststore.type*
+#zookeeper.ssl.truststore.type#
 -------------------------------
 
 Truststore type when using TLS connectivity to ZooKeeper. Overrides any
-explicit value set via the zookeeper.ssl.trustStore.type system property (note
-the camelCase). The default value of null means the type will be auto-detected
-based on the filename extension of the truststore.
+explicit value set via the `zookeeper.ssl.trustStore.type` system property
+(note the camelCase). The default value of `null` means the type will be
+auto-detected based on the filename extension of the truststore.
 
 
 Type: string
@@ -3592,11 +3590,11 @@ Importance: medium
 Update Mode: read-only
 
 
-*alter.config.policy.class.name*
+#alter.config.policy.class.name#
 --------------------------------
 
-The alter configs policy class that should be used for validation.  The class
-should implement the org.apache.kafka.server.policy.AlterConfigPolicy
+The alter configs policy class that should be used for validation. The class
+should implement the `org.apache.kafka.server.policy.AlterConfigPolicy`
 interface.
 
 
@@ -3607,7 +3605,7 @@ Importance: low
 Update Mode: read-only
 
 
-*alter.log.dirs.replication.quota.window.num*
+#alter.log.dirs.replication.quota.window.num#
 ---------------------------------------------
 
 The number of samples to retain in memory for alter log dirs replication quotas
@@ -3620,7 +3618,7 @@ Importance: low
 Update Mode: read-only
 
 
-*alter.log.dirs.replication.quota.window.size.seconds*
+#alter.log.dirs.replication.quota.window.size.seconds#
 ------------------------------------------------------
 
 The time span of each sample for alter log dirs replication quotas
@@ -3633,11 +3631,11 @@ Importance: low
 Update Mode: read-only
 
 
-*authorizer.class.name*
+#authorizer.class.name#
 -----------------------
 
 The fully qualified name of a class that implements
-org.apache.kafka.server.authorizer.Authorizer interface, which is used by the
+`org.apache.kafka.server.authorizer.Authorizer` interface, which is used by the
 broker for authorization.
 
 
@@ -3648,13 +3646,13 @@ Importance: low
 Update Mode: read-only
 
 
-*auto.include.jmx.reporter*
+#auto.include.jmx.reporter#
 ---------------------------
 
 Deprecated. Whether to automatically include JmxReporter even if it's not
-listed in metric.reporters. This configuration will be removed in Kafka 4.0,
-users should instead include org.apache.kafka.common.metrics.JmxReporter in
-metric.reporters in order to enable the JmxReporter.
+listed in `metric.reporters`. This configuration will be removed in Kafka 4.0,
+users should instead include `org.apache.kafka.common.metrics.JmxReporter` in
+`metric.reporters` in order to enable the JmxReporter.
 
 
 Type: boolean
@@ -3664,14 +3662,15 @@ Importance: low
 Update Mode: read-only
 
 
-*client.quota.callback.class*
+#client.quota.callback.class#
 -----------------------------
 
 The fully qualified name of a class that implements the ClientQuotaCallback
 interface, which is used to determine quota limits applied to client requests.
-By default, the and quotas that are stored in ZooKeeper are applied. For any
-given request, the most specific quota that matches the user principal of the
-session and the client-id of the request is applied.
+By default, the &lt;user&gt; and &lt;client-id&gt; quotas that are stored in
+ZooKeeper are applied. For any given request, the most specific quota that
+matches the user principal of the session and the client-id of the request is
+applied.
 
 
 Type: class
@@ -3681,7 +3680,7 @@ Importance: low
 Update Mode: read-only
 
 
-*connection.failed.authentication.delay.ms*
+#connection.failed.authentication.delay.ms#
 -------------------------------------------
 
 Connection close delay on failed authentication: this is the time (in
@@ -3697,14 +3696,14 @@ Importance: low
 Update Mode: read-only
 
 
-*controller.quorum.retry.backoff.ms*
+#controller.quorum.retry.backoff.ms#
 ------------------------------------
 
 The amount of time to wait before attempting to retry a failed request to a
 given topic partition. This avoids repeatedly sending requests in a tight loop
 under some failure scenarios. This value is the initial backoff value and will
-increase exponentially for each failed request, up to the retry.backoff.max.ms
-value.
+increase exponentially for each failed request, up to the
+`retry.backoff.max.ms` value.
 
 
 Type: int
@@ -3714,7 +3713,7 @@ Importance: low
 Update Mode: read-only
 
 
-*controller.quota.window.num*
+#controller.quota.window.num#
 -----------------------------
 
 The number of samples to retain in memory for controller mutation quotas
@@ -3727,7 +3726,7 @@ Importance: low
 Update Mode: read-only
 
 
-*controller.quota.window.size.seconds*
+#controller.quota.window.size.seconds#
 --------------------------------------
 
 The time span of each sample for controller mutations quotas
@@ -3740,11 +3739,11 @@ Importance: low
 Update Mode: read-only
 
 
-*create.topic.policy.class.name*
+#create.topic.policy.class.name#
 --------------------------------
 
-The create topic policy class that should be used for validation.  The class
-should implement the org.apache.kafka.server.policy.CreateTopicPolicy
+The create topic policy class that should be used for validation. The class
+should implement the `org.apache.kafka.server.policy.CreateTopicPolicy`
 interface.
 
 
@@ -3755,7 +3754,7 @@ Importance: low
 Update Mode: read-only
 
 
-*delegation.token.expiry.check.interval.ms*
+#delegation.token.expiry.check.interval.ms#
 -------------------------------------------
 
 Scan interval to remove expired delegation tokens.
@@ -3768,7 +3767,7 @@ Importance: low
 Update Mode: read-only
 
 
-*kafka.metrics.polling.interval.secs*
+#kafka.metrics.polling.interval.secs#
 -------------------------------------
 
 The metrics polling interval (in seconds) which can be used
@@ -3782,14 +3781,14 @@ Importance: low
 Update Mode: read-only
 
 
-*kafka.metrics.reporters*
+#kafka.metrics.reporters#
 -------------------------
 
 A list of classes to use as Yammer metrics custom reporters. The reporters
-should implement kafka.metrics.KafkaMetricsReporter trait. If a client wants to
-expose JMX operations on a custom reporter, the custom reporter needs to
+should implement `kafka.metrics.KafkaMetricsReporter` trait. If a client wants
+to expose JMX operations on a custom reporter, the custom reporter needs to
 additionally implement an MBean trait that extends
-kafka.metrics.KafkaMetricsReporterMBean trait so that the registered MBean is
+`kafka.metrics.KafkaMetricsReporterMBean` trait so that the registered MBean is
 compliant with the standard MBean convention.
 
 
@@ -3800,35 +3799,34 @@ Importance: low
 Update Mode: read-only
 
 
-*listener.security.protocol.map*
+#listener.security.protocol.map#
 --------------------------------
 
 Map between listener names and security protocols. This must be defined for the
 same security protocol to be usable in more than one port or IP. For example,
 internal and external traffic can be separated even if SSL is required for
 both. Concretely, the user could define listeners with names INTERNAL and
-EXTERNAL and this property as: INTERNAL:SSL,EXTERNAL:SSL. As shown, key and
-value are separated by a colon and map entries are separated by commas.  Each
+EXTERNAL and this property as: `INTERNAL:SSL,EXTERNAL:SSL`. As shown, key and
+value are separated by a colon and map entries are separated by commas. Each
 listener name should only appear once in the map. Different security (SSL and
 SASL) settings can be configured for each listener by adding a normalised
 prefix (the listener name is lowercased) to the config name. For example, to
 set a different keystore for the INTERNAL listener, a config with name
-listener.name.internal.ssl.keystore.location would be set. If the config for
+`listener.name.internal.ssl.keystore.location` would be set. If the config for
 the listener name is not set, the config will fallback to the generic config
-(i.e. ssl.keystore.location). Note that in KRaft a default mapping from the
-listener names defined by controller.listener.names to PLAINTEXT is assumed if
-no explicit mapping is provided and no other security protocol is in use.
+(i.e. `ssl.keystore.location`). Note that in KRaft a default mapping from the
+listener names defined by `controller.listener.names` to PLAINTEXT is assumed
+if no explicit mapping is provided and no other security protocol is in use.
 
 
 Type: string
-Default:
-SASL_SSL:SASL_SSL,PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT
+Default: SASL_SSL:SASL_SSL,PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT
 Valid Values:
 Importance: low
 Update Mode: per-broker
 
 
-*log.dir.failure.timeout.ms*
+#log.dir.failure.timeout.ms#
 ----------------------------
 
 If the broker is unable to successfully communicate to the controller that some
@@ -3843,15 +3841,15 @@ Importance: low
 Update Mode: read-only
 
 
-*log.message.downconversion.enable*
+#log.message.downconversion.enable#
 -----------------------------------
 
 This configuration controls whether down-conversion of message formats is
-enabled to satisfy consume requests. When set to false, broker will not perform
-down-conversion for consumers expecting an older message format. The broker
-responds with UNSUPPORTED_VERSION error for consume requests from such older
-clients. This configurationdoes not apply to any message format conversion that
-might be required for replication to followers.
+enabled to satisfy consume requests. When set to `false`, broker will not
+perform down-conversion for consumers expecting an older message format. The
+broker responds with `UNSUPPORTED_VERSION` error for consume requests from such
+older clients. This configurationdoes not apply to any message format
+conversion that might be required for replication to followers.
 
 
 Type: boolean
@@ -3861,7 +3859,7 @@ Importance: low
 Update Mode: cluster-wide
 
 
-*metadata.max.idle.interval.ms*
+#metadata.max.idle.interval.ms#
 -------------------------------
 
 This configuration controls how often the active controller should write no-op
@@ -3876,13 +3874,13 @@ Importance: low
 Update Mode: read-only
 
 
-*metric.reporters*
+#metric.reporters#
 ------------------
 
 A list of classes to use as metrics reporters. Implementing the
-org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in
-classes that will be notified of new metric creation.  The JmxReporter is
-always included to register JMX statistics.
+`org.apache.kafka.common.metrics.MetricsReporter` interface allows plugging in
+classes that will be notified of new metric creation. The JmxReporter is always
+included to register JMX statistics.
 
 
 Type: list
@@ -3892,26 +3890,33 @@ Importance: low
 Update Mode: cluster-wide
 
 
-*metrics.num.samples*
+#metrics.num.samples#
 ---------------------
 
 The number of samples maintained to compute metrics.
 
 
-Type: int Default: 2 Valid Values: [1,...] Importance: low Update Mode:
-read-only
+Type: int
+Default: 2
+Valid Values: [1,...]
+Importance: low
+Update Mode: read-only
 
 
-*metrics.recording.level*
+#metrics.recording.level#
 -------------------------
 
 The highest recording level for metrics.
 
 
-Type: string Default: INFO Valid Values: Importance: low Update Mode: read-only
+Type: string
+Default: INFO
+Valid Values:
+Importance: low
+Update Mode: read-only
 
 
-*metrics.sample.window.ms*
+#metrics.sample.window.ms#
 --------------------------
 
 The window of time a metrics sample is computed over.
@@ -3924,7 +3929,7 @@ Importance: low
 Update Mode: read-only
 
 
-*password.encoder.cipher.algorithm*
+#password.encoder.cipher.algorithm#
 -----------------------------------
 
 The Cipher algorithm used for encoding dynamically configured passwords.
@@ -3937,7 +3942,7 @@ Importance: low
 Update Mode: read-only
 
 
-*password.encoder.iterations*
+#password.encoder.iterations#
 -----------------------------
 
 The iteration count used for encoding dynamically configured passwords.
@@ -3950,7 +3955,7 @@ Importance: low
 Update Mode: read-only
 
 
-*password.encoder.key.length*
+#password.encoder.key.length#
 -----------------------------
 
 The key length used for encoding dynamically configured passwords.
@@ -3963,7 +3968,7 @@ Importance: low
 Update Mode: read-only
 
 
-*password.encoder.keyfactory.algorithm*
+#password.encoder.keyfactory.algorithm#
 ---------------------------------------
 
 The SecretKeyFactory algorithm used for encoding dynamically configured
@@ -3978,14 +3983,14 @@ Importance: low
 Update Mode: read-only
 
 
-*producer.id.expiration.ms*
+#producer.id.expiration.ms#
 ---------------------------
 
 The time in ms that a topic partition leader will wait before expiring producer
 IDs. Producer IDs will not expire while a transaction associated to them is
 still ongoing. Note that producer IDs may expire sooner if the last write from
 the producer ID is deleted due to the topic's retention settings. Setting this
-value the same or higher than delivery.timeout.ms can help prevent expiration
+value the same or higher than `delivery.timeout.ms` can help prevent expiration
 during retries and protect against message duplication, but the default should
 be reasonable for most use cases.
 
@@ -3997,17 +4002,20 @@ Importance: low
 Update Mode: cluster-wide
 
 
-*quota.window.num*
+#quota.window.num#
 ------------------
 
 The number of samples to retain in memory for client quotas
 
 
-Type: int Default: 11 Valid Values: [1,...] Importance: low Update Mode:
-read-only
+Type: int
+Default: 11
+Valid Values: [1,...]
+Importance: low
+Update Mode: read-only
 
 
-*quota.window.size.seconds*
+#quota.window.size.seconds#
 ---------------------------
 
 The time span of each sample for client quotas
@@ -4020,7 +4028,7 @@ Importance: low
 Update Mode: read-only
 
 
-*remote.log.index.file.cache.total.size.bytes*
+#remote.log.index.file.cache.total.size.bytes#
 ----------------------------------------------
 
 The total size of the space allocated to store index files fetched from remote
@@ -4034,7 +4042,7 @@ Importance: low
 Update Mode: cluster-wide
 
 
-*remote.log.manager.task.interval.ms*
+#remote.log.manager.task.interval.ms#
 -------------------------------------
 
 Interval at which remote log manager runs the scheduled tasks like copy
@@ -4048,11 +4056,11 @@ Importance: low
 Update Mode: read-only
 
 
-*remote.log.metadata.custom.metadata.max.bytes*
+#remote.log.metadata.custom.metadata.max.bytes#
 -----------------------------------------------
 
 The maximum size of custom metadata in bytes that the broker should accept from
-a remote storage plugin. If custom metadata exceeds this limit, the updated
+a remote storage plugin. If custom  metadata exceeds this limit, the updated
 segment metadata will not be stored, the copied data will be attempted to
 delete, and the remote copying task for this topic-partition will stop with an
 error.
@@ -4065,7 +4073,7 @@ Importance: low
 Update Mode: read-only
 
 
-*replication.quota.window.num*
+#replication.quota.window.num#
 ------------------------------
 
 The number of samples to retain in memory for replication quotas
@@ -4078,7 +4086,7 @@ Importance: low
 Update Mode: read-only
 
 
-*replication.quota.window.size.seconds*
+#replication.quota.window.size.seconds#
 ---------------------------------------
 
 The time span of each sample for replication quotas
@@ -4091,7 +4099,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.login.connect.timeout.ms*
+#sasl.login.connect.timeout.ms#
 -------------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -4105,7 +4113,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.login.read.timeout.ms*
+#sasl.login.read.timeout.ms#
 ----------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -4119,7 +4127,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.login.retry.backoff.max.ms*
+#sasl.login.retry.backoff.max.ms#
 ---------------------------------
 
 The (optional) value in milliseconds for the maximum wait between login
@@ -4137,7 +4145,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.login.retry.backoff.ms*
+#sasl.login.retry.backoff.ms#
 -----------------------------
 
 The (optional) value in milliseconds for the initial wait between login
@@ -4155,7 +4163,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.clock.skew.seconds*
+#sasl.oauthbearer.clock.skew.seconds#
 -------------------------------------
 
 The (optional) value in seconds to allow for differences between the time of
@@ -4169,14 +4177,14 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.expected.audience*
+#sasl.oauthbearer.expected.audience#
 ------------------------------------
 
 The (optional) comma-delimited setting for the broker to use to verify that the
-JWT was issued for one of the expected audiences.  The JWT will be inspected
-for the standard OAuth "aud" claim and if this value is set, the broker will
-match the value from JWT's "aud" claim to see if there is an exact match. If
-there is no match, the broker will reject the JWT and authentication will fail.
+JWT was issued for one of the expected audiences. The JWT will be inspected for
+the standard OAuth "aud" claim and if this value is set, the broker will match
+the value from JWT's "aud" claim  to see if there is an exact match. If there
+is no match, the broker will reject the JWT and authentication will fail.
 
 
 Type: list
@@ -4186,7 +4194,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.expected.issuer*
+#sasl.oauthbearer.expected.issuer#
 ----------------------------------
 
 The (optional) setting for the broker to use to verify that the JWT was created
@@ -4203,7 +4211,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.jwks.endpoint.refresh.ms*
+#sasl.oauthbearer.jwks.endpoint.refresh.ms#
 -------------------------------------------
 
 The (optional) value in milliseconds for the broker to wait between refreshing
@@ -4218,7 +4226,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms#
 -----------------------------------------------------
 
 The (optional) value in milliseconds for the maximum wait between attempts to
@@ -4236,7 +4244,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.ms#
 -------------------------------------------------
 
 The (optional) value in milliseconds for the initial wait between JWKS (JSON
@@ -4254,7 +4262,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.scope.claim.name*
+#sasl.oauthbearer.scope.claim.name#
 -----------------------------------
 
 The OAuth claim for the scope is often named "scope", but this (optional)
@@ -4270,7 +4278,7 @@ Importance: low
 Update Mode: read-only
 
 
-*sasl.oauthbearer.sub.claim.name*
+#sasl.oauthbearer.sub.claim.name#
 ---------------------------------
 
 The OAuth claim for the subject is often named "sub", but this (optional)
@@ -4286,12 +4294,12 @@ Importance: low
 Update Mode: read-only
 
 
-*security.providers*
+#security.providers#
 --------------------
 
 A list of configurable creator classes each returning a provider implementing
 security algorithms. These classes should implement the
-org.apache.kafka.common.security.auth.SecurityProviderCreator interface.
+`org.apache.kafka.common.security.auth.SecurityProviderCreator` interface.
 
 
 Type: string
@@ -4301,7 +4309,7 @@ Importance: low
 Update Mode: read-only
 
 
-*ssl.allow.dn.changes*
+#ssl.allow.dn.changes#
 ----------------------
 
 Indicates whether changes to the certificate distinguished name should be
@@ -4315,7 +4323,7 @@ Importance: low
 Update Mode: read-only
 
 
-*ssl.allow.san.changes*
+#ssl.allow.san.changes#
 -----------------------
 
 Indicates whether changes to the certificate subject alternative names should
@@ -4329,7 +4337,7 @@ Importance: low
 Update Mode: read-only
 
 
-*ssl.endpoint.identification.algorithm*
+#ssl.endpoint.identification.algorithm#
 ---------------------------------------
 
 The endpoint identification algorithm to validate server hostname using server
@@ -4343,12 +4351,12 @@ Importance: low
 Update Mode: per-broker
 
 
-*ssl.engine.factory.class*
+#ssl.engine.factory.class#
 --------------------------
 
 The class of type org.apache.kafka.common.security.auth.SslEngineFactory to
 provide SSLEngine objects. Default value is
-org.apache.kafka.common.security.ssl.DefaultSslEngineFactory.  Alternatively,
+org.apache.kafka.common.security.ssl.DefaultSslEngineFactory. Alternatively,
 setting this to
 org.apache.kafka.common.security.ssl.CommonNameLoggingSslEngineFactory will log
 the common name of expired SSL certificates used by clients to authenticate at
@@ -4367,17 +4375,16 @@ Importance: low
 Update Mode: per-broker
 
 
-*ssl.principal.mapping.rules*
+#ssl.principal.mapping.rules#
 -----------------------------
 
 A list of rules for mapping from distinguished name from the client certificate
 to short name. The rules are evaluated in order and the first rule that matches
 a principal name is used to map it to a short name. Any later rules in the list
 are ignored. By default, distinguished name of the X.500 certificate will be
-the principal.  For more details on the format please see security
-authorization and acls. Note that this configuration is ignored if an extension
-of KafkaPrincipalBuilder is provided by the principal.builder.class
-configuration.
+the principal. For more details on the format please see . Note that this
+configuration is ignored if an extension of KafkaPrincipalBuilder is provided
+by the `principal.builder.class` configuration.
 
 
 Type: string
@@ -4387,7 +4394,7 @@ Importance: low
 Update Mode: read-only
 
 
-*ssl.secure.random.implementation*
+#ssl.secure.random.implementation#
 ----------------------------------
 
 The SecureRandom PRNG implementation to use for SSL cryptography operations.
@@ -4400,7 +4407,7 @@ Importance: low
 Update Mode: per-broker
 
 
-*telemetry.max.bytes*
+#telemetry.max.bytes#
 ---------------------
 
 The maximum size (after compression if compression is used) of telemetry
@@ -4415,7 +4422,7 @@ Importance: low
 Update Mode: read-only
 
 
-*transaction.abort.timed.out.transaction.cleanup.interval.ms*
+#transaction.abort.timed.out.transaction.cleanup.interval.ms#
 -------------------------------------------------------------
 
 The interval at which to rollback transactions that have timed out
@@ -4428,7 +4435,7 @@ Importance: low
 Update Mode: read-only
 
 
-*transaction.partition.verification.enable*
+#transaction.partition.verification.enable#
 -------------------------------------------
 
 Enable verification that checks that the partition has been added to the
@@ -4442,11 +4449,11 @@ Importance: low
 Update Mode: cluster-wide
 
 
-*transaction.remove.expired.transaction.cleanup.interval.ms*
+#transaction.remove.expired.transaction.cleanup.interval.ms#
 ------------------------------------------------------------
 
 The interval at which to remove transactions that have expired due to
-transactional.id.expiration.ms passing
+`transactional.id.expiration.ms` passing
 
 
 Type: int
@@ -4456,14 +4463,14 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.cipher.suites*
+#zookeeper.ssl.cipher.suites#
 -----------------------------
 
 Specifies the enabled cipher suites to be used in ZooKeeper TLS negotiation
-(csv). Overrides any explicit value set via the zookeeper.ssl.ciphersuites
+(csv). Overrides any explicit value set via the `zookeeper.ssl.ciphersuites`
 system property (note the single word "ciphersuites"). The default value of
-null means the list of enabled cipher suites is determined by the Java runtime
-being used.
+`null` means the list of enabled cipher suites is determined by the Java
+runtime being used.
 
 
 Type: list
@@ -4473,11 +4480,11 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.crl.enable*
+#zookeeper.ssl.crl.enable#
 --------------------------
 
 Specifies whether to enable Certificate Revocation List in the ZooKeeper TLS
-protocols. Overrides any explicit value set via the zookeeper.ssl.crl system
+protocols. Overrides any explicit value set via the `zookeeper.ssl.crl` system
 property (note the shorter name).
 
 
@@ -4488,13 +4495,13 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.enabled.protocols*
+#zookeeper.ssl.enabled.protocols#
 ---------------------------------
 
 Specifies the enabled protocol(s) in ZooKeeper TLS negotiation (csv). Overrides
-any explicit value set via the zookeeper.ssl.enabledProtocols system property
-(note the camelCase). The default value of null means the enabled protocol will
-be the value of the zookeeper.ssl.protocol configuration property.
+any explicit value set via the `zookeeper.ssl.enabledProtocols` system property
+(note the camelCase). The default value of `null` means the enabled protocol
+will be the value of the `zookeeper.ssl.protocol` configuration property.
 
 
 Type: list
@@ -4504,7 +4511,7 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.endpoint.identification.algorithm*
+#zookeeper.ssl.endpoint.identification.algorithm#
 -------------------------------------------------
 
 Specifies whether to enable hostname verification in the ZooKeeper TLS
@@ -4512,8 +4519,8 @@ negotiation process, with (case-insensitively) "https" meaning ZooKeeper
 hostname verification is enabled and an explicit blank value meaning it is
 disabled (disabling it is only recommended for testing purposes). An explicit
 value overrides any "true" or "false" value set via the
-zookeeper.ssl.hostnameVerification system property (note the different name and
-values; true implies https and false implies blank).
+`zookeeper.ssl.hostnameVerification` system property (note the different name
+and values; true implies https and false implies blank).
 
 
 Type: string
@@ -4523,11 +4530,11 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.ocsp.enable*
+#zookeeper.ssl.ocsp.enable#
 ---------------------------
 
 Specifies whether to enable Online Certificate Status Protocol in the ZooKeeper
-TLS protocols. Overrides any explicit value set via the zookeeper.ssl.ocsp
+TLS protocols. Overrides any explicit value set via the `zookeeper.ssl.ocsp`
 system property (note the shorter name).
 
 
@@ -4538,12 +4545,12 @@ Importance: low
 Update Mode: read-only
 
 
-*zookeeper.ssl.protocol*
+#zookeeper.ssl.protocol#
 ------------------------
 
 Specifies the protocol to be used in ZooKeeper TLS negotiation. An explicit
-value overrides any value set via the same-named zookeeper.ssl.protocol system
-property.
+value overrides any value set via the same-named `zookeeper.ssl.protocol`
+system property.
 
 
 Type: string
@@ -4552,24 +4559,20 @@ Valid Values:
 Importance: low
 Update Mode: read-only
 
-More details about broker configuration can be found in the scala class
-kafka.server.KafkaConfig.
+
+##Topic-Level Configs##
 
 
-**Topic-Level Configs**
-
-
-*cleanup.policy*
+#cleanup.policy#
 ----------------
 
-This config designates the retention policy to use on log segments.  The
+This config designates the retention policy to use on log segments. The
 "delete" policy (which is the default) will discard old segments when their
 retention time or size limit has been reached. The "compact" policy will enable
-log compaction, which retains the latest value for each key. It is also
-possible to specify both policies in a comma-separated list (e.g.
-"delete,compact"). In this case, old segments will be discarded per the
-retention time and size configuration, while retained segments will be
-compacted.
+, which retains the latest value for each key. It is also possible to specify
+both policies in a comma-separated list (e.g. "delete,compact"). In this case,
+old segments will be discarded per the retention time and size configuration,
+while retained segments will be compacted.
 
 
 Type: list
@@ -4579,35 +4582,33 @@ Server Default Property: log.cleanup.policy
 Importance: medium
 
 
-*cleanup.policy*
-----------------
-
-Type: list Default: delete Valid Values: [compact, delete] Server Default
-Property: log.cleanup.policy Importance: medium
-
-
-
-*compression.gzip.level*
+#compression.gzip.level#
 ------------------------
 
-The compression level to use if compression.type is set to gzip.
+The compression level to use if compression.type is set to `gzip`.
 
 
-Type: int Default: -1 Valid Values: [1,...,9] or -1 Server Default Property:
-compression.gzip.level Importance: medium
+Type: int
+Default: -1
+Valid Values: [1,...,9] or -1
+Server Default Property: compression.gzip.level
+Importance: medium
 
 
-*compression.lz4.level*
+#compression.lz4.level#
 -----------------------
 
-The compression level to use if compression.type is set to lz4.
+The compression level to use if compression.type is set to `lz4`.
 
 
-Type: int Default: 9 Valid Values: [1,...,17] Server Default Property:
-compression.lz4.level Importance: medium
+Type: int
+Default: 9
+Valid Values: [1,...,17]
+Server Default Property: compression.lz4.level
+Importance: medium
 
 
-*compression.type*
+#compression.type#
 ------------------
 
 Specify the final compression type for a given topic. This configuration
@@ -4624,24 +4625,26 @@ Server Default Property: compression.type
 Importance: medium
 
 
-*compression.zstd.level*
+#compression.zstd.level#
 ------------------------
 
-The compression level to use if compression.type is set to zstd.
+The compression level to use if compression.type is set to `zstd`.
 
 
-Type: int Default: 3 Valid Values: [-131072,...,22] Server Default Property:
-compression.zstd.level Importance: medium
+Type: int
+Default: 3
+Valid Values: [-131072,...,22]
+Server Default Property: compression.zstd.level
+Importance: medium
 
 
-*delete.retention.ms*
+#delete.retention.ms#
 ---------------------
 
-The amount of time to retain delete tombstone markers for log compacted topics.
-This setting also gives a bound on the time in which a consumer must complete a
-read if they begin from offset 0 to ensure that they get a valid snapshot of
-the final stage (otherwise delete tombstones may be collected before they
-complete their scan).
+The amount of time to retain delete tombstone markers for  topics. This setting
+also gives a bound on the time in which a consumer must complete a read if they
+begin from offset 0 to ensure that they get a valid snapshot of the final stage
+(otherwise delete tombstones may be collected before they complete their scan).
 
 
 Type: long
@@ -4651,17 +4654,20 @@ Server Default Property: log.cleaner.delete.retention.ms
 Importance: medium
 
 
-*file.delete.delay.ms*
+#file.delete.delay.ms#
 ----------------------
 
 The time to wait before deleting a file from the filesystem
 
 
-Type: long Default: 60000 (1 minute) Valid Values: [0,...] Server Default
-Property: log.segment.delete.delay.ms Importance: medium
+Type: long
+Default: 60000 (1 minute)
+Valid Values: [0,...]
+Server Default Property: log.segment.delete.delay.ms
+Importance: medium
 
 
-*flush.messages*
+#flush.messages#
 ----------------
 
 This setting allows specifying an interval at which we will force an fsync of
@@ -4669,8 +4675,7 @@ data written to the log. For example if this was set to 1 we would fsync after
 every message; if it were 5 we would fsync after every five messages. In
 general we recommend you not set this and use replication for durability and
 allow the operating system's background flush capabilities as it is more
-efficient. This setting can be overridden on a per-topic basis (see the
-per-topic configuration section).
+efficient. This setting can be overridden on a per-topic basis (see ).
 
 
 Type: long
@@ -4680,7 +4685,7 @@ Server Default Property: log.flush.interval.messages
 Importance: medium
 
 
-*flush.ms*
+#flush.ms#
 ----------
 
 This setting allows specifying a time interval at which we will force an fsync
@@ -4697,13 +4702,13 @@ Server Default Property: log.flush.interval.ms
 Importance: medium
 
 
-*follower.replication.throttled.replicas*
+#follower.replication.throttled.replicas#
 -----------------------------------------
 
 A list of replicas for which log replication should be throttled on the
 follower side. The list should describe a set of replicas in the form
 [PartitionId]:[BrokerId],[PartitionId]:[BrokerId]:... or alternatively the
-wildcard '*' can be used to throttle all replicas for this topic.
+wildcard '#' can be used to throttle all replicas for this topic.
 
 
 Type: list
@@ -4713,13 +4718,13 @@ Server Default Property: null
 Importance: medium
 
 
-*index.interval.bytes*
+#index.interval.bytes#
 ----------------------
 
 This setting controls how frequently Kafka adds an index entry to its offset
 index. The default setting ensures that we index a message roughly every 4096
 bytes. More indexing allows reads to jump closer to the exact position in the
-log but makes the index larger.  You probably don't need to change this.
+log but makes the index larger. You probably don't need to change this.
 
 
 Type: int
@@ -4729,13 +4734,13 @@ Server Default Property: log.index.interval.bytes
 Importance: medium
 
 
-*leader.replication.throttled.replicas*
+#leader.replication.throttled.replicas#
 ---------------------------------------
 
 A list of replicas for which log replication should be throttled on the leader
 side. The list should describe a set of replicas in the form
 [PartitionId]:[BrokerId],[PartitionId]:[BrokerId]:... or alternatively the
-wildcard '*' can be used to throttle all replicas for this topic.
+wildcard '#' can be used to throttle all replicas for this topic.
 
 
 Type: list
@@ -4745,7 +4750,7 @@ Server Default Property: null
 Importance: medium
 
 
-*local.retention.bytes*
+#local.retention.bytes#
 -----------------------
 
 The maximum size of local log segments that can grow for a partition before it
@@ -4761,7 +4766,7 @@ Server Default Property: log.local.retention.bytes
 Importance: medium
 
 
-*local.retention.ms*
+#local.retention.ms#
 --------------------
 
 The number of milliseconds to keep the local log segment before it gets
@@ -4777,7 +4782,7 @@ Server Default Property: log.local.retention.ms
 Importance: medium
 
 
-*max.compaction.lag.ms*
+#max.compaction.lag.ms#
 -----------------------
 
 The maximum time a message will remain ineligible for compaction in the log.
@@ -4791,7 +4796,7 @@ Server Default Property: log.cleaner.max.compaction.lag.ms
 Importance: medium
 
 
-*max.message.bytes*
+#max.message.bytes#
 -------------------
 
 The largest record batch size allowed by Kafka (after compression if
@@ -4810,7 +4815,7 @@ Server Default Property: message.max.bytes
 Importance: medium
 
 
-*message.format.version*
+#message.format.version#
 ------------------------
 
 [DEPRECATED] Specify the message format version the broker will use to append
@@ -4826,19 +4831,12 @@ don't understand.
 
 Type: string
 Default: 3.0-IV1
-Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1,
-0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-
-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-
-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1,
-2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-
-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3,
-3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-
-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
+Valid Values: [0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.10.0-IV0, 0.10.0-IV1, 0.10.1-IV0, 0.10.1-IV1, 0.10.1-IV2, 0.10.2-IV0, 0.11.0-IV0, 0.11.0-IV1, 0.11.0-IV2, 1.0-IV0, 1.1-IV0, 2.0-IV0, 2.0-IV1, 2.1-IV0, 2.1-IV1, 2.1-IV2, 2.2-IV0, 2.2-IV1, 2.3-IV0, 2.3-IV1, 2.4-IV0, 2.4-IV1, 2.5-IV0, 2.6-IV0, 2.7-IV0, 2.7-IV1, 2.7-IV2, 2.8-IV0, 2.8-IV1, 3.0-IV0, 3.0-IV1, 3.1-IV0, 3.2-IV0, 3.3-IV0, 3.3-IV1, 3.3-IV2, 3.3-IV3, 3.4-IV0, 3.5-IV0, 3.5-IV1, 3.5-IV2, 3.6-IV0, 3.6-IV1, 3.6-IV2, 3.7-IV0, 3.7-IV1, 3.7-IV2, 3.7-IV3, 3.7-IV4, 3.8-IV0, 3.9-IV0]
 Server Default Property: log.message.format.version
 Importance: medium
 
 
-*message.timestamp.after.max.ms*
+#message.timestamp.after.max.ms#
 --------------------------------
 
 This configuration sets the allowable timestamp difference between the message
@@ -4857,7 +4855,7 @@ Server Default Property: log.message.timestamp.after.max.ms
 Importance: medium
 
 
-*message.timestamp.before.max.ms*
+#message.timestamp.before.max.ms#
 ---------------------------------
 
 This configuration sets the allowable timestamp difference between the broker's
@@ -4876,7 +4874,7 @@ Server Default Property: log.message.timestamp.before.max.ms
 Importance: medium
 
 
-*message.timestamp.difference.max.ms*
+#message.timestamp.difference.max.ms#
 -------------------------------------
 
 [DEPRECATED] The maximum difference allowed between the timestamp when a broker
@@ -4893,7 +4891,7 @@ Server Default Property: log.message.timestamp.difference.max.ms
 Importance: medium
 
 
-*message.timestamp.type*
+#message.timestamp.type#
 ------------------------
 
 Define whether the timestamp in the message is message create time or log
@@ -4907,21 +4905,20 @@ Server Default Property: log.message.timestamp.type
 Importance: medium
 
 
-*min.cleanable.dirty.ratio*
+#min.cleanable.dirty.ratio#
 ---------------------------
 
 This configuration controls how frequently the log compactor will attempt to
-clean the log (assuming log compaction is enabled). By default we will avoid
-cleaning a log where more than 50% of the log has been compacted. This ratio
-bounds the maximum space wasted in the log by duplicates (at 50% at most 50% of
-the log could be duplicates). A higher ratio will mean fewer, more efficient
-cleanings but will mean more wasted space in the log. If the
-max.compaction.lag.ms or the min.compaction.lag.ms configurations are also
-specified, then the log compactor considers the log to be eligible for
-compaction as soon as either: (i) the dirty ratio threshold has been met and
-the log has had dirty (uncompacted) records for at least the
-min.compaction.lag.ms duration, or (ii) if the log has had dirty (uncompacted)
-records for at most the max.compaction.lag.ms period.
+clean the log (assuming  is enabled). By default we will avoid cleaning a log
+where more than 50% of the log has been compacted. This ratio bounds the
+maximum space wasted in the log by duplicates (at 50% at most 50% of the log
+could be duplicates). A higher ratio will mean fewer, more efficient cleanings
+but will mean more wasted space in the log. If the max.compaction.lag.ms or the
+min.compaction.lag.ms configurations are also specified, then the log compactor
+considers the log to be eligible for compaction as soon as either: (i) the
+dirty ratio threshold has been met and the log has had dirty (uncompacted)
+records for at least the min.compaction.lag.ms duration, or (ii) if the log has
+had dirty (uncompacted) records for at most the max.compaction.lag.ms period.
 
 
 Type: double
@@ -4931,7 +4928,7 @@ Server Default Property: log.cleaner.min.cleanable.ratio
 Importance: medium
 
 
-*min.compaction.lag.ms*
+#min.compaction.lag.ms#
 -----------------------
 
 The minimum time a message will remain uncompacted in the log. Only applicable
@@ -4945,18 +4942,19 @@ Server Default Property: log.cleaner.min.compaction.lag.ms
 Importance: medium
 
 
-*min.insync.replicas*
+#min.insync.replicas#
 ---------------------
 
 When a producer sets acks to "all" (or "-1"), this configuration specifies the
 minimum number of replicas that must acknowledge a write for the write to be
 considered successful. If this minimum cannot be met, then the producer will
-raise an exception (either NotEnoughReplicas or NotEnoughReplicasAfterAppend).
-When used together, min.insync.replicas and acks allow you to enforce greater
-durability guarantees. A typical scenario would be to create a topic with a
-replication factor of 3, set min.insync.replicas to 2, and produce with acks of
-"all". This will ensure that the producer raises an exception if a majority of
-replicas do not receive a write.
+raise an exception (either NotEnoughReplicas or
+NotEnoughReplicasAfterAppend).When used together, `min.insync.replicas` and
+`acks` allow you to enforce greater durability guarantees. A typical scenario
+would be to create a topic with a replication factor of 3, set
+`min.insync.replicas` to 2, and produce with `acks` of "all". This will ensure
+that the producer raises an exception if a majority of replicas do not receive
+a write.
 
 
 Type: int
@@ -4966,7 +4964,7 @@ Server Default Property: min.insync.replicas
 Importance: medium
 
 
-*preallocate*
+#preallocate#
 -------------
 
 True if we should preallocate the file on disk when creating a new log segment.
@@ -4979,7 +4977,7 @@ Server Default Property: log.preallocate
 Importance: medium
 
 
-*remote.storage.enable*
+#remote.storage.enable#
 -----------------------
 
 To enable tiered storage for a topic, set this configuration as true. You can
@@ -4994,7 +4992,7 @@ Server Default Property: null
 Importance: medium
 
 
-*retention.bytes*
+#retention.bytes#
 -----------------
 
 This configuration controls the maximum size a partition (which consists of log
@@ -5002,7 +5000,7 @@ segments) can grow to before we will discard old log segments to free up space
 if we are using the "delete" retention policy. By default there is no size
 limit only a time limit. Since this limit is enforced at the partition level,
 multiply it by the number of partitions to compute the topic retention in
-bytes.  Additionally, retention.bytes configuration operates independently of
+bytes. Additionally, retention.bytes configuration operates independently of
 "segment.ms" and "segment.bytes" configurations. Moreover, it triggers the
 rolling of new segment if the retention.bytes is configured to zero.
 
@@ -5014,7 +5012,7 @@ Server Default Property: log.retention.bytes
 Importance: medium
 
 
-*retention.ms*
+#retention.ms#
 --------------
 
 This configuration controls the maximum time we will retain a log before we
@@ -5022,7 +5020,7 @@ will discard old log segments to free up space if we are using the "delete"
 retention policy. This represents an SLA on how soon consumers must read their
 data. If set to -1, no time limit is applied. Additionally, retention.ms
 configuration operates independently of "segment.ms" and "segment.bytes"
-configurations.  Moreover, it triggers the rolling of new segment if the
+configurations. Moreover, it triggers the rolling of new segment if the
 retention.ms condition is satisfied.
 
 
@@ -5033,10 +5031,10 @@ Server Default Property: log.retention.ms
 Importance: medium
 
 
-*segment.bytes*
+#segment.bytes#
 ---------------
 
-This configuration controls the segment file size for the log.  Retention and
+This configuration controls the segment file size for the log. Retention and
 cleaning is always done a file at a time so a larger segment size means fewer
 files but less granular control over retention.
 
@@ -5048,7 +5046,7 @@ Server Default Property: log.segment.bytes
 Importance: medium
 
 
-*segment.index.bytes*
+#segment.index.bytes#
 ---------------------
 
 This configuration controls the size of the index that maps offsets to file
@@ -5063,7 +5061,7 @@ Server Default Property: log.index.size.max.bytes
 Importance: medium
 
 
-*segment.jitter.ms*
+#segment.jitter.ms#
 -------------------
 
 The maximum random jitter subtracted from the scheduled segment roll time to
@@ -5077,7 +5075,7 @@ Server Default Property: log.roll.jitter.ms
 Importance: medium
 
 
-*segment.ms*
+#segment.ms#
 ------------
 
 This configuration controls the period of time after which Kafka will force the
@@ -5092,7 +5090,7 @@ Server Default Property: log.roll.ms
 Importance: medium
 
 
-*unclean.leader.election.enable*
+#unclean.leader.election.enable#
 --------------------------------
 
 Indicates whether to enable replicas not in the ISR set to be elected as leader
@@ -5106,15 +5104,15 @@ Server Default Property: unclean.leader.election.enable
 Importance: medium
 
 
-*message.downconversion.enable*
+#message.downconversion.enable#
 -------------------------------
 
 This configuration controls whether down-conversion of message formats is
-enabled to satisfy consume requests. When set to false, broker will not perform
-down-conversion for consumers expecting an older message format. The broker
-responds with UNSUPPORTED_VERSION error for consume requests from such older
-clients. This configurationdoes not apply to any message format conversion that
-might be required for replication to followers.
+enabled to satisfy consume requests. When set to `false`, broker will not
+perform down-conversion for consumers expecting an older message format. The
+broker responds with `UNSUPPORTED_VERSION` error for consume requests from such
+older clients. This configurationdoes not apply to any message format
+conversion that might be required for replication to followers.
 
 
 Type: boolean
@@ -5124,16 +5122,14 @@ Server Default Property: log.message.downconversion.enable
 Importance: low
 
 
-**Producer Configs**
-
-Below is the configuration of the producer:
+##Producer Configs##
 
 
-*key.serializer*
+#key.serializer#
 ----------------
 
 Serializer class for key that implements the
-org.apache.kafka.common.serialization.Serializer interface.
+`org.apache.kafka.common.serialization.Serializer` interface.
 
 
 Type: class
@@ -5142,11 +5138,11 @@ Valid Values:
 Importance: high
 
 
-*value.serializer*
+#value.serializer#
 ------------------
 
 Serializer class for value that implements the
-org.apache.kafka.common.serialization.Serializer interface.
+`org.apache.kafka.common.serialization.Serializer` interface.
 
 
 Type: class
@@ -5155,17 +5151,17 @@ Valid Values:
 Importance: high
 
 
-*bootstrap.servers*
+#bootstrap.servers#
 -------------------
 
 A list of host/port pairs to use for establishing the initial connection to the
 Kafka cluster. The client will make use of all servers irrespective of which
-servers are specified here for bootstrapping—this list only impacts the initial
-hosts used to discover the full set of servers. This list should be in the form
-host1:port1,host2:port2,.... Since these servers are just used for the initial
-connection to discover the full cluster membership (which may change
-dynamically), this list need not contain the full set of servers (you may want
-more than one, though, in case a server is down).
+servers are specified here for bootstrapping&mdash;this list only impacts the
+initial hosts used to discover the full set of servers. This list should be in
+the form `host1:port1,host2:port2,...`. Since these servers are just used for
+the initial connection to discover the full cluster membership (which may
+change dynamically), this list need not contain the full set of servers (you
+may want more than one, though, in case a server is down).
 
 
 Type: list
@@ -5174,20 +5170,17 @@ Valid Values: non-null string
 Importance: high
 
 
-*buffer.memory*
+#buffer.memory#
 ---------------
 
 The total bytes of memory the producer can use to buffer records waiting to be
 sent to the server. If records are sent faster than they can be delivered to
-the server the producer will block for max.block.ms after which it will throw
-an exception.
+the server the producer will block for `max.block.ms` after which it will throw
+an exception.This setting should correspond roughly to the total memory the
+producer will use, but is not a hard bound since not all memory the producer
+uses is used for buffering. Some additional memory will be used for compression
+(if compression is enabled) as well as for maintaining in-flight requests.
 
-
-This setting should correspond roughly to the total memory the
-producer will use, but is not a hard bound since not all memory the
-producer uses is used for buffering. Some additional memory will be
-used for compression (if compression is enabled) as well as for
-maintaining in-flight requests.
 
 Type: long
 Default: 33554432
@@ -5195,13 +5188,14 @@ Valid Values: [0,...]
 Importance: high
 
 
-*compression.type*
+#compression.type#
 ------------------
 
 The compression type for all data generated by the producer. The default is
-none (i.e. no compression). Valid values are none, gzip, snappy, lz4, or zstd.
-Compression is of full batches of data, so the efficacy of batching will also
-impact the compression ratio (more batching means better compression).
+none (i.e. no compression). Valid  values are `none`, `gzip`, `snappy`, `lz4`,
+or `zstd`. Compression is of full batches of data, so the efficacy of batching
+will also impact the compression ratio (more batching means better
+compression).
 
 
 Type: string
@@ -5210,28 +5204,24 @@ Valid Values: [none, gzip, snappy, lz4, zstd]
 Importance: high
 
 
-*retries*
+#retries#
 ---------
 
 Setting a value greater than zero will cause the client to resend any record
 whose send fails with a potentially transient error. Note that this retry is no
 different than if the client resent the record upon receiving the error.
 Produce requests will be failed before the number of retries has been exhausted
-if the timeout configured by delivery.timeout.ms expires first before
+if the timeout configured by `delivery.timeout.ms` expires first before
 successful acknowledgement. Users should generally prefer to leave this config
-unset and instead use delivery.timeout.ms to control retry behavior.
+unset and instead use `delivery.timeout.ms` to control retry behavior.Enabling
+idempotence requires this config value to be greater than 0. If conflicting
+configurations are set and idempotence is not explicitly enabled, idempotence
+is disabled.Allowing retries while setting `enable.idempotence` to `false` and
+`max.in.flight.requests.per.connection` to greater than 1 will potentially
+change the ordering of records because if two batches are sent to a single
+partition, and the first fails and is retried but the second succeeds, then the
+records in the second batch may appear first.
 
-
-Enabling idempotence requires this config value to be greater than
-0. If conflicting configurations are set and idempotence is not
-explicitly enabled, idempotence is disabled.
-
-Allowing retries while setting enable.idempotence to false and
-max.in.flight.requests.per.connection to greater than 1 will
-potentially change the ordering of records because if two batches
-are sent to a single partition, and the first fails and is retried
-but the second succeeds, then the records in the second batch may
-appear first.
 
 Type: int
 Default: 2147483647
@@ -5239,7 +5229,7 @@ Valid Values: [0,...,2147483647]
 Importance: high
 
 
-*ssl.key.password*
+#ssl.key.password#
 ------------------
 
 The password of the private key in the key store file or the PEM key specified
@@ -5252,10 +5242,10 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.certificate.chain*
+#ssl.keystore.certificate.chain#
 --------------------------------
 
-Certificate chain in the format specified by 'ssl.keystore.type'.  Default SSL
+Certificate chain in the format specified by 'ssl.keystore.type'. Default SSL
 engine factory supports only PEM format with a list of X.509 certificates
 
 
@@ -5265,7 +5255,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.key*
+#ssl.keystore.key#
 ------------------
 
 Private key in the format specified by 'ssl.keystore.type'. Default SSL engine
@@ -5279,7 +5269,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.location*
+#ssl.keystore.location#
 -----------------------
 
 The location of the key store file. This is optional for client and can be used
@@ -5292,7 +5282,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.password*
+#ssl.keystore.password#
 -----------------------
 
 The store password for the key store file. This is optional for client and only
@@ -5306,7 +5296,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.certificates*
+#ssl.truststore.certificates#
 -----------------------------
 
 Trusted certificates in the format specified by 'ssl.truststore.type'. Default
@@ -5319,7 +5309,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.location*
+#ssl.truststore.location#
 -------------------------
 
 The location of the trust store file.
@@ -5331,7 +5321,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.password*
+#ssl.truststore.password#
 -------------------------
 
 The password for the trust store file. If a password is not set, trust store
@@ -5345,32 +5335,25 @@ Valid Values:
 Importance: high
 
 
-*batch.size*
+#batch.size#
 ------------
 
 The producer will attempt to batch records together into fewer requests
 whenever multiple records are being sent to the same partition. This helps
-performance on both the client and the server.  This configuration controls the
-default batch size in bytes.
+performance on both the client and the server. This configuration controls the
+default batch size in bytes. No attempt will be made to batch records larger
+than this size. Requests sent to brokers will contain multiple batches, one for
+each partition with data available to be sent. A small batch size will make
+batching less common and may reduce throughput (a batch size of zero will
+disable batching entirely). A very large batch size may use memory a bit more
+wastefully as we will always allocate a buffer of the specified batch size in
+anticipation of additional records.Note: This setting gives the upper bound of
+the batch size to be sent. If we have fewer than this many bytes accumulated
+for this partition, we will 'linger' for the `linger.ms` time waiting for more
+records to show up. This `linger.ms` setting defaults to 0, which means we'll
+immediately send out a record even the accumulated batch size is under this
+`batch.size` setting.
 
-
-No attempt will be made to batch records larger than this size.
-
-Requests sent to brokers will contain multiple batches, one for each
-partition with data available to be sent.
-
-A small batch size will make batching less common and may reduce
-throughput (a batch size of zero will disable batching entirely). A
-very large batch size may use memory a bit more wastefully as we
-will always allocate a buffer of the specified batch size in
-anticipation of additional records.
-
-Note: This setting gives the upper bound of the batch size to be
-sent. If we have fewer than this many bytes accumulated for this
-partition, we will 'linger' for the linger.ms time waiting for
-more records to show up. This linger.ms setting defaults to 0,
-which means we'll immediately send out a record even the accumulated
-batch size is under this batch.size setting.
 
 Type: int
 Default: 16384
@@ -5378,27 +5361,26 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*client.dns.lookup*
+#client.dns.lookup#
 -------------------
 
-Controls how the client uses DNS lookups. If set to use_all_dns_ips, connect to
-each returned IP address in sequence until a successful connection is
+Controls how the client uses DNS lookups. If set to `use_all_dns_ips`, connect
+to each returned IP address in sequence until a successful connection is
 established. After a disconnection, the next IP is used. Once all IPs have been
 used once, the client resolves the IP(s) from the hostname again (both the JVM
 and the OS cache DNS name lookups, however). If set to
-resolve_canonical_bootstrap_servers_only, resolve each bootstrap address into a
-list of canonical names. After the bootstrap phase, this behaves the same as
-use_all_dns_ips.
+`resolve_canonical_bootstrap_servers_only`, resolve each bootstrap address into
+a list of canonical names. After the bootstrap phase, this behaves the same as
+`use_all_dns_ips`.
 
 
 Type: string
 Default: use_all_dns_ips
-Valid Values: [use_all_dns_ips,
-resolve_canonical_bootstrap_servers_only]
+Valid Values: [use_all_dns_ips, resolve_canonical_bootstrap_servers_only]
 Importance: medium
 
 
-*client.id*
+#client.id#
 -----------
 
 An id string to pass to the server when making requests. The purpose of this is
@@ -5412,34 +5394,43 @@ Valid Values:
 Importance: medium
 
 
-*compression.gzip.level*
+#compression.gzip.level#
 ------------------------
 
-The compression level to use if compression.type is set to gzip.
+The compression level to use if compression.type is set to `gzip`.
 
 
-Type: int Default: -1 Valid Values: [1,...,9] or -1 Importance: medium
+Type: int
+Default: -1
+Valid Values: [1,...,9] or -1
+Importance: medium
 
 
-*compression.lz4.level*
+#compression.lz4.level#
 -----------------------
 
-The compression level to use if compression.type is set to lz4.
+The compression level to use if compression.type is set to `lz4`.
 
 
-Type: int Default: 9 Valid Values: [1,...,17] Importance: medium
+Type: int
+Default: 9
+Valid Values: [1,...,17]
+Importance: medium
 
 
-*compression.zstd.level*
+#compression.zstd.level#
 ------------------------
 
-The compression level to use if compression.type is set to zstd.
+The compression level to use if compression.type is set to `zstd`.
 
 
-Type: int Default: 3 Valid Values: [-131072,...,22] Importance: medium
+Type: int
+Default: 3
+Valid Values: [-131072,...,22]
+Importance: medium
 
 
-*connections.max.idle.ms*
+#connections.max.idle.ms#
 -------------------------
 
 Close idle connections after the number of milliseconds specified by this
@@ -5452,17 +5443,18 @@ Valid Values:
 Importance: medium
 
 
-*delivery.timeout.ms*
+#delivery.timeout.ms#
 ---------------------
 
-An upper bound on the time to report success or failure after a call to send()
-returns. This limits the total time that a record will be delayed prior to
-sending, the time to await acknowledgement from the broker (if expected), and
-the time allowed for retriable send failures. The producer may report failure
-to send a record earlier than this config if either an unrecoverable error is
-encountered, the retries have been exhausted, or the record is added to a batch
-which reached an earlier delivery expiration deadline. The value of this config
-should be greater than or equal to the sum of request.timeout.ms and linger.ms.
+An upper bound on the time to report success or failure after a call to
+`send()` returns. This limits the total time that a record will be delayed
+prior to sending, the time to await acknowledgement from the broker (if
+expected), and the time allowed for retriable send failures. The producer may
+report failure to send a record earlier than this config if either an
+unrecoverable error is encountered, the retries have been exhausted, or the
+record is added to a batch which reached an earlier delivery expiration
+deadline. The value of this config should be greater than or equal to the sum
+of `request.timeout.ms` and `linger.ms`.
 
 
 Type: int
@@ -5471,7 +5463,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*linger.ms*
+#linger.ms#
 -----------
 
 The producer groups together any records that arrive in between request
@@ -5479,17 +5471,17 @@ transmissions into a single batched request. Normally this occurs only under
 load when records arrive faster than they can be sent out. However in some
 circumstances the client may want to reduce the number of requests even under
 moderate load. This setting accomplishes this by adding a small amount of
-artificial delay—that is, rather than immediately sending out a record, the
-producer will wait for up to the given delay to allow other records to be sent
-so that the sends can be batched together. This can be thought of as analogous
-to Nagle's algorithm in TCP. This setting gives the upper bound on the delay
-for batching: once we get batch.size worth of records for a partition it will
-be sent immediately regardless of this setting, however if we have fewer than
-this many bytes accumulated for this partition we will 'linger' for the
-specified time waiting for more records to show up. This setting defaults to 0
-(i.e. no delay). Setting linger.ms=5, for example, would have the effect of
-reducing the number of requests sent but would add up to 5ms of latency to
-records sent in the absence of load.
+artificial delay&mdash;that is, rather than immediately sending out a record,
+the producer will wait for up to the given delay to allow other records to be
+sent so that the sends can be batched together. This can be thought of as
+analogous to Nagle's algorithm in TCP. This setting gives the upper bound on
+the delay for batching: once we get `batch.size` worth of records for a
+partition it will be sent immediately regardless of this setting, however if we
+have fewer than this many bytes accumulated for this partition we will 'linger'
+for the specified time waiting for more records to show up. This setting
+defaults to 0 (i.e. no delay). Setting `linger.ms=5`, for example, would have
+the effect of reducing the number of requests sent but would add up to 5ms of
+latency to records sent in the absence of load.
 
 
 Type: long
@@ -5498,16 +5490,16 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*max.block.ms*
+#max.block.ms#
 --------------
 
-The configuration controls how long the KafkaProducer's send(),
-partitionsFor(), initTransactions(), sendOffsetsToTransaction(),
-commitTransaction() and abortTransaction() methods will block. For send() this
-timeout bounds the total time waiting for both metadata fetch and buffer
+The configuration controls how long the `KafkaProducer`'s `send()`,
+`partitionsFor()`, `initTransactions()`, `sendOffsetsToTransaction()`,
+`commitTransaction()` and `abortTransaction()` methods will block. For `send()`
+this timeout bounds the total time waiting for both metadata fetch and buffer
 allocation (blocking in the user-supplied serializers or partitioner is not
-counted against this timeout). For partitionsFor() this timeout bounds the time
-spent waiting for metadata if it is unavailable. The transaction-related
+counted against this timeout). For `partitionsFor()` this timeout bounds the
+time spent waiting for metadata if it is unavailable. The transaction-related
 methods always block, but may timeout if the transaction coordinator could not
 be discovered or did not respond within the timeout.
 
@@ -5518,7 +5510,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*max.request.size*
+#max.request.size#
 ------------------
 
 The maximum size of a request in bytes. This setting will limit the number of
@@ -5534,31 +5526,25 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*partitioner.class*
+#partitioner.class#
 -------------------
 
 Determines which partition to send a record to when records are produced.
-Available options are:
+Available options are:If not set, the default partitioning logic is
+used. This strategy send records to a partition until at least batch.size bytes
+is produced to the partition. It works with the strategy:<ol>If no
+partition is specified but a key is present, choose a partition based on a hash
+of the key.If no partition or key is present, choose the sticky
+partition that changes when at least batch.size bytes are produced to the
+partition.</ol>`org.apache.kafka.clients.producer.RoundRobinPartitioner`:
+A partitioning strategy where each record in a series of consecutive records is
+sent to a different partition, regardless of whether the 'key' is provided or
+not, until partitions run out and the process starts over again. Note: There's
+a known issue that will cause uneven distribution when a new batch is created.
+See KAFKA-9965 for more detail.Implementing the
+`org.apache.kafka.clients.producer.Partitioner` interface allows you to plug in
+a custom partitioner.
 
-
-o If not set, the default partitioning logic is used. This
-strategy send records to a partition until at least batch.size
-bytes is produced to the partition. It works with the strategy:
-1. If no partition is specified but a key is present, choose a
-partition based on a hash of the key.
-2. If no partition or key is present, choose the sticky
-partition that changes when at least batch.size bytes are
-produced to the partition.
-o org.apache.kafka.clients.producer.RoundRobinPartitioner: A
-partitioning strategy where each record in a series of
-consecutive records is sent to a different partition, regardless
-of whether the 'key' is provided or not, until partitions run
-out and the process starts over again. Note: There's a known
-issue that will cause uneven distribution when a new batch is
-created. See KAFKA-9965 for more detail.
-
-Implementing the org.apache.kafka.clients.producer.Partitioner
-interface allows you to plug in a custom partitioner.
 
 Type: class
 Default: null
@@ -5566,7 +5552,7 @@ Valid Values:
 Importance: medium
 
 
-*partitioner.ignore.keys*
+#partitioner.ignore.keys#
 -------------------------
 
 When set to 'true' the producer won't use record keys to choose a partition. If
@@ -5581,7 +5567,7 @@ Valid Values:
 Importance: medium
 
 
-*receive.buffer.bytes*
+#receive.buffer.bytes#
 ----------------------
 
 The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the
@@ -5594,13 +5580,13 @@ Valid Values: [-1,...]
 Importance: medium
 
 
-*request.timeout.ms*
+#request.timeout.ms#
 --------------------
 
 The configuration controls the maximum amount of time the client will wait for
 the response of a request. If the response is not received before the timeout
 elapses the client will resend the request if necessary or fail the request if
-retries are exhausted.  This should be larger than replica.lag.time.max.ms (a
+retries are exhausted. This should be larger than `replica.lag.time.max.ms` (a
 broker configuration) to reduce the possibility of message duplication due to
 unnecessary producer retries.
 
@@ -5611,7 +5597,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*sasl.client.callback.handler.class*
+#sasl.client.callback.handler.class#
 ------------------------------------
 
 The fully qualified name of a SASL client callback handler class that
@@ -5624,17 +5610,16 @@ Valid Values:
 Importance: medium
 
 
-*sasl.jaas.config*
+#sasl.jaas.config#
 ------------------
 
 JAAS login context parameters for SASL connections in the format used by JAAS
-configuration files. JAAS configuration file format is described here
-<https://docs.oracle.com/javase/8/docs/technotes/
-guides/security/jgss/tutorials/LoginConfigFile.html>. The format for the value
-is: loginModuleClass controlFlag (optionName=optionValue)*;. For brokers, the
-config must be prefixed with listener prefix and SASL mechanism name in
-lower-case.  For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;
+configuration files. JAAS configuration file format is described . The format
+for the value is: `loginModuleClass controlFlag (optionName=optionValue)#;`.
+For brokers, the config must be prefixed with listener prefix and SASL
+mechanism name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule
+required;
 
 
 Type: password
@@ -5643,7 +5628,7 @@ Valid Values:
 Importance: medium
 
 
-*sasl.kerberos.service.name*
+#sasl.kerberos.service.name#
 ----------------------------
 
 The Kerberos principal name that Kafka runs as. This can be defined either in
@@ -5656,14 +5641,14 @@ Valid Values:
 Importance: medium
 
 
-*sasl.login.callback.handler.class*
+#sasl.login.callback.handler.class#
 -----------------------------------
 
 The fully qualified name of a SASL login callback handler class that implements
 the AuthenticateCallbackHandler interface. For brokers, login callback handler
 config must be prefixed with listener prefix and SASL mechanism name in
-lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
+lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
 
 
 Type: class
@@ -5672,13 +5657,13 @@ Valid Values:
 Importance: medium
 
 
-*sasl.login.class*
+#sasl.login.class#
 ------------------
 
 The fully qualified name of a class that implements the Login interface. For
 brokers, login config must be prefixed with listener prefix and SASL mechanism
-name in lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.class=com.example.CustomScramLogin
+name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.class=com.example.CustomScramLogin
 
 
 Type: class
@@ -5687,7 +5672,7 @@ Valid Values:
 Importance: medium
 
 
-*sasl.mechanism*
+#sasl.mechanism#
 ----------------
 
 SASL mechanism used for client connections. This may be any mechanism for which
@@ -5700,19 +5685,19 @@ Valid Values:
 Importance: medium
 
 
-*sasl.oauthbearer.jwks.endpoint.url*
+#sasl.oauthbearer.jwks.endpoint.url#
 ------------------------------------
 
-The OAuth/OIDC provider URL from which the provider's JWKS (JSON Web Key Set)
-can be retrieved. The URL can be HTTP(S)-based or file-based. If the URL is
-HTTP(S)-based, the JWKS data will be retrieved from the OAuth/OIDC provider via
-the configured URL on broker startup. All then-current keys will be cached on
-the broker for incoming requests. If an authentication request is received for
-a JWT that includes a "kid" header claim value that isn't yet in the cache, the
-JWKS endpoint will be queried again on demand. However, the broker polls the
-URL every sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the
-cache with any forthcoming keys before any JWT requests that include them are
-received. If the URL is file- based, the broker will load the JWKS file from a
+The OAuth/OIDC provider URL from which the provider's  can be retrieved. The
+URL can be HTTP(S)-based or file-based. If the URL is HTTP(S)-based, the JWKS
+data will be retrieved from the OAuth/OIDC provider via the configured URL on
+broker startup. All then-current keys will be cached on the broker for incoming
+requests. If an authentication request is received for a JWT that includes a
+"kid" header claim value that isn't yet in the cache, the JWKS endpoint will be
+queried again on demand. However, the broker polls the URL every
+sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the cache
+with any forthcoming keys before any JWT requests that include them are
+received. If the URL is file-based, the broker will load the JWKS file from a
 configured location on startup. In the event that the JWT includes a "kid"
 header value that isn't in the JWKS file, the broker will reject the JWT and
 authentication will fail.
@@ -5724,10 +5709,10 @@ Valid Values:
 Importance: medium
 
 
-*sasl.oauthbearer.token.endpoint.url*
+#sasl.oauthbearer.token.endpoint.url#
 -------------------------------------
 
-The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)- based, it
+The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)-based, it
 is the issuer's token endpoint URL to which requests will be made to login
 based on the configuration in sasl.jaas.config. If the URL is file-based, it
 specifies a file containing an access token (in JWT serialized form) issued by
@@ -5740,7 +5725,7 @@ Valid Values:
 Importance: medium
 
 
-*security.protocol*
+#security.protocol#
 -------------------
 
 Protocol used to communicate with brokers. Valid values are: PLAINTEXT, SSL,
@@ -5749,12 +5734,11 @@ SASL_PLAINTEXT, SASL_SSL.
 
 Type: string
 Default: PLAINTEXT
-Valid Values: (case insensitive) [SASL_SSL, PLAINTEXT, SSL,
-SASL_PLAINTEXT]
+Valid Values: (case insensitive) [SASL_SSL, PLAINTEXT, SSL, SASL_PLAINTEXT]
 Importance: medium
 
 
-*send.buffer.bytes*
+#send.buffer.bytes#
 -------------------
 
 The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the
@@ -5767,7 +5751,7 @@ Valid Values: [-1,...]
 Importance: medium
 
 
-*socket.connection.setup.timeout.max.ms*
+#socket.connection.setup.timeout.max.ms#
 ----------------------------------------
 
 The maximum amount of time the client will wait for the socket connection to be
@@ -5783,14 +5767,14 @@ Valid Values:
 Importance: medium
 
 
-*socket.connection.setup.timeout.ms*
+#socket.connection.setup.timeout.ms#
 ------------------------------------
 
 The amount of time the client will wait for the socket connection to be
 established. If the connection is not built before the timeout elapses, clients
 will close the socket channel. This value is the initial backoff value and will
 increase exponentially for each consecutive connection failure, up to the
-socket.connection.setup.timeout.max.ms value.
+`socket.connection.setup.timeout.max.ms` value.
 
 
 Type: long
@@ -5799,7 +5783,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.enabled.protocols*
+#ssl.enabled.protocols#
 -----------------------
 
 The list of protocols enabled for SSL connections. The default is
@@ -5816,10 +5800,10 @@ Valid Values:
 Importance: medium
 
 
-*ssl.keystore.type*
+#ssl.keystore.type#
 -------------------
 
-The file format of the key store file. This is optional for client.  The values
+The file format of the key store file. This is optional for client. The values
 currently supported by the default `ssl.engine.factory.class` are [JKS, PKCS12,
 PEM].
 
@@ -5830,11 +5814,11 @@ Valid Values:
 Importance: medium
 
 
-*ssl.protocol*
+#ssl.protocol#
 --------------
 
 The SSL protocol used to generate the SSLContext. The default is 'TLSv1.3' when
-running with Java 11 or newer, 'TLSv1.2' otherwise.  This value should be fine
+running with Java 11 or newer, 'TLSv1.2' otherwise. This value should be fine
 for most use cases. Allowed values in recent JVMs are 'TLSv1.2' and 'TLSv1.3'.
 'TLS', 'TLSv1.1', 'SSL', 'SSLv2' and 'SSLv3' may be supported in older JVMs,
 but their usage is discouraged due to known security vulnerabilities. With the
@@ -5850,7 +5834,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.provider*
+#ssl.provider#
 --------------
 
 The name of the security provider used for SSL connections. Default value is
@@ -5863,7 +5847,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.truststore.type*
+#ssl.truststore.type#
 ---------------------
 
 The file format of the trust store file. The values currently supported by the
@@ -5876,13 +5860,12 @@ Valid Values:
 Importance: medium
 
 
-*acks*
+#acks#
 ------
 
-The number of acknowledgments the producer requires the leader to
-have received before considering a request complete. This controls
-the durability of records that are sent. The following settings are
-allowed:
+The number of acknowledgments the producer requires the leader to have received
+before considering a request complete. This controls the  durability of records
+that are sent. The following settings are allowed:
 
 
 `acks=0`
@@ -5890,9 +5873,9 @@ allowed:
 If set to zero then the producer will not wait for any acknowledgment from the
 server at all. The record will be immediately added to the socket buffer and
 considered sent. No guarantee can be made that the server has received the
-record in this case, and the retries configuration will not take effect (as the
-client won't generally know of any failures). The offset given back for each
-record will always be set to -1.
+record in this case, and the `retries` configuration will not take effect (as
+the client won't generally know of any failures). The offset given back for
+each record will always be set to `-1`.
 
 `acks=1`
 
@@ -5906,11 +5889,11 @@ the followers have replicated it then the record will be lost.
 This means the leader will wait for the full set of in-sync replicas to
 acknowledge the record. This guarantees that the record will not be lost as
 long as at least one in-sync replica remains alive. This is the strongest
-available guarantee. This is equivalent to the `acks=-1` setting.
+available guarantee. This is equivalent to the acks=-1 setting.Note that
+enabling idempotence requires this config value to be 'all'. If conflicting
+configurations are set and idempotence is not explicitly enabled, idempotence
+is disabled.
 
-Note that enabling idempotence requires this config value to be
-'all'. If conflicting configurations are set and idempotence is not
-explicitly enabled, idempotence is disabled.
 
 Type: string
 Default: all
@@ -5918,13 +5901,13 @@ Valid Values: [all, -1, 0, 1]
 Importance: low
 
 
-*auto.include.jmx.reporter*
+#auto.include.jmx.reporter#
 ---------------------------
 
 Deprecated. Whether to automatically include JmxReporter even if it's not
-listed in metric.reporters. This configuration will be removed in Kafka 4.0,
-users should instead include org.apache.kafka.common.metrics.JmxReporter in
-metric.reporters in order to enable the JmxReporter.
+listed in `metric.reporters`. This configuration will be removed in Kafka 4.0,
+users should instead include `org.apache.kafka.common.metrics.JmxReporter` in
+`metric.reporters` in order to enable the JmxReporter.
 
 
 Type: boolean
@@ -5933,22 +5916,20 @@ Valid Values:
 Importance: low
 
 
-*enable.idempotence*
+#enable.idempotence#
 --------------------
 
 When set to 'true', the producer will ensure that exactly one copy of each
 message is written in the stream. If 'false', producer retries due to broker
 failures, etc., may write duplicates of the retried message in the stream. Note
-that enabling idempotence requires max.in.flight.requests.per.connection to be
-less than or equal to 5 (with message ordering preserved for any allowable
-value), retries to be greater than 0, and acks must be 'all'.
+that enabling idempotence requires `max.in.flight.requests.per.connection` to
+be less than or equal to 5 (with message ordering preserved for any allowable
+value), `retries` to be greater than 0, and `acks` must be 'all'. Idempotence
+is enabled by default if no conflicting configurations are set. If conflicting
+configurations are set and idempotence is not explicitly enabled, idempotence
+is disabled. If idempotence is explicitly enabled and conflicting
+configurations are set, a `ConfigException` is thrown.
 
-
-Idempotence is enabled by default if no conflicting configurations
-are set. If conflicting configurations are set and idempotence is
-not explicitly enabled, idempotence is disabled. If idempotence is
-explicitly enabled and conflicting configurations are set, a
-ConfigException is thrown.
 
 Type: boolean
 Default: true
@@ -5956,7 +5937,7 @@ Valid Values:
 Importance: low
 
 
-*enable.metrics.push*
+#enable.metrics.push#
 ---------------------
 
 Whether to enable pushing of client metrics to the cluster, if the cluster has
@@ -5969,11 +5950,11 @@ Valid Values:
 Importance: low
 
 
-*interceptor.classes*
+#interceptor.classes#
 ---------------------
 
 A list of classes to use as interceptors. Implementing the
-org.apache.kafka.clients.producer.ProducerInterceptor interface allows you to
+`org.apache.kafka.clients.producer.ProducerInterceptor` interface allows you to
 intercept (and possibly mutate) the records received by the producer before
 they are published to the Kafka cluster. By default, there are no interceptors.
 
@@ -5984,18 +5965,18 @@ Valid Values: non-null string
 Importance: low
 
 
-*max.in.flight.requests.per.connection*
+#max.in.flight.requests.per.connection#
 ---------------------------------------
 
 The maximum number of unacknowledged requests the client will send on a single
 connection before blocking. Note that if this configuration is set to be
-greater than 1 and enable.idempotence is set to false, there is a risk of
+greater than 1 and `enable.idempotence` is set to false, there is a risk of
 message reordering after a failed send due to retries (i.e., if retries are
-enabled); if retries are disabled or if enable.idempotence is set to true,
+enabled);  if retries are disabled or if `enable.idempotence` is set to true,
 ordering will be preserved. Additionally, enabling idempotence requires the
-value of this configuration to be less than or equal to 5.
-If conflicting configurations are set and idempotence is not explicitly
-enabled, idempotence is disabled.
+value of this configuration to be less than or equal to 5. If conflicting
+configurations are set and idempotence is not explicitly enabled, idempotence
+is disabled.
 
 
 Type: int
@@ -6004,7 +5985,7 @@ Valid Values: [1,...]
 Importance: low
 
 
-*metadata.max.age.ms*
+#metadata.max.age.ms#
 ---------------------
 
 The period of time in milliseconds after which we force a refresh of metadata
@@ -6018,7 +5999,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*metadata.max.idle.ms*
+#metadata.max.idle.ms#
 ----------------------
 
 Controls how long the producer will cache metadata for a topic that's idle. If
@@ -6033,19 +6014,19 @@ Valid Values: [5000,...]
 Importance: low
 
 
-*metadata.recovery.strategy*
+#metadata.recovery.strategy#
 ----------------------------
 
 Controls how the client recovers when none of the brokers known to it is
-available. If set to none, the client fails. If set to rebootstrap, the client
-repeats the bootstrap process using bootstrap.servers. Rebootstrapping is
-useful when a client communicates with brokers so infrequently that the set of
-brokers may change entirely before the client refreshes metadata. Metadata
+available. If set to `none`, the client fails. If set to `rebootstrap`, the
+client repeats the bootstrap process using `bootstrap.servers`. Rebootstrapping
+is useful when a client communicates with brokers so infrequently that the set
+of brokers may change entirely before the client refreshes metadata. Metadata
 recovery is triggered when all last-known brokers appear unavailable
 simultaneously. Brokers appear unavailable when disconnected and no current
-retry attempt is in-progress. Consider increasing reconnect.backoff.ms and
-reconnect.backoff.max.ms and decreasing socket.connection.setup.timeout.ms and
-socket.connection.setup.timeout.max.ms for the client.
+retry attempt is in-progress. Consider increasing `reconnect.backoff.ms` and
+`reconnect.backoff.max.ms` and decreasing `socket.connection.setup.timeout.ms`
+and `socket.connection.setup.timeout.max.ms` for the client.
 
 
 Type: string
@@ -6054,13 +6035,13 @@ Valid Values: (case insensitive) [REBOOTSTRAP, NONE]
 Importance: low
 
 
-*metric.reporters*
+#metric.reporters#
 ------------------
 
 A list of classes to use as metrics reporters. Implementing the
-org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in
-classes that will be notified of new metric creation.  The JmxReporter is
-always included to register JMX statistics.
+`org.apache.kafka.common.metrics.MetricsReporter` interface allows plugging in
+classes that will be notified of new metric creation. The JmxReporter is always
+included to register JMX statistics.
 
 
 Type: list
@@ -6069,16 +6050,19 @@ Valid Values: non-null string
 Importance: low
 
 
-*metrics.num.samples*
+#metrics.num.samples#
 ---------------------
 
 The number of samples maintained to compute metrics.
 
 
-Type: int Default: 2 Valid Values: [1,...] Importance: low
+Type: int
+Default: 2
+Valid Values: [1,...]
+Importance: low
 
 
-*metrics.recording.level*
+#metrics.recording.level#
 -------------------------
 
 The highest recording level for metrics.
@@ -6090,7 +6074,7 @@ Valid Values: [INFO, DEBUG, TRACE]
 Importance: low
 
 
-*metrics.sample.window.ms*
+#metrics.sample.window.ms#
 --------------------------
 
 The window of time a metrics sample is computed over.
@@ -6102,7 +6086,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*partitioner.adaptive.partitioning.enable*
+#partitioner.adaptive.partitioning.enable#
 ------------------------------------------
 
 When set to 'true', the producer will try to adapt to broker performance and
@@ -6117,14 +6101,14 @@ Valid Values:
 Importance: low
 
 
-*partitioner.availability.timeout.ms*
+#partitioner.availability.timeout.ms#
 -------------------------------------
 
 If a broker cannot process produce requests from a partition for
-partitioner.availability.timeout.ms time, the partitioner treats that partition
-as not available. If the value is 0, this logic is disabled. Note: this setting
-has no effect if a custom partitioner is used or
-partitioner.adaptive.partitioning.enable is set to 'false'
+`partitioner.availability.timeout.ms` time, the partitioner treats that
+partition as not available.  If the value is 0, this logic is disabled. Note:
+this setting has no effect if a custom partitioner is used or
+`partitioner.adaptive.partitioning.enable` is set to 'false'
 
 
 Type: long
@@ -6133,7 +6117,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*reconnect.backoff.max.ms*
+#reconnect.backoff.max.ms#
 --------------------------
 
 The maximum amount of time in milliseconds to wait when reconnecting to a
@@ -6149,14 +6133,14 @@ Valid Values: [0,...]
 Importance: low
 
 
-*reconnect.backoff.ms*
+#reconnect.backoff.ms#
 ----------------------
 
 The base amount of time to wait before attempting to reconnect to a given host.
 This avoids repeatedly connecting to a host in a tight loop. This backoff
 applies to all connection attempts by the client to a broker. This value is the
 initial backoff value and will increase exponentially for each consecutive
-connection failure, up to the reconnect.backoff.max.ms value.
+connection failure, up to the `reconnect.backoff.max.ms` value.
 
 
 Type: long
@@ -6165,7 +6149,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*retry.backoff.max.ms*
+#retry.backoff.max.ms#
 ----------------------
 
 The maximum amount of time in milliseconds to wait when retrying a request to
@@ -6173,9 +6157,9 @@ the broker that has repeatedly failed. If provided, the backoff per client will
 increase exponentially for each failed request, up to this maximum. To prevent
 all clients from being synchronized upon retry, a randomized jitter with a
 factor of 0.2 will be applied to the backoff, resulting in the backoff falling
-within a range between 20% below and 20% above the computed value.  If
-retry.backoff.ms is set to be higher than retry.backoff.max.ms, then
-retry.backoff.max.ms will be used as a constant backoff from the beginning
+within a range between 20% below and 20% above the computed value. If
+`retry.backoff.ms` is set to be higher than `retry.backoff.max.ms`, then
+`retry.backoff.max.ms` will be used as a constant backoff from the beginning
 without any exponential increase
 
 
@@ -6185,14 +6169,14 @@ Valid Values: [0,...]
 Importance: low
 
 
-*retry.backoff.ms*
+#retry.backoff.ms#
 ------------------
 
 The amount of time to wait before attempting to retry a failed request to a
 given topic partition. This avoids repeatedly sending requests in a tight loop
 under some failure scenarios. This value is the initial backoff value and will
-increase exponentially for each failed request, up to the retry.backoff.max.ms
-value.
+increase exponentially for each failed request, up to the
+`retry.backoff.max.ms` value.
 
 
 Type: long
@@ -6201,7 +6185,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*sasl.kerberos.kinit.cmd*
+#sasl.kerberos.kinit.cmd#
 -------------------------
 
 Kerberos kinit command path.
@@ -6213,7 +6197,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.min.time.before.relogin*
+#sasl.kerberos.min.time.before.relogin#
 ---------------------------------------
 
 Login thread sleep time between refresh attempts.
@@ -6225,7 +6209,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.ticket.renew.jitter*
+#sasl.kerberos.ticket.renew.jitter#
 -----------------------------------
 
 Percentage of random jitter added to the renewal time.
@@ -6237,7 +6221,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.ticket.renew.window.factor*
+#sasl.kerberos.ticket.renew.window.factor#
 ------------------------------------------
 
 Login thread will sleep until the specified window factor of time from last
@@ -6251,7 +6235,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.connect.timeout.ms*
+#sasl.login.connect.timeout.ms#
 -------------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -6264,7 +6248,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.read.timeout.ms*
+#sasl.login.read.timeout.ms#
 ----------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -6277,14 +6261,14 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.refresh.buffer.seconds*
+#sasl.login.refresh.buffer.seconds#
 -----------------------------------
 
 The amount of buffer time before credential expiration to maintain when
 refreshing a credential, in seconds. If a refresh would otherwise occur closer
 to expiration than the number of buffer seconds then the refresh will be moved
 up to maintain as much of the buffer time as possible. Legal values are between
-0 and 3600 (1 hour); a default value of 300 (5 minutes) is used if no value is
+0 and 3600 (1 hour); a default value of  300 (5 minutes) is used if no value is
 specified. This value and sasl.login.refresh.min.period.seconds are both
 ignored if their sum exceeds the remaining lifetime of a credential. Currently
 applies only to OAUTHBEARER.
@@ -6296,14 +6280,14 @@ Valid Values: [0,...,3600]
 Importance: low
 
 
-*sasl.login.refresh.min.period.seconds*
+#sasl.login.refresh.min.period.seconds#
 ---------------------------------------
 
 The desired minimum time for the login refresh thread to wait before refreshing
 a credential, in seconds. Legal values are between 0 and 900 (15 minutes); a
-default value of 60 (1 minute) is used if no value is specified. This value and
-sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds the
-remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
+default value of 60 (1 minute) is used if no value is specified.  This value
+and  sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds
+the remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
 
 
 Type: short
@@ -6312,7 +6296,7 @@ Valid Values: [0,...,900]
 Importance: low
 
 
-*sasl.login.refresh.window.factor*
+#sasl.login.refresh.window.factor#
 ----------------------------------
 
 Login refresh thread will sleep until the specified window factor relative to
@@ -6328,11 +6312,11 @@ Valid Values: [0.5,...,1.0]
 Importance: low
 
 
-*sasl.login.refresh.window.jitter*
+#sasl.login.refresh.window.jitter#
 ----------------------------------
 
 The maximum amount of random jitter relative to the credential's lifetime that
-is added to the login refresh thread's sleep time.  Legal values are between 0
+is added to the login refresh thread's sleep time. Legal values are between 0
 and 0.25 (25%) inclusive; a default value of 0.05 (5%) is used if no value is
 specified. Currently applies only to OAUTHBEARER.
 
@@ -6343,7 +6327,7 @@ Valid Values: [0.0,...,0.25]
 Importance: low
 
 
-*sasl.login.retry.backoff.max.ms*
+#sasl.login.retry.backoff.max.ms#
 ---------------------------------
 
 The (optional) value in milliseconds for the maximum wait between login
@@ -6360,7 +6344,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.retry.backoff.ms*
+#sasl.login.retry.backoff.ms#
 -----------------------------
 
 The (optional) value in milliseconds for the initial wait between login
@@ -6377,7 +6361,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.clock.skew.seconds*
+#sasl.oauthbearer.clock.skew.seconds#
 -------------------------------------
 
 The (optional) value in seconds to allow for differences between the time of
@@ -6390,14 +6374,14 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.expected.audience*
+#sasl.oauthbearer.expected.audience#
 ------------------------------------
 
 The (optional) comma-delimited setting for the broker to use to verify that the
-JWT was issued for one of the expected audiences.  The JWT will be inspected
-for the standard OAuth "aud" claim and if this value is set, the broker will
-match the value from JWT's "aud" claim to see if there is an exact match. If
-there is no match, the broker will reject the JWT and authentication will fail.
+JWT was issued for one of the expected audiences. The JWT will be inspected for
+the standard OAuth "aud" claim and if this value is set, the broker will match
+the value from JWT's "aud" claim  to see if there is an exact match. If there
+is no match, the broker will reject the JWT and authentication will fail.
 
 
 Type: list
@@ -6406,7 +6390,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.expected.issuer*
+#sasl.oauthbearer.expected.issuer#
 ----------------------------------
 
 The (optional) setting for the broker to use to verify that the JWT was created
@@ -6422,7 +6406,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.refresh.ms*
+#sasl.oauthbearer.jwks.endpoint.refresh.ms#
 -------------------------------------------
 
 The (optional) value in milliseconds for the broker to wait between refreshing
@@ -6436,7 +6420,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms#
 -----------------------------------------------------
 
 The (optional) value in milliseconds for the maximum wait between attempts to
@@ -6453,7 +6437,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.ms#
 -------------------------------------------------
 
 The (optional) value in milliseconds for the initial wait between JWKS (JSON
@@ -6470,7 +6454,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.scope.claim.name*
+#sasl.oauthbearer.scope.claim.name#
 -----------------------------------
 
 The OAuth claim for the scope is often named "scope", but this (optional)
@@ -6485,7 +6469,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.sub.claim.name*
+#sasl.oauthbearer.sub.claim.name#
 ---------------------------------
 
 The OAuth claim for the subject is often named "sub", but this (optional)
@@ -6500,12 +6484,12 @@ Valid Values:
 Importance: low
 
 
-*security.providers*
+#security.providers#
 --------------------
 
 A list of configurable creator classes each returning a provider implementing
 security algorithms. These classes should implement the
-org.apache.kafka.common.security.auth.SecurityProviderCreator interface.
+`org.apache.kafka.common.security.auth.SecurityProviderCreator` interface.
 
 
 Type: string
@@ -6514,7 +6498,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.cipher.suites*
+#ssl.cipher.suites#
 -------------------
 
 A list of cipher suites. This is a named combination of authentication,
@@ -6529,7 +6513,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.endpoint.identification.algorithm*
+#ssl.endpoint.identification.algorithm#
 ---------------------------------------
 
 The endpoint identification algorithm to validate server hostname using server
@@ -6542,12 +6526,12 @@ Valid Values:
 Importance: low
 
 
-*ssl.engine.factory.class*
+#ssl.engine.factory.class#
 --------------------------
 
 The class of type org.apache.kafka.common.security.auth.SslEngineFactory to
 provide SSLEngine objects. Default value is
-org.apache.kafka.common.security.ssl.DefaultSslEngineFactory.  Alternatively,
+org.apache.kafka.common.security.ssl.DefaultSslEngineFactory. Alternatively,
 setting this to
 org.apache.kafka.common.security.ssl.CommonNameLoggingSslEngineFactory will log
 the common name of expired SSL certificates used by clients to authenticate at
@@ -6565,11 +6549,11 @@ Valid Values:
 Importance: low
 
 
-*ssl.keymanager.algorithm*
+#ssl.keymanager.algorithm#
 --------------------------
 
-The algorithm used by key manager factory for SSL connections.  Default value
-is the key manager factory algorithm configured for the Java Virtual Machine.
+The algorithm used by key manager factory for SSL connections. Default value is
+the key manager factory algorithm configured for the Java Virtual Machine.
 
 
 Type: string
@@ -6578,7 +6562,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.secure.random.implementation*
+#ssl.secure.random.implementation#
 ----------------------------------
 
 The SecureRandom PRNG implementation to use for SSL cryptography operations.
@@ -6590,10 +6574,10 @@ Valid Values:
 Importance: low
 
 
-*ssl.trustmanager.algorithm*
+#ssl.trustmanager.algorithm#
 ----------------------------
 
-The algorithm used by trust manager factory for SSL connections.  Default value
+The algorithm used by trust manager factory for SSL connections. Default value
 is the trust manager factory algorithm configured for the Java Virtual Machine.
 
 
@@ -6603,14 +6587,14 @@ Valid Values:
 Importance: low
 
 
-*transaction.timeout.ms*
+#transaction.timeout.ms#
 ------------------------
 
 The maximum amount of time in milliseconds that a transaction will remain open
 before the coordinator proactively aborts it. The start of the transaction is
 set at the time that the first partition is added to it. If this value is
-larger than the transaction.max.timeout.ms setting in the broker, the request
-will fail with a InvalidTxnTimeoutException error.
+larger than the `transaction.max.timeout.ms` setting in the broker, the request
+will fail with a `InvalidTxnTimeoutException` error.
 
 
 Type: int
@@ -6619,7 +6603,7 @@ Valid Values:
 Importance: low
 
 
-*transactional.id*
+#transactional.id#
 ------------------
 
 The TransactionalId to use for transactional delivery. This enables reliability
@@ -6627,11 +6611,11 @@ semantics which span multiple producer sessions since it allows the client to
 guarantee that transactions using the same TransactionalId have been completed
 prior to starting any new transactions. If no TransactionalId is provided, then
 the producer is limited to idempotent delivery. If a TransactionalId is
-configured, enable.idempotence is implied. By default the TransactionId is not
-configured, which means transactions cannot be used. Note that, by default,
+configured, `enable.idempotence` is implied. By default the TransactionId is
+not configured, which means transactions cannot be used. Note that, by default,
 transactions require a cluster of at least three brokers which is the
 recommended setting for production; for development you can change this, by
-adjusting broker setting transaction.state.log.replication.factor.
+adjusting broker setting `transaction.state.log.replication.factor`.
 
 
 Type: string
@@ -6640,16 +6624,14 @@ Valid Values: non-empty string
 Importance: low
 
 
-**Consumer Configs**
-
-Below is the configuration for the consumer:
+##Consumer Configs##
 
 
-*key.deserializer*
+#key.deserializer#
 ------------------
 
 Deserializer class for key that implements the
-org.apache.kafka.common.serialization.Deserializer interface.
+`org.apache.kafka.common.serialization.Deserializer` interface.
 
 
 Type: class
@@ -6658,11 +6640,11 @@ Valid Values:
 Importance: high
 
 
-*value.deserializer*
+#value.deserializer#
 --------------------
 
 Deserializer class for value that implements the
-org.apache.kafka.common.serialization.Deserializer interface.
+`org.apache.kafka.common.serialization.Deserializer` interface.
 
 
 Type: class
@@ -6671,17 +6653,17 @@ Valid Values:
 Importance: high
 
 
-*bootstrap.servers*
+#bootstrap.servers#
 -------------------
 
 A list of host/port pairs to use for establishing the initial connection to the
 Kafka cluster. The client will make use of all servers irrespective of which
-servers are specified here for bootstrapping—this list only impacts the initial
-hosts used to discover the full set of servers. This list should be in the form
-host1:port1,host2:port2,.... Since these servers are just used for the initial
-connection to discover the full cluster membership (which may change
-dynamically), this list need not contain the full set of servers (you may want
-more than one, though, in case a server is down).
+servers are specified here for bootstrapping&mdash;this list only impacts the
+initial hosts used to discover the full set of servers. This list should be in
+the form `host1:port1,host2:port2,...`. Since these servers are just used for
+the initial connection to discover the full cluster membership (which may
+change dynamically), this list need not contain the full set of servers (you
+may want more than one, though, in case a server is down).
 
 
 Type: list
@@ -6690,7 +6672,7 @@ Valid Values: non-null string
 Importance: high
 
 
-*fetch.min.bytes*
+#fetch.min.bytes#
 -----------------
 
 The minimum amount of data the server should return for a fetch request. If
@@ -6709,12 +6691,12 @@ Valid Values: [0,...]
 Importance: high
 
 
-*group.id*
+#group.id#
 ----------
 
 A unique string that identifies the consumer group this consumer belongs to.
 This property is required if the consumer uses either the group management
-functionality by using subscribe(topic) or the Kafka-based offset management
+functionality by using `subscribe(topic)` or the Kafka-based offset management
 strategy.
 
 
@@ -6724,7 +6706,7 @@ Valid Values:
 Importance: high
 
 
-*group.protocol*
+#group.protocol#
 ----------------
 
 The group protocol consumer should use. We currently support "classic" or
@@ -6738,14 +6720,14 @@ Valid Values: (case insensitive) [CONSUMER, CLASSIC]
 Importance: high
 
 
-*heartbeat.interval.ms*
+#heartbeat.interval.ms#
 -----------------------
 
 The expected time between heartbeats to the consumer coordinator when using
 Kafka's group management facilities. Heartbeats are used to ensure that the
 consumer's session stays active and to facilitate rebalancing when new
 consumers join or leave the group. The value must be set lower than
-session.timeout.ms, but typically should be set no higher than 1/3 of that
+`session.timeout.ms`, but typically should be set no higher than 1/3 of that
 value. It can be adjusted even lower to control the expected time for normal
 rebalances.
 
@@ -6756,15 +6738,15 @@ Valid Values:
 Importance: high
 
 
-*max.partition.fetch.bytes*
+#max.partition.fetch.bytes#
 ---------------------------
 
-The maximum amount of data per-partition the server will return.  Records are
+The maximum amount of data per-partition the server will return. Records are
 fetched in batches by the consumer. If the first record batch in the first
 non-empty partition of the fetch is larger than this limit, the batch will
 still be returned to ensure that the consumer can make progress. The maximum
-record batch size accepted by the broker is defined via message.max.bytes
-(broker config) or max.message.bytes (topic config). See fetch.max.bytes for
+record batch size accepted by the broker is defined via `message.max.bytes`
+(broker config) or `max.message.bytes` (topic config). See fetch.max.bytes for
 limiting the consumer request size.
 
 
@@ -6774,7 +6756,7 @@ Valid Values: [0,...]
 Importance: high
 
 
-*session.timeout.ms*
+#session.timeout.ms#
 --------------------
 
 The timeout used to detect client failures when using Kafka's group management
@@ -6782,8 +6764,8 @@ facility. The client sends periodic heartbeats to indicate its liveness to the
 broker. If no heartbeats are received by the broker before the expiration of
 this session timeout, then the broker will remove this client from the group
 and initiate a rebalance. Note that the value must be in the allowable range as
-configured in the broker configuration by group.min.session.timeout.ms and
-group.max.session.timeout.ms.
+configured in the broker configuration by `group.min.session.timeout.ms` and
+`group.max.session.timeout.ms`.
 
 
 Type: int
@@ -6792,7 +6774,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.key.password*
+#ssl.key.password#
 ------------------
 
 The password of the private key in the key store file or the PEM key specified
@@ -6805,10 +6787,10 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.certificate.chain*
+#ssl.keystore.certificate.chain#
 --------------------------------
 
-Certificate chain in the format specified by 'ssl.keystore.type'.  Default SSL
+Certificate chain in the format specified by 'ssl.keystore.type'. Default SSL
 engine factory supports only PEM format with a list of X.509 certificates
 
 
@@ -6818,7 +6800,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.key*
+#ssl.keystore.key#
 ------------------
 
 Private key in the format specified by 'ssl.keystore.type'. Default SSL engine
@@ -6832,7 +6814,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.location*
+#ssl.keystore.location#
 -----------------------
 
 The location of the key store file. This is optional for client and can be used
@@ -6845,7 +6827,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.keystore.password*
+#ssl.keystore.password#
 -----------------------
 
 The store password for the key store file. This is optional for client and only
@@ -6859,7 +6841,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.certificates*
+#ssl.truststore.certificates#
 -----------------------------
 
 Trusted certificates in the format specified by 'ssl.truststore.type'. Default
@@ -6872,7 +6854,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.location*
+#ssl.truststore.location#
 -------------------------
 
 The location of the trust store file.
@@ -6884,7 +6866,7 @@ Valid Values:
 Importance: high
 
 
-*ssl.truststore.password*
+#ssl.truststore.password#
 -------------------------
 
 The password for the trust store file. If a password is not set, trust store
@@ -6898,7 +6880,7 @@ Valid Values:
 Importance: high
 
 
-*allow.auto.create.topics*
+#allow.auto.create.topics#
 --------------------------
 
 Allow automatic topic creation on the broker when subscribing to or assigning a
@@ -6913,27 +6895,20 @@ Valid Values:
 Importance: medium
 
 
-*auto.offset.reset*
+#auto.offset.reset#
 -------------------
 
 What to do when there is no initial offset in Kafka or if the current offset
 does not exist any more on the server (e.g. because that data has been
-deleted):
+deleted): earliest: automatically reset the offset to the earliest
+offsetlatest: automatically reset the offset to the latest
+offsetnone: throw exception to the consumer if no previous offset is
+found for the consumer's groupanything else: throw exception to the
+consumer.Note that altering partition numbers while setting this
+config to latest may cause message delivery loss since producers could start to
+send messages to newly added partitions (i.e. no initial offsets exist yet)
+before consumers reset their offsets.
 
-
-o earliest: automatically reset the offset to the earliest offset
-
-o latest: automatically reset the offset to the latest offset
-
-o none: throw exception to the consumer if no previous offset is
-        found for the consumer's group
-
-o anything else: throw exception to the consumer.
-
-Note that altering partition numbers while setting this config to
-latest may cause message delivery loss since producers could start
-to send messages to newly added partitions (i.e. no initial offsets
-exist yet) before consumers reset their offsets.
 
 Type: string
 Default: latest
@@ -6941,27 +6916,26 @@ Valid Values: [latest, earliest, none]
 Importance: medium
 
 
-*client.dns.lookup*
+#client.dns.lookup#
 -------------------
 
-Controls how the client uses DNS lookups. If set to use_all_dns_ips, connect to
-each returned IP address in sequence until a successful connection is
+Controls how the client uses DNS lookups. If set to `use_all_dns_ips`, connect
+to each returned IP address in sequence until a successful connection is
 established. After a disconnection, the next IP is used. Once all IPs have been
 used once, the client resolves the IP(s) from the hostname again (both the JVM
 and the OS cache DNS name lookups, however). If set to
-resolve_canonical_bootstrap_servers_only, resolve each bootstrap address into a
-list of canonical names. After the bootstrap phase, this behaves the same as
-use_all_dns_ips.
+`resolve_canonical_bootstrap_servers_only`, resolve each bootstrap address into
+a list of canonical names. After the bootstrap phase, this behaves the same as
+`use_all_dns_ips`.
 
 
 Type: string
 Default: use_all_dns_ips
-Valid Values: [use_all_dns_ips,
-resolve_canonical_bootstrap_servers_only]
+Valid Values: [use_all_dns_ips, resolve_canonical_bootstrap_servers_only]
 Importance: medium
 
 
-*connections.max.idle.ms*
+#connections.max.idle.ms#
 -------------------------
 
 Close idle connections after the number of milliseconds specified by this
@@ -6974,12 +6948,12 @@ Valid Values:
 Importance: medium
 
 
-*default.api.timeout.ms*
+#default.api.timeout.ms#
 ------------------------
 
 Specifies the timeout (in milliseconds) for client APIs. This configuration is
 used as the default timeout for all client operations that do not specify a
-timeout parameter.
+`timeout` parameter.
 
 
 Type: int
@@ -6988,7 +6962,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*enable.auto.commit*
+#enable.auto.commit#
 --------------------
 
 If true the consumer's offset will be periodically committed in the background.
@@ -7000,7 +6974,7 @@ Valid Values:
 Importance: medium
 
 
-*exclude.internal.topics*
+#exclude.internal.topics#
 -------------------------
 
 Whether internal topics matching a subscribed pattern should be excluded from
@@ -7014,7 +6988,7 @@ Valid Values:
 Importance: medium
 
 
-*fetch.max.bytes*
+#fetch.max.bytes#
 -----------------
 
 The maximum amount of data the server should return for a fetch request.
@@ -7022,8 +6996,8 @@ Records are fetched in batches by the consumer, and if the first record batch
 in the first non-empty partition of the fetch is larger than this value, the
 record batch will still be returned to ensure that the consumer can make
 progress. As such, this is not a absolute maximum. The maximum record batch
-size accepted by the broker is defined via message.max.bytes (broker config) or
-max.message.bytes (topic config). Note that the consumer performs multiple
+size accepted by the broker is defined via `message.max.bytes` (broker config)
+or `max.message.bytes` (topic config). Note that the consumer performs multiple
 fetches in parallel.
 
 
@@ -7033,7 +7007,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*group.instance.id*
+#group.instance.id#
 -------------------
 
 A unique identifier of the consumer instance provided by the end user. Only
@@ -7051,12 +7025,12 @@ Valid Values: non-empty string
 Importance: medium
 
 
-*group.remote.assignor*
+#group.remote.assignor#
 -----------------------
 
 The server-side assignor to use. If no assignor is specified, the group
-coordinator will pick one. This configuration is applied only if group.protocol
-is set to "consumer".
+coordinator will pick one. This configuration is applied only if
+`group.protocol` is set to "consumer".
 
 
 Type: string
@@ -7065,27 +7039,23 @@ Valid Values:
 Importance: medium
 
 
-*isolation.level*
+#isolation.level#
 -----------------
 
 Controls how to read messages written transactionally. If set to
-read_committed, consumer.poll() will only return transactional messages which
-have been committed. If set to read_uncommitted (the default), consumer.poll()
-will return all messages, even transactional messages which have been aborted.
-Non-transactional messages will be returned unconditionally in either mode.
+`read_committed`, consumer.poll() will only return transactional messages which
+have been committed. If set to `read_uncommitted` (the default),
+consumer.poll() will return all messages, even transactional messages which
+have been aborted. Non-transactional messages will be returned unconditionally
+in either mode. Messages will always be returned in offset order. Hence, in
+`read_committed` mode, consumer.poll() will only return messages up to the last
+stable offset (LSO), which is the one less than the offset of the first open
+transaction. In particular any messages appearing after messages belonging to
+ongoing transactions will be withheld until the relevant transaction has been
+completed. As a result, `read_committed` consumers will not be able to read up
+to the high watermark when there are in flight transactions. Further, when in
+`read_committed` the seekToEnd method will return the LSO
 
-
-Messages will always be returned in offset order. Hence, in
-read_committed mode, consumer.poll() will only return messages up
-to the last stable offset (LSO), which is the one less than the
-offset of the first open transaction. In particular any messages
-appearing after messages belonging to ongoing transactions will be
-withheld until the relevant transaction has been completed. As a
-result, read_committed consumers will not be able to read up to
-the high watermark when there are in flight transactions.
-
-Further, when in read_committed the seekToEnd method will return
-the LSO
 
 Type: string
 Default: read_uncommitted
@@ -7093,7 +7063,7 @@ Valid Values: [read_committed, read_uncommitted]
 Importance: medium
 
 
-*max.poll.interval.ms*
+#max.poll.interval.ms#
 ----------------------
 
 The maximum delay between invocations of poll() when using consumer group
@@ -7101,10 +7071,10 @@ management. This places an upper bound on the amount of time that the consumer
 can be idle before fetching more records. If poll() is not called before
 expiration of this timeout, then the consumer is considered failed and the
 group will rebalance in order to reassign the partitions to another member. For
-consumers using a non-null group.instance.id which reach this timeout,
+consumers using a non-null `group.instance.id` which reach this timeout,
 partitions will not be immediately reassigned. Instead, the consumer will stop
 sending heartbeats and partitions will be reassigned after expiration of
-session.timeout.ms. This mirrors the behavior of a static consumer which has
+`session.timeout.ms`. This mirrors the behavior of a static consumer which has
 shutdown.
 
 
@@ -7114,13 +7084,13 @@ Valid Values: [1,...]
 Importance: medium
 
 
-*max.poll.records*
+#max.poll.records#
 ------------------
 
-The maximum number of records returned in a single call to poll().  Note, that
-max.poll.records does not impact the underlying fetching behavior. The consumer
-will cache the records from each fetch request and returns them incrementally
-from each poll.
+The maximum number of records returned in a single call to poll(). Note, that
+`max.poll.records` does not impact the underlying fetching behavior. The
+consumer will cache the records from each fetch request and returns them
+incrementally from each poll.
 
 
 Type: int
@@ -7129,46 +7099,37 @@ Valid Values: [1,...]
 Importance: medium
 
 
-*partition.assignment.strategy*
+#partition.assignment.strategy#
 -------------------------------
 
 A list of class names or class types, ordered by preference, of supported
 partition assignment strategies that the client will use to distribute
 partition ownership amongst consumer instances when group management is used.
-Available options are:
+Available options
+are:`org.apache.kafka.clients.consumer.RangeAssignor`: Assigns
+partitions on a per-topic
+basis.`org.apache.kafka.clients.consumer.RoundRobinAssignor`: Assigns
+partitions to consumers in a round-robin
+fashion.`org.apache.kafka.clients.consumer.StickyAssignor`: Guarantees
+an assignment that is maximally balanced while preserving as many existing
+partition assignments as
+possible.`org.apache.kafka.clients.consumer.CooperativeStickyAssignor`:
+Follows the same StickyAssignor logic, but allows for cooperative
+rebalancing.The default assignor is [RangeAssignor,
+CooperativeStickyAssignor], which will use the RangeAssignor by default, but
+allows upgrading to the CooperativeStickyAssignor with just a single rolling
+bounce that removes the RangeAssignor from the list.Implementing the
+`org.apache.kafka.clients.consumer.ConsumerPartitionAssignor` interface allows
+you to plug in a custom assignment strategy.
 
-
-o org.apache.kafka.clients.consumer.RangeAssignor: Assigns
-partitions on a per-topic basis.
-
-o org.apache.kafka.clients.consumer.RoundRobinAssignor: Assigns
-partitions to consumers in a round-robin fashion.
-
-o org.apache.kafka.clients.consumer.StickyAssignor: Guarantees
-an assignment that is maximally balanced while preserving as
-many existing partition assignments as possible.
-
-o org.apache.kafka.clients.consumer.CooperativeStickyAssignor:
-Follows the same StickyAssignor logic, but allows for
-cooperative rebalancing.
-
-The default assignor is [RangeAssignor, CooperativeStickyAssignor],
-which will use the RangeAssignor by default, but allows upgrading to
-the CooperativeStickyAssignor with just a single rolling bounce that
-removes the RangeAssignor from the list.
-
-Implementing the
-org.apache.kafka.clients.consumer.ConsumerPartitionAssignor
-interface allows you to plug in a custom assignment strategy.
 
 Type: list
-Default: class org.apache.kafka.clients.consumer.RangeAssignor,class
-org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+Default: class org.apache.kafka.clients.consumer.RangeAssignor,class org.apache.kafka.clients.consumer.CooperativeStickyAssignor
 Valid Values: non-null string
 Importance: medium
 
 
-*receive.buffer.bytes*
+#receive.buffer.bytes#
 ----------------------
 
 The size of the TCP receive buffer (SO_RCVBUF) to use when reading data. If the
@@ -7181,7 +7142,7 @@ Valid Values: [-1,...]
 Importance: medium
 
 
-*request.timeout.ms*
+#request.timeout.ms#
 --------------------
 
 The configuration controls the maximum amount of time the client will wait for
@@ -7196,7 +7157,7 @@ Valid Values: [0,...]
 Importance: medium
 
 
-*sasl.client.callback.handler.class*
+#sasl.client.callback.handler.class#
 ------------------------------------
 
 The fully qualified name of a SASL client callback handler class that
@@ -7209,17 +7170,16 @@ Valid Values:
 Importance: medium
 
 
-*sasl.jaas.config*
+#sasl.jaas.config#
 ------------------
 
 JAAS login context parameters for SASL connections in the format used by JAAS
-configuration files. JAAS configuration file format is described here
-<https://docs.oracle.com/javase/8/docs/technotes/
-guides/security/jgss/tutorials/LoginConfigFile.html>. The format for the value
-is: loginModuleClass controlFlag (optionName=optionValue)*;. For brokers, the
-config must be prefixed with listener prefix and SASL mechanism name in
-lower-case.  For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;
+configuration files. JAAS configuration file format is described . The format
+for the value is: `loginModuleClass controlFlag (optionName=optionValue)#;`.
+For brokers, the config must be prefixed with listener prefix and SASL
+mechanism name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule
+required;
 
 
 Type: password
@@ -7228,7 +7188,7 @@ Valid Values:
 Importance: medium
 
 
-*sasl.kerberos.service.name*
+#sasl.kerberos.service.name#
 ----------------------------
 
 The Kerberos principal name that Kafka runs as. This can be defined either in
@@ -7241,14 +7201,14 @@ Valid Values:
 Importance: medium
 
 
-*sasl.login.callback.handler.class*
+#sasl.login.callback.handler.class#
 -----------------------------------
 
 The fully qualified name of a SASL login callback handler class that implements
 the AuthenticateCallbackHandler interface. For brokers, login callback handler
 config must be prefixed with listener prefix and SASL mechanism name in
-lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
+lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler
 
 
 Type: class
@@ -7257,13 +7217,13 @@ Valid Values:
 Importance: medium
 
 
-*sasl.login.class*
+#sasl.login.class#
 ------------------
 
 The fully qualified name of a class that implements the Login interface. For
 brokers, login config must be prefixed with listener prefix and SASL mechanism
-name in lower-case. For example, listener.name.sasl_ssl.scram-
-sha-256.sasl.login.class=com.example.CustomScramLogin
+name in lower-case. For example,
+listener.name.sasl_ssl.scram-sha-256.sasl.login.class=com.example.CustomScramLogin
 
 
 Type: class
@@ -7272,7 +7232,7 @@ Valid Values:
 Importance: medium
 
 
-*sasl.mechanism*
+#sasl.mechanism#
 ----------------
 
 SASL mechanism used for client connections. This may be any mechanism for which
@@ -7285,19 +7245,19 @@ Valid Values:
 Importance: medium
 
 
-*sasl.oauthbearer.jwks.endpoint.url*
+#sasl.oauthbearer.jwks.endpoint.url#
 ------------------------------------
 
-The OAuth/OIDC provider URL from which the provider's JWKS (JSON Web Key Set)
-can be retrieved. The URL can be HTTP(S)-based or file-based. If the URL is
-HTTP(S)-based, the JWKS data will be retrieved from the OAuth/OIDC provider via
-the configured URL on broker startup. All then-current keys will be cached on
-the broker for incoming requests. If an authentication request is received for
-a JWT that includes a "kid" header claim value that isn't yet in the cache, the
-JWKS endpoint will be queried again on demand. However, the broker polls the
-URL every sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the
-cache with any forthcoming keys before any JWT requests that include them are
-received. If the URL is file- based, the broker will load the JWKS file from a
+The OAuth/OIDC provider URL from which the provider's  can be retrieved. The
+URL can be HTTP(S)-based or file-based. If the URL is HTTP(S)-based, the JWKS
+data will be retrieved from the OAuth/OIDC provider via the configured URL on
+broker startup. All then-current keys will be cached on the broker for incoming
+requests. If an authentication request is received for a JWT that includes a
+"kid" header claim value that isn't yet in the cache, the JWKS endpoint will be
+queried again on demand. However, the broker polls the URL every
+sasl.oauthbearer.jwks.endpoint.refresh.ms milliseconds to refresh the cache
+with any forthcoming keys before any JWT requests that include them are
+received. If the URL is file-based, the broker will load the JWKS file from a
 configured location on startup. In the event that the JWT includes a "kid"
 header value that isn't in the JWKS file, the broker will reject the JWT and
 authentication will fail.
@@ -7309,10 +7269,10 @@ Valid Values:
 Importance: medium
 
 
-*sasl.oauthbearer.token.endpoint.url*
+#sasl.oauthbearer.token.endpoint.url#
 -------------------------------------
 
-The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)- based, it
+The URL for the OAuth/OIDC identity provider. If the URL is HTTP(S)-based, it
 is the issuer's token endpoint URL to which requests will be made to login
 based on the configuration in sasl.jaas.config. If the URL is file-based, it
 specifies a file containing an access token (in JWT serialized form) issued by
@@ -7325,7 +7285,7 @@ Valid Values:
 Importance: medium
 
 
-*security.protocol*
+#security.protocol#
 -------------------
 
 Protocol used to communicate with brokers. Valid values are: PLAINTEXT, SSL,
@@ -7334,12 +7294,11 @@ SASL_PLAINTEXT, SASL_SSL.
 
 Type: string
 Default: PLAINTEXT
-Valid Values: (case insensitive) [SASL_SSL, PLAINTEXT, SSL,
-SASL_PLAINTEXT]
+Valid Values: (case insensitive) [SASL_SSL, PLAINTEXT, SSL, SASL_PLAINTEXT]
 Importance: medium
 
 
-*send.buffer.bytes*
+#send.buffer.bytes#
 -------------------
 
 The size of the TCP send buffer (SO_SNDBUF) to use when sending data. If the
@@ -7352,7 +7311,7 @@ Valid Values: [-1,...]
 Importance: medium
 
 
-*socket.connection.setup.timeout.max.ms*
+#socket.connection.setup.timeout.max.ms#
 ----------------------------------------
 
 The maximum amount of time the client will wait for the socket connection to be
@@ -7368,14 +7327,14 @@ Valid Values:
 Importance: medium
 
 
-*socket.connection.setup.timeout.ms*
+#socket.connection.setup.timeout.ms#
 ------------------------------------
 
 The amount of time the client will wait for the socket connection to be
 established. If the connection is not built before the timeout elapses, clients
 will close the socket channel. This value is the initial backoff value and will
 increase exponentially for each consecutive connection failure, up to the
-socket.connection.setup.timeout.max.ms value.
+`socket.connection.setup.timeout.max.ms` value.
 
 
 Type: long
@@ -7384,7 +7343,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.enabled.protocols*
+#ssl.enabled.protocols#
 -----------------------
 
 The list of protocols enabled for SSL connections. The default is
@@ -7401,10 +7360,10 @@ Valid Values:
 Importance: medium
 
 
-*ssl.keystore.type*
+#ssl.keystore.type#
 -------------------
 
-The file format of the key store file. This is optional for client.  The values
+The file format of the key store file. This is optional for client. The values
 currently supported by the default `ssl.engine.factory.class` are [JKS, PKCS12,
 PEM].
 
@@ -7415,11 +7374,11 @@ Valid Values:
 Importance: medium
 
 
-*ssl.protocol*
+#ssl.protocol#
 --------------
 
 The SSL protocol used to generate the SSLContext. The default is 'TLSv1.3' when
-running with Java 11 or newer, 'TLSv1.2' otherwise.  This value should be fine
+running with Java 11 or newer, 'TLSv1.2' otherwise. This value should be fine
 for most use cases. Allowed values in recent JVMs are 'TLSv1.2' and 'TLSv1.3'.
 'TLS', 'TLSv1.1', 'SSL', 'SSLv2' and 'SSLv3' may be supported in older JVMs,
 but their usage is discouraged due to known security vulnerabilities. With the
@@ -7435,7 +7394,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.provider*
+#ssl.provider#
 --------------
 
 The name of the security provider used for SSL connections. Default value is
@@ -7448,7 +7407,7 @@ Valid Values:
 Importance: medium
 
 
-*ssl.truststore.type*
+#ssl.truststore.type#
 ---------------------
 
 The file format of the trust store file. The values currently supported by the
@@ -7461,11 +7420,11 @@ Valid Values:
 Importance: medium
 
 
-*auto.commit.interval.ms*
+#auto.commit.interval.ms#
 -------------------------
 
-The frequency in milliseconds that the consumer offsets are auto- committed to
-Kafka if enable.auto.commit is set to true.
+The frequency in milliseconds that the consumer offsets are auto-committed to
+Kafka if `enable.auto.commit` is set to `true`.
 
 
 Type: int
@@ -7474,13 +7433,13 @@ Valid Values: [0,...]
 Importance: low
 
 
-*auto.include.jmx.reporter*
+#auto.include.jmx.reporter#
 ---------------------------
 
 Deprecated. Whether to automatically include JmxReporter even if it's not
-listed in metric.reporters. This configuration will be removed in Kafka 4.0,
-users should instead include org.apache.kafka.common.metrics.JmxReporter in
-metric.reporters in order to enable the JmxReporter.
+listed in `metric.reporters`. This configuration will be removed in Kafka 4.0,
+users should instead include `org.apache.kafka.common.metrics.JmxReporter` in
+`metric.reporters` in order to enable the JmxReporter.
 
 
 Type: boolean
@@ -7489,7 +7448,7 @@ Valid Values:
 Importance: low
 
 
-*check.crcs*
+#check.crcs#
 ------------
 
 Automatically check the CRC32 of the records consumed. This ensures no
@@ -7503,7 +7462,7 @@ Valid Values:
 Importance: low
 
 
-*client.id*
+#client.id#
 -----------
 
 An id string to pass to the server when making requests. The purpose of this is
@@ -7517,7 +7476,7 @@ Valid Values:
 Importance: low
 
 
-*client.rack*
+#client.rack#
 -------------
 
 A rack identifier for this client. This can be any string value which indicates
@@ -7531,7 +7490,7 @@ Valid Values:
 Importance: low
 
 
-*enable.metrics.push*
+#enable.metrics.push#
 ---------------------
 
 Whether to enable pushing of client metrics to the cluster, if the cluster has
@@ -7544,7 +7503,7 @@ Valid Values:
 Importance: low
 
 
-*fetch.max.wait.ms*
+#fetch.max.wait.ms#
 -------------------
 
 The maximum amount of time the server will block before answering the fetch
@@ -7560,11 +7519,11 @@ Valid Values: [0,...]
 Importance: low
 
 
-*interceptor.classes*
+#interceptor.classes#
 ---------------------
 
 A list of classes to use as interceptors. Implementing the
-org.apache.kafka.clients.consumer.ConsumerInterceptor interface allows you to
+`org.apache.kafka.clients.consumer.ConsumerInterceptor` interface allows you to
 intercept (and possibly mutate) records received by the consumer. By default,
 there are no interceptors.
 
@@ -7575,7 +7534,7 @@ Valid Values: non-null string
 Importance: low
 
 
-*metadata.max.age.ms*
+#metadata.max.age.ms#
 ---------------------
 
 The period of time in milliseconds after which we force a refresh of metadata
@@ -7589,19 +7548,19 @@ Valid Values: [0,...]
 Importance: low
 
 
-*metadata.recovery.strategy*
+#metadata.recovery.strategy#
 ----------------------------
 
 Controls how the client recovers when none of the brokers known to it is
-available. If set to none, the client fails. If set to rebootstrap, the client
-repeats the bootstrap process using bootstrap.servers. Rebootstrapping is
-useful when a client communicates with brokers so infrequently that the set of
-brokers may change entirely before the client refreshes metadata. Metadata
+available. If set to `none`, the client fails. If set to `rebootstrap`, the
+client repeats the bootstrap process using `bootstrap.servers`. Rebootstrapping
+is useful when a client communicates with brokers so infrequently that the set
+of brokers may change entirely before the client refreshes metadata. Metadata
 recovery is triggered when all last-known brokers appear unavailable
 simultaneously. Brokers appear unavailable when disconnected and no current
-retry attempt is in-progress. Consider increasing reconnect.backoff.ms and
-reconnect.backoff.max.ms and decreasing socket.connection.setup.timeout.ms and
-socket.connection.setup.timeout.max.ms for the client.
+retry attempt is in-progress. Consider increasing `reconnect.backoff.ms` and
+`reconnect.backoff.max.ms` and decreasing `socket.connection.setup.timeout.ms`
+and `socket.connection.setup.timeout.max.ms` for the client.
 
 
 Type: string
@@ -7610,13 +7569,13 @@ Valid Values: (case insensitive) [REBOOTSTRAP, NONE]
 Importance: low
 
 
-*metric.reporters*
+#metric.reporters#
 ------------------
 
 A list of classes to use as metrics reporters. Implementing the
-org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in
-classes that will be notified of new metric creation.  The JmxReporter is
-always included to register JMX statistics.
+`org.apache.kafka.common.metrics.MetricsReporter` interface allows plugging in
+classes that will be notified of new metric creation. The JmxReporter is always
+included to register JMX statistics.
 
 
 Type: list
@@ -7625,16 +7584,19 @@ Valid Values: non-null string
 Importance: low
 
 
-*metrics.num.samples*
+#metrics.num.samples#
 ---------------------
 
 The number of samples maintained to compute metrics.
 
 
-Type: int Default: 2 Valid Values: [1,...] Importance: low
+Type: int
+Default: 2
+Valid Values: [1,...]
+Importance: low
 
 
-*metrics.recording.level*
+#metrics.recording.level#
 -------------------------
 
 The highest recording level for metrics.
@@ -7646,7 +7608,7 @@ Valid Values: [INFO, DEBUG, TRACE]
 Importance: low
 
 
-*metrics.sample.window.ms*
+#metrics.sample.window.ms#
 --------------------------
 
 The window of time a metrics sample is computed over.
@@ -7658,7 +7620,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*reconnect.backoff.max.ms*
+#reconnect.backoff.max.ms#
 --------------------------
 
 The maximum amount of time in milliseconds to wait when reconnecting to a
@@ -7674,14 +7636,14 @@ Valid Values: [0,...]
 Importance: low
 
 
-*reconnect.backoff.ms*
+#reconnect.backoff.ms#
 ----------------------
 
 The base amount of time to wait before attempting to reconnect to a given host.
 This avoids repeatedly connecting to a host in a tight loop. This backoff
 applies to all connection attempts by the client to a broker. This value is the
 initial backoff value and will increase exponentially for each consecutive
-connection failure, up to the reconnect.backoff.max.ms value.
+connection failure, up to the `reconnect.backoff.max.ms` value.
 
 
 Type: long
@@ -7690,7 +7652,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*retry.backoff.max.ms*
+#retry.backoff.max.ms#
 ----------------------
 
 The maximum amount of time in milliseconds to wait when retrying a request to
@@ -7698,9 +7660,9 @@ the broker that has repeatedly failed. If provided, the backoff per client will
 increase exponentially for each failed request, up to this maximum. To prevent
 all clients from being synchronized upon retry, a randomized jitter with a
 factor of 0.2 will be applied to the backoff, resulting in the backoff falling
-within a range between 20% below and 20% above the computed value.  If
-retry.backoff.ms is set to be higher than retry.backoff.max.ms, then
-retry.backoff.max.ms will be used as a constant backoff from the beginning
+within a range between 20% below and 20% above the computed value. If
+`retry.backoff.ms` is set to be higher than `retry.backoff.max.ms`, then
+`retry.backoff.max.ms` will be used as a constant backoff from the beginning
 without any exponential increase
 
 
@@ -7710,14 +7672,14 @@ Valid Values: [0,...]
 Importance: low
 
 
-*retry.backoff.ms*
+#retry.backoff.ms#
 ------------------
 
 The amount of time to wait before attempting to retry a failed request to a
 given topic partition. This avoids repeatedly sending requests in a tight loop
 under some failure scenarios. This value is the initial backoff value and will
-increase exponentially for each failed request, up to the retry.backoff.max.ms
-value.
+increase exponentially for each failed request, up to the
+`retry.backoff.max.ms` value.
 
 
 Type: long
@@ -7726,7 +7688,7 @@ Valid Values: [0,...]
 Importance: low
 
 
-*sasl.kerberos.kinit.cmd*
+#sasl.kerberos.kinit.cmd#
 -------------------------
 
 Kerberos kinit command path.
@@ -7738,7 +7700,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.min.time.before.relogin*
+#sasl.kerberos.min.time.before.relogin#
 ---------------------------------------
 
 Login thread sleep time between refresh attempts.
@@ -7750,7 +7712,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.ticket.renew.jitter*
+#sasl.kerberos.ticket.renew.jitter#
 -----------------------------------
 
 Percentage of random jitter added to the renewal time.
@@ -7762,7 +7724,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.kerberos.ticket.renew.window.factor*
+#sasl.kerberos.ticket.renew.window.factor#
 ------------------------------------------
 
 Login thread will sleep until the specified window factor of time from last
@@ -7776,7 +7738,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.connect.timeout.ms*
+#sasl.login.connect.timeout.ms#
 -------------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -7789,7 +7751,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.read.timeout.ms*
+#sasl.login.read.timeout.ms#
 ----------------------------
 
 The (optional) value in milliseconds for the external authentication provider
@@ -7802,14 +7764,14 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.refresh.buffer.seconds*
+#sasl.login.refresh.buffer.seconds#
 -----------------------------------
 
 The amount of buffer time before credential expiration to maintain when
 refreshing a credential, in seconds. If a refresh would otherwise occur closer
 to expiration than the number of buffer seconds then the refresh will be moved
 up to maintain as much of the buffer time as possible. Legal values are between
-0 and 3600 (1 hour); a default value of 300 (5 minutes) is used if no value is
+0 and 3600 (1 hour); a default value of  300 (5 minutes) is used if no value is
 specified. This value and sasl.login.refresh.min.period.seconds are both
 ignored if their sum exceeds the remaining lifetime of a credential. Currently
 applies only to OAUTHBEARER.
@@ -7821,14 +7783,14 @@ Valid Values: [0,...,3600]
 Importance: low
 
 
-*sasl.login.refresh.min.period.seconds*
+#sasl.login.refresh.min.period.seconds#
 ---------------------------------------
 
 The desired minimum time for the login refresh thread to wait before refreshing
 a credential, in seconds. Legal values are between 0 and 900 (15 minutes); a
-default value of 60 (1 minute) is used if no value is specified. This value and
-sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds the
-remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
+default value of 60 (1 minute) is used if no value is specified.  This value
+and  sasl.login.refresh.buffer.seconds are both ignored if their sum exceeds
+the remaining lifetime of a credential. Currently applies only to OAUTHBEARER.
 
 
 Type: short
@@ -7837,7 +7799,7 @@ Valid Values: [0,...,900]
 Importance: low
 
 
-*sasl.login.refresh.window.factor*
+#sasl.login.refresh.window.factor#
 ----------------------------------
 
 Login refresh thread will sleep until the specified window factor relative to
@@ -7853,11 +7815,11 @@ Valid Values: [0.5,...,1.0]
 Importance: low
 
 
-*sasl.login.refresh.window.jitter*
+#sasl.login.refresh.window.jitter#
 ----------------------------------
 
 The maximum amount of random jitter relative to the credential's lifetime that
-is added to the login refresh thread's sleep time.  Legal values are between 0
+is added to the login refresh thread's sleep time. Legal values are between 0
 and 0.25 (25%) inclusive; a default value of 0.05 (5%) is used if no value is
 specified. Currently applies only to OAUTHBEARER.
 
@@ -7868,7 +7830,7 @@ Valid Values: [0.0,...,0.25]
 Importance: low
 
 
-*sasl.login.retry.backoff.max.ms*
+#sasl.login.retry.backoff.max.ms#
 ---------------------------------
 
 The (optional) value in milliseconds for the maximum wait between login
@@ -7885,7 +7847,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.login.retry.backoff.ms*
+#sasl.login.retry.backoff.ms#
 -----------------------------
 
 The (optional) value in milliseconds for the initial wait between login
@@ -7902,7 +7864,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.clock.skew.seconds*
+#sasl.oauthbearer.clock.skew.seconds#
 -------------------------------------
 
 The (optional) value in seconds to allow for differences between the time of
@@ -7915,14 +7877,14 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.expected.audience*
+#sasl.oauthbearer.expected.audience#
 ------------------------------------
 
 The (optional) comma-delimited setting for the broker to use to verify that the
-JWT was issued for one of the expected audiences.  The JWT will be inspected
-for the standard OAuth "aud" claim and if this value is set, the broker will
-match the value from JWT's "aud" claim to see if there is an exact match. If
-there is no match, the broker will reject the JWT and authentication will fail.
+JWT was issued for one of the expected audiences. The JWT will be inspected for
+the standard OAuth "aud" claim and if this value is set, the broker will match
+the value from JWT's "aud" claim  to see if there is an exact match. If there
+is no match, the broker will reject the JWT and authentication will fail.
 
 
 Type: list
@@ -7931,7 +7893,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.expected.issuer*
+#sasl.oauthbearer.expected.issuer#
 ----------------------------------
 
 The (optional) setting for the broker to use to verify that the JWT was created
@@ -7947,7 +7909,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.refresh.ms*
+#sasl.oauthbearer.jwks.endpoint.refresh.ms#
 -------------------------------------------
 
 The (optional) value in milliseconds for the broker to wait between refreshing
@@ -7961,7 +7923,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms#
 -----------------------------------------------------
 
 The (optional) value in milliseconds for the maximum wait between attempts to
@@ -7978,7 +7940,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.jwks.endpoint.retry.backoff.ms*
+#sasl.oauthbearer.jwks.endpoint.retry.backoff.ms#
 -------------------------------------------------
 
 The (optional) value in milliseconds for the initial wait between JWKS (JSON
@@ -7995,7 +7957,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.scope.claim.name*
+#sasl.oauthbearer.scope.claim.name#
 -----------------------------------
 
 The OAuth claim for the scope is often named "scope", but this (optional)
@@ -8010,7 +7972,7 @@ Valid Values:
 Importance: low
 
 
-*sasl.oauthbearer.sub.claim.name*
+#sasl.oauthbearer.sub.claim.name#
 ---------------------------------
 
 The OAuth claim for the subject is often named "sub", but this (optional)
@@ -8025,12 +7987,12 @@ Valid Values:
 Importance: low
 
 
-*security.providers*
+#security.providers#
 --------------------
 
 A list of configurable creator classes each returning a provider implementing
 security algorithms. These classes should implement the
-org.apache.kafka.common.security.auth.SecurityProviderCreator interface.
+`org.apache.kafka.common.security.auth.SecurityProviderCreator` interface.
 
 
 Type: string
@@ -8039,7 +8001,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.cipher.suites*
+#ssl.cipher.suites#
 -------------------
 
 A list of cipher suites. This is a named combination of authentication,
@@ -8054,7 +8016,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.endpoint.identification.algorithm*
+#ssl.endpoint.identification.algorithm#
 ---------------------------------------
 
 The endpoint identification algorithm to validate server hostname using server
@@ -8067,12 +8029,12 @@ Valid Values:
 Importance: low
 
 
-*ssl.engine.factory.class*
+#ssl.engine.factory.class#
 --------------------------
 
 The class of type org.apache.kafka.common.security.auth.SslEngineFactory to
 provide SSLEngine objects. Default value is
-org.apache.kafka.common.security.ssl.DefaultSslEngineFactory.  Alternatively,
+org.apache.kafka.common.security.ssl.DefaultSslEngineFactory. Alternatively,
 setting this to
 org.apache.kafka.common.security.ssl.CommonNameLoggingSslEngineFactory will log
 the common name of expired SSL certificates used by clients to authenticate at
@@ -8090,11 +8052,11 @@ Valid Values:
 Importance: low
 
 
-*ssl.keymanager.algorithm*
+#ssl.keymanager.algorithm#
 --------------------------
 
-The algorithm used by key manager factory for SSL connections.  Default value
-is the key manager factory algorithm configured for the Java Virtual Machine.
+The algorithm used by key manager factory for SSL connections. Default value is
+the key manager factory algorithm configured for the Java Virtual Machine.
 
 
 Type: string
@@ -8103,7 +8065,7 @@ Valid Values:
 Importance: low
 
 
-*ssl.secure.random.implementation*
+#ssl.secure.random.implementation#
 ----------------------------------
 
 The SecureRandom PRNG implementation to use for SSL cryptography operations.
@@ -8115,10 +8077,10 @@ Valid Values:
 Importance: low
 
 
-*ssl.trustmanager.algorithm*
----------------------------
+#ssl.trustmanager.algorithm#
+----------------------------
 
-The algorithm used by trust manager factory for SSL connections.  Default value
+The algorithm used by trust manager factory for SSL connections. Default value
 is the trust manager factory algorithm configured for the Java Virtual Machine.
 
 
