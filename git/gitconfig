@@ -150,6 +150,8 @@
     lineNumber = false
 [http]
 	sslVerify = false
+[https]
+	sslVerify = false
 [credential]
     helper = cache --timeout=360000
 [pull]

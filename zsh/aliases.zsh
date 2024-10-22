@@ -53,3 +53,11 @@ alias l='export JAVA_HOME=/usr/lib/jvm/java-17-openjdk && lvim'
 alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
 source ~/.kafka_aliases.zsh
+
+# Szkoleniowe
+alias -g BS='--bootstrap-server localhost:9092,localhost:9093,localhost:9094'
+alias zss='zookeeper-server-start.sh'
+alias kss='kafka-server-start.sh'
+alias kcc='kafka-console-consumer.sh BS --from-beginning --topic'
+alias kcp='kafka-console-producer.sh BS --topic'
+alias kt='kafka-topics.sh BS'

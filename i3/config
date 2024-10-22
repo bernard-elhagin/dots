@@ -400,7 +400,7 @@ bar {
     position top
     set $height 16
     tray_output none
-    status_command bumblebee-status -m uptime arch-update date time -p date.format="%a, %d. %b %Y" time.format="%H:%M:%S" -t iceberg-dark-powerline
+    #status_command bumblebee-status -m uptime arch-update date time -p date.format="%a, %d. %b %Y" time.format="%H:%M:%S" -t iceberg-dark-powerline
     colors{
         background #232323
         statusline #DCDCDC
