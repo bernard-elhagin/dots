@@ -42,6 +42,7 @@ alias tmu='tmuxinator start $(basename -s .yml $(ls ~/.tmuxinator | fzf))'
 alias -g G='| grep --color=always'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
+alias -g DD='>/dev/null'
 
 alias cll='clear && ll'
 
@@ -56,8 +57,8 @@ source ~/.kafka_aliases.zsh
 
 # Szkoleniowe
 alias -g BS='--bootstrap-server localhost:9092,localhost:9093,localhost:9094'
-alias zss='zookeeper-server-start.sh'
-alias kss='kafka-server-start.sh'
-alias kcc='kafka-console-consumer.sh BS --from-beginning --topic'
-alias kcp='kafka-console-producer.sh BS --topic'
-alias kt='kafka-topics.sh BS'
+alias zss='bin/zookeeper-server-start.sh'
+alias kss='bin/kafka-server-start.sh'
+alias kcc='bin/kafka-console-consumer.sh BS --from-beginning --topic'
+alias kcp='bin/kafka-console-producer.sh BS --topic'
+alias kt='bin/kafka-topics.sh BS'
