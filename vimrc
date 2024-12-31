@@ -21,14 +21,12 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'flazz/vim-colorschemes'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'easymotion/vim-easymotion'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-surround'
 Plug 'sjl/gundo.vim'
 Plug 'godlygeek/tabular'
 Plug 'xolox/vim-misc'
@@ -47,7 +45,7 @@ Plug 'vim-scripts/CSApprox'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'scrooloose/nerdcommenter'
 Plug 'prettier/vim-prettier'
-Plug 'machakann/vim-sandwich'
+"Plug 'machakann/vim-sandwich'
 Plug 'chriskempson/base16-vim'
 Plug 'stsewd/fzf-checkout.vim'
 Plug 'szw/vim-maximizer'
@@ -130,7 +128,7 @@ set diffopt=internal,filler,context:3,indent-heuristic,algorithm:patience
 set clipboard=unnamed,unnamedplus
 set hidden
 set updatetime=1000
-set timeoutlen=1000
+set timeoutlen=200
 set splitbelow splitright
 set wildmode=list:full
 set wildmenu
@@ -311,7 +309,9 @@ endfunction
 nnoremap <leader>Q :g/^#\\|\(^$\)/d<CR>
 
 " Remove trailing whitespace
-nnoremap <leader>w :%s/\s\+$//<CR>
+"nnoremap <leader>w :%s/\s\+$//<CR>
+nnoremap <leader>w :wq<CR>
+imap <c-p> <ESC>:w<CR>
 
 " execute "!perl ~/Devel/Projects/wso2tools/add_artifact.pl " . system("git rev-parse --show-toplevel | tr -d '\\n'")
 
@@ -555,20 +555,20 @@ let g:EasyMotion_smartcase = 1
 let g:EasyMotion_keys = 'asdfjkl;mvwo'
 
 "]]]
-" UltiSnips [[[
-
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
-let g:SuperTabDefaultCompletionType = 'context'
-
-let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
-let g:UltiSnipsSnippetDirectories=["~/.vim/UltiSnips", "UltiSnips"]
-
-let g:airline_powerline_fonts = 1
-
-"]]]
+"" UltiSnips [[[
+"
+"let g:UltiSnipsExpandTrigger="<tab>"
+"let g:UltiSnipsJumpForwardTrigger="<tab>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+"
+"let g:SuperTabDefaultCompletionType = 'context'
+"
+"let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
+"let g:UltiSnipsSnippetDirectories=["~/.vim/UltiSnips", "UltiSnips"]
+"
+"let g:airline_powerline_fonts = 1
+"
+""]]]
 " Fugitive [[[
 
 nnoremap <leader>gs :silent Gstatus<cr>
