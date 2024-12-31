@@ -23,6 +23,7 @@ alias gaa='git add --all'
 alias grh='git reset --hard'
 alias ga='git commit --amend --no-edit'
 alias gcg='git config --global'
+alias gcd='cd $(git rev-parse --show-toplevel)'
 
 alias GPF='gaa && ga && gpf'
 
@@ -61,4 +62,4 @@ alias zss='bin/zookeeper-server-start.sh'
 alias kss='bin/kafka-server-start.sh'
 alias kcc='bin/kafka-console-consumer.sh BS --from-beginning --topic'
 alias kcp='bin/kafka-console-producer.sh BS --topic'
-alias kt='bin/kafka-topics.sh BS'
+alias s='cd ~/dots/kafka && sxiv *'
