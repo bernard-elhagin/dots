@@ -37,7 +37,7 @@ alias c='clear'
 alias tml='tmux list-sessions'
 alias tma='tmux attach-session -t'
 alias tx='tmuxinator start'
-alias tmu='tmuxinator start $(basename -s .yml $(ls ~/.tmuxinator | fzf))'
+alias tmu='tmuxinator start $(basename -s .yml $(ls ~/.config/tmuxinator | fzf))'
 
 # Global aliases
 alias -g G='| grep --color=always'

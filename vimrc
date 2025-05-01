@@ -50,7 +50,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'stsewd/fzf-checkout.vim'
 Plug 'szw/vim-maximizer'
 Plug 'romainl/vim-cool'
-Plug 'markonm/traces.vim'
+"Plug 'markonm/traces.vim'
 Plug 'tommcdo/vim-lion'
 Plug 'preservim/tagbar'
 Plug 'kana/vim-textobj-user'
@@ -128,7 +128,7 @@ set diffopt=internal,filler,context:3,indent-heuristic,algorithm:patience
 set clipboard=unnamed,unnamedplus
 set hidden
 set updatetime=1000
-set timeoutlen=200
+set timeoutlen=150
 set splitbelow splitright
 set wildmode=list:full
 set wildmenu
@@ -187,6 +187,9 @@ syntax enable
 imap jk <ESC>
 vnoremap <c-j><c-k> <ESC>
 cnoremap jk <C-U> <ESC>
+
+cnoremap <c-l> <right>
+cnoremap <c-h> <left>
 
 let mapleader=' '
 let maplocalleader='\\'
@@ -309,8 +312,7 @@ endfunction
 nnoremap <leader>Q :g/^#\\|\(^$\)/d<CR>
 
 " Remove trailing whitespace
-"nnoremap <leader>w :%s/\s\+$//<CR>
-nnoremap <leader>w :wq<CR>
+nnoremap <leader>w :%s/\s\+$//<CR>
 imap <c-p> <ESC>:w<CR>
 
 " execute "!perl ~/Devel/Projects/wso2tools/add_artifact.pl " . system("git rev-parse --show-toplevel | tr -d '\\n'")
@@ -345,25 +347,13 @@ nnoremap <leader>d :let @/='======='<CR>ggn
 nnoremap <c-down> ddd/>>>>>><cr>dd?<<<<<<<cr>dd:let @/='======='<CR>
 nnoremap <c-up> ddd?<<<<<<<cr>/>>>>>>><cr>dd:let @/='======='<CR>
 
-inoremap <c-l> <right>
-inoremap <c-h> <left>
-inoremap <c-j> <ESC>A
-inoremap <c-o> <ESC>I
+inoremap <c-l> <esc>A
+inoremap <c-h> <esc>I
 
 inoremap , ,<c-g>u
 inoremap . .<c-g>u
 inoremap ! !<c-g>u
 inoremap ? ?<c-g>u
-
-nnoremap <F9> :cd %:h<CR>yi":e ../sequences/".xml<CR>
-
-function ScratchBuffer()
-    setlocal buftype=nofile
-    setlocal bufhidden=hide
-    setlocal noswapfile
-endfu
-
-nnoremap <leader>d :new \| read ! sdcv <c-r><c-w> <cr>:call ScratchBuffer() <cr>:normal gg<cr>
 
 " Map dot to repeat last edit over entire visual selection
 vmap . ;normal .<CR>
@@ -371,11 +361,6 @@ vmap . ;normal .<CR>
 map <c-u> 
 
 noremap <c-m> m
-
-noremap go o<ESC>k^
-noremap gO O<ESC>j^
-
-iabbr hw Hello, World!
 
 map <c-c> <cmd>e ~/dots/configs.md<CR>
 
