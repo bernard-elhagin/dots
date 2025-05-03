@@ -10,7 +10,7 @@
 # Domyślnie, bez podania $1 brany jest plik o nazwie
 # new_topics.txt
 
-if [ -z $1 ]
+if [ -z "$1" ]
 then
     filename="new_topics.txt"
 else
@@ -19,12 +19,18 @@ fi
 
 # na podstawie host IP tworzymy bootstrap-server oraz liczymy
 # replication factor
-host=$(hostname -I)
+if [[ ! host=$(hostname -I 2>/dev/null) ]]; then
+    echo ""
+else
+    host=$(hostname -i)
+fi
 
-bootstrap=$(echo $host:9092 | sed -e 's/ //')
+bootstrap=$(echo "$host":9092 | sed -e 's/ //')
 
-bootstrap=$(kafka-broker-api-versions.sh --bootstrap-server $bootstrap --command-config $HOME/security/client.properties | grep "id:" | cut -f1 -d" " | paste -sd",")
-replication=$(kafka-broker-api-versions.sh --bootstrap-server $bootstrap --command-config $HOME/security/client.properties | grep "id:" | wc -l)
+echo $bootstrap; exit 0
+
+bootstrap=$(kafka-broker-api-versions.sh --bootstrap-server "$bootstrap" --command-config "$HOME"/security/client.properties | grep "id:" | cut -f1 -d" " | paste -sd",")
+replication=$(kafka-broker-api-versions.sh --bootstrap-server "$bootstrap" --command-config "$HOME"/security/client.properties | grep -c "id:")
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
     topic=$(echo "$line" | cut -f 1 -d" ")
@@ -33,9 +39,9 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 
     retention_ms=$((retention*24*60*60*1000))
 
-    echo "/opt/kafka/bin/kafka-topics.sh --create --bootstrap-server $bootstrap --replication-factor $replication --partitions $partitions --topic "$topic" --config retention.ms=$retention_ms"
+    echo "/opt/kafka/bin/kafka-topics.sh --create --bootstrap-server $bootstrap --replication-factor $replication --partitions $partitions --topic $topic --config retention.ms=$retention_ms"
     echo "
     "
-    /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server $bootstrap --replication-factor $replication --partitions $partitions --topic "$topic" --config retention.ms=$retention_ms"
+    /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server "$bootstrap" --replication-factor "$replication" --partitions "$partitions" --topic "$topic" --config retention.ms=$retention_ms
 done < "$filename"
 exit 0
