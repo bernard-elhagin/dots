@@ -9,3 +9,5 @@ reload("bertold.plugin_overrides")
 reload("bertold.plugins")
 reload("bertold.treesitter")
 reload("bertold.telescope")
+
+require'lspconfig'.perlpls.setup{}

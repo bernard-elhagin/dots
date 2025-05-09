@@ -6,11 +6,11 @@ alias yss='yay -Ss'
 alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
+alias ls='ls --color'
 alias  ll='ls -l --group-directories-first'
 alias lll='ls -al --group-directories-first'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
-#alias github='git clone https://github.com/'
 
 alias p='cd ~/Devel/Projects'
 

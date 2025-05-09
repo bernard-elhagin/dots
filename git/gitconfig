@@ -116,7 +116,7 @@
     default = upstream
 [core]
     autocrlf = input
-    editor = vim
+    editor = lvim
     excludesfile = ~/.gitignore
     pager = delta --dark --paging=auto --syntax-theme base16-256 --diff-so-fancy
 [advice]
@@ -169,10 +169,6 @@
     file-decoration-style = none
 [rebase]
     pull = true
-[url "git@github.com:bernard-elhagin/"]
-    insteadOf = "ghbe:"
-[url "git@github.com:"]
-    insteadOf = "gh:"
 [status]
     branch = true
     showStash = true
