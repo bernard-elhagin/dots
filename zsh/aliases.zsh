@@ -37,7 +37,7 @@ alias c='clear'
 alias tml='tmux list-sessions'
 alias tma='tmux attach-session -t'
 alias tx='tmuxinator start'
-alias tmu='tmuxinator start $(basename -s .yml $(ls ~/.config/tmuxinator | fzf))'
+alias tm='tmuxinator start $(basename -s .yml $(ls ~/.config/tmuxinator | fzf))'
 
 # Global aliases
 alias -g G='| grep --color=always'
@@ -56,10 +56,5 @@ alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
 source ~/.kafka_aliases.zsh
 
-# Szkoleniowe
-alias -g BS='--bootstrap-server localhost:9092,localhost:9093,localhost:9094'
-alias zss='bin/zookeeper-server-start.sh'
-alias kss='bin/kafka-server-start.sh'
-alias kcc='bin/kafka-console-consumer.sh BS --from-beginning --topic'
-alias kcp='bin/kafka-console-producer.sh BS --topic'
-alias s='cd ~/dots/kafka && sxiv *'
+# Check the weather
+alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'

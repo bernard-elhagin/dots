@@ -770,4 +770,9 @@ cnoremap <expr> <cr> CCR()
 " ]]]
 "]]]
 
+if &term =~ '256color'
+  " disable Background Color Erase (BCE)
+  set t_ut=
+endif
+
 autocmd CmdwinEnter * unmap <CR>
