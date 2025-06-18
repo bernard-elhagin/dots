@@ -9,14 +9,13 @@ declare -a PACKAGES_TO_INSTALL=(
   'starship'
   'git-delta'
   'ranger'
-  'npm'
   'make'
   'ripgrep'
   'xsel'
-  'exa'
   'fd'
   'tree'
   'unzip'
+  'i3-wm'
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

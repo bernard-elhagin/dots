@@ -20,26 +20,6 @@ else
     echo "done."
 fi
 
-# Neovim
-echo -n "Copying Neovim settings.."
-if [[ -d $HOME/.config/nvim ]]; then
-    echo "$HOME/.config/nvim already exists...skipping."
-else
-    ln -s "$HOME/dots/config/nvim" "$HOME/.config/nvim"
-    echo "done."
-fi
-
-# Lunarvim
-echo -n "Copying Lunarvim settings.."
-if [[ -d $HOME/.config/lvim ]]; then
-    rm -rf $HOME/.config/lvim
-    ln -s "$HOME/dots/config/lvim" "$HOME/.config/lvim"
-    echo "done."
-else
-    ln -s "$HOME/dots/config/lvim" "$HOME/.config/lvim"
-    echo "done."
-fi
-
 # bin
 echo -n "Copying bin.."
 if [[ -d $HOME/bin ]]; then
@@ -119,4 +99,5 @@ main() {
 main
 
 mkdir $HOME/.fzf
+
 cp $HOME/dots/fzf/*.zsh $HOME/.fzf
