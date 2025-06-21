@@ -34,7 +34,6 @@ Plug 'xolox/vim-colorscheme-switcher'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'Valloric/MatchTagAlways'
 Plug 'mhinz/vim-startify'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
 Plug 'airblade/vim-rooter'
