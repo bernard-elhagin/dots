@@ -16,6 +16,7 @@ declare -a PACKAGES_TO_INSTALL=(
   'tree'
   'unzip'
   'i3-wm'
+  'zoxide'
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
