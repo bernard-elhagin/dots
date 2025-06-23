@@ -7,14 +7,6 @@
 # Change to the dots directory
 cd "$HOME/dots" || exit
 
-# Install zprezto
-
-$HOME/dots/packages.sh
-
-#
-# Actual symlink stuff
-#
-
 # VIM
 echo -n "Copying VIM settings.."
 if [[ -d $HOME/.vim ]]; then
@@ -52,46 +44,31 @@ else
 fi
 
 declare -a FILES_TO_SYMLINK=(
-  'zprezto/runcoms/zlogin'
-  'zprezto/runcoms/zlogout'
-  'zprezto/runcoms/zpreztorc'
-  'zprezto/runcoms/zprofile'
-  'zprezto/runcoms/zshenv'
-  'zprezto/runcoms/zshrc'
-  'fzf.sh'
-  'vimrc'
-  'tmux/tmux.conf'
-  'zsh/functions'
-  'zsh/aliases.zsh'
-  'zsh/aliases_work.zsh'
-  'git/gitconfig'
-  'git/gitignore'
-  'config/starship.toml'
+    'zprezto/runcoms/zlogin'
+    'zprezto/runcoms/zlogout'
+    'zprezto/runcoms/zpreztorc'
+    'zprezto/runcoms/zprofile'
+    'zprezto/runcoms/zshenv'
+    'zprezto/runcoms/zshrc'
+    'fzf.sh'
+    'vimrc'
+    'tmux/tmux.conf'
+    'zsh/functions'
+    'zsh/aliases.zsh'
+    'zsh/aliases_work.zsh'
+    'git/gitconfig'
+    'git/gitignore'
+    'config/starship.toml'
 )
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-main() {
-
-  local i=''
-  local sourceFile=''
-  local targetFile=''
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  for i in "${FILES_TO_SYMLINK[@]}"; do
+for i in "${FILES_TO_SYMLINK[@]}"; do
 
     sourceFile="$(pwd)/$i"
     targetFile="$HOME/.$(printf "%s" "$i" | sed "s/.*\/\(.*\)/\1/g")"
 
     ln -fs "$sourceFile" "$targetFile"
 
-  done
-
-  unset FILES_TO_SYMLINK
-}
-
-main
+done
 
 mkdir $HOME/.fzf
 
