@@ -63,7 +63,7 @@ Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 "Plug 'preservim/vim-markdown'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-Plug 'christoomey/vim-tmux-navigator'
+Plug 'rose-pine/vim'
 
 call plug#end()
 
@@ -213,11 +213,7 @@ nnoremap <leader>r :!<UP><CR>
 " Toggle paste mode
 nnoremap <leader>p :set paste!<CR>
 
-" Mappings for manipulating and moving around splits
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-"nnoremap <C-l> <C-w>l
+map <c-j> <cmd>.!jq<cr>
 
 nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
@@ -289,9 +285,6 @@ nnoremap ZZ ZQ
 nnoremap <tab> :bn<CR>
 nnoremap <s-tab> :bp<CR>
 nnoremap <leader>b :Buffers<CR>
-
-" Avoid unintentional switch to Ex mode.
-nnoremap Q <nop>
 
 noremap Y y$
 
@@ -688,6 +681,7 @@ let g:rainbow_active=1
 " ]]]
 " Tabularize [[[
     vmap <c-t> ;Tabularize / \s*<cr>
+    map <c-t> <cmd>%!column -t<cr>
 " ]]]
 "]]]
 

@@ -58,6 +58,23 @@ _zlf_handler() {
 }
 zle -N _zlf_handler
 
+unalias cd
+
+cd() {
+    # Go to home without arguments
+    [ -z "$*" ] && builtin cd && return
+    # If directory exists, change to it
+    [ -d "$*" ] && builtin cd "$*" && return
+    [ "$*" = "-" ] && builtin cd "$*" && return
+    # Catch cd . and cd ..
+    case "$*" in
+        ..) builtin cd ..; return;;
+        .) builtin cd .; return;;
+    esac
+    # Finally, call zoxide
+    z "$*" || builtin cd "$*"
+}
+
 my-expand() {
     zle _expand_alias || zle _expand_word || true;
 }

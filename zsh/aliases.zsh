@@ -7,8 +7,8 @@ alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
 alias ls='ls --color'
-alias  ll='ls -l --group-directories-first'
-alias lll='ls -al --group-directories-first'
+alias  ll='ls -lh --group-directories-first'
+alias lll='ls -alh --group-directories-first'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
 
@@ -54,7 +54,7 @@ alias l='export JAVA_HOME=/usr/lib/jvm/java-17-openjdk && lvim'
 # Kafka
 alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
-source ~/.kafka_aliases.zsh
+#source ~/.kafka_aliases.zsh
 
 # Check the weather
 alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'

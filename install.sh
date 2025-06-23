@@ -7,6 +7,10 @@
 # Change to the dots directory
 cd "$HOME/dots" || exit
 
+# Install zprezto
+
+$HOME/dots/packages.sh
+
 #
 # Actual symlink stuff
 #
@@ -35,15 +39,6 @@ if [[ -d $HOME/.tmux ]]; then
     echo "$HOME/.tmux already exists...skipping."
 else
     ln -s "$HOME/dots/tmux" "$HOME/.tmux"
-    echo "done."
-fi
-
-# tmuxinator
-echo -n "Copying tmuxinator settings.."
-if [[ -d $HOME/.tmuxinator ]]; then
-    echo "$HOME/.tmuxinator already exists...skipping."
-else
-    ln -s "$HOME/dots/tmuxinator" "$HOME/.tmuxinator"
     echo "done."
 fi
 

@@ -116,7 +116,7 @@
     default = upstream
 [core]
     autocrlf = input
-    editor = lvim
+    editor = vim
     excludesfile = ~/.gitignore
     pager = delta --dark --paging=auto --syntax-theme base16-256 --diff-so-fancy
 [advice]
