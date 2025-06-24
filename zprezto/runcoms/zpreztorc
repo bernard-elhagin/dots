@@ -39,13 +39,14 @@ zstyle ':prezto:load' pmodule \
   'ssh' \
   'syntax-highlighting' \
   'prompt' \
+  'autosuggestions' \
 
 #
 # Autosuggestions
 #
 
 # Set the query found color.
-zstyle ':prezto:module:autosuggestions:color' found 'red'
+zstyle ':prezto:module:autosuggestions:color' found 'grey'
 
 #
 # Editor

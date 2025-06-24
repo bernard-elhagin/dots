@@ -17,6 +17,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'unzip'
     'i3-wm'
     'zoxide'
+    'tmux'
     'zsh'
 )
 
@@ -31,3 +32,5 @@ for i in "${PACKAGES_TO_INSTALL[@]}"; do
 done
 
 git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+

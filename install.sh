@@ -36,12 +36,8 @@ fi
 
 # i3
 echo -n "Copying i3 settings.."
-if [[ -d $HOME/.i3 ]]; then
-    echo "$HOME/.i3 already exists...skipping."
-else
-    ln -s "$HOME/dots/i3" "$HOME/.i3"
-    echo "done."
-fi
+ln -s "$HOME/dots/i3/config" "$HOME/.config/i3/config"
+echo "done."
 
 declare -a FILES_TO_SYMLINK=(
     'zprezto/runcoms/zlogin'
