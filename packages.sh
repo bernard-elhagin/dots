@@ -17,6 +17,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'unzip'
     'i3-wm'
     'zoxide'
+    'zsh'
 )
 
 sudo pacman -Sy
