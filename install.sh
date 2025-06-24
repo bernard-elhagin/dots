@@ -36,6 +36,7 @@ fi
 
 # i3
 echo -n "Copying i3 settings.."
+mkdir -p "$HOME/.config/i3"
 ln -s "$HOME/dots/i3/config" "$HOME/.config/i3/config"
 echo "done."
 
