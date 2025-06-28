@@ -33,4 +33,3 @@ done
 
 git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
