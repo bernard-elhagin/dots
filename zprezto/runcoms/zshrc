@@ -93,5 +93,8 @@ eval "$(fasd --init auto)"
 export GROFF_NO_SGR=1
 export MANPAGER='less -s -M +Gg'
 
+source ~/.kafka_aliases.zsh
+source ~/.kafka_completion
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
