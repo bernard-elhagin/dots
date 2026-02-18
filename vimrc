@@ -21,7 +21,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'flazz/vim-colorschemes'
-Plug 'easymotion/vim-easymotion'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
@@ -241,7 +240,7 @@ nnoremap <silent> <leader>tp "_yiw?\w\+\_W\+\%#<CR>:s/\(\%#\w\+\)\(\_W\+\)\(\w\+
 nnoremap <F7> :tabprev<CR>
 
 " Fold all, unfold all
-nnoremap <leader>e :call Fold()<CR>
+"nnoremap <leader>e :call Fold()<CR>
 function! Fold()
     let foldlvl = eval("&foldlevel")
     if(foldlvl==0)
@@ -250,6 +249,8 @@ function! Fold()
         set foldlevel=0
     endif
 endfunction
+
+inoremap <c-e> echo ""; exit 0<left><left><left><left><left><left><left><left><left>
 
 " Toggle hls and matching with the <leader>N utility
 "map <CR> :set hls!<CR>
@@ -401,16 +402,16 @@ vnoremap <leader>z za
 " Theme ------------------------------------------------------------------ [[[
 
 " Change cursor shape/color depending on mode
-if &term =~ "xterm\\|rxvt"
-  " use an orange cursor in insert mode
-  let &t_SI = "\<Esc>]12;red\x7"
-  " use a red cursor otherwise
-  let &t_EI = "\<Esc>]12;red\x7"
-  silent !echo -ne "\033]12;red\007"
-  " reset cursor when vim exits
-  autocmd VimLeave * silent !echo -ne "\033]112\007"
-  " use \003]12;gray\007 for gnome-terminal and rxvt up to version 9.21
-endif
+"if &term =~ "xterm\\|rxvt"
+"  " use an orange cursor in insert mode
+"  let &t_SI = "\<Esc>]12;red\x7"
+"  " use a red cursor otherwise
+"  let &t_EI = "\<Esc>]12;red\x7"
+"  silent !echo -ne "\033]12;red\007"
+"  " reset cursor when vim exits
+"  autocmd VimLeave * silent !echo -ne "\033]112\007"
+"  " use \003]12;gray\007 for gnome-terminal and rxvt up to version 9.21
+"endif
 
 if &term =~ "xterm\\|rxvt"
   " solid underscore
@@ -426,11 +427,11 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme archery
+colorscheme Monokai
 
 set bg=dark
 
-hi Normal guibg=grey10
+hi Normal guibg=black
 hi CursorLineNr cterm=none
 hi CursorLine cterm=none
 hi String guifg=hotpink
@@ -515,22 +516,6 @@ au BufEnter *.json map =x :%!python -m json.tool<CR>
 
 " Plugin Settings -------------------------------------------------------- [[[
 
-" EasyMotion [[[
-
-let g:EasyMotion_do_mapping = 0
-
-" Jump to anywhere you want with minimal keystrokes.
-" s{char}{label}
-nmap m <Plug>(easymotion-w)
-nmap M <Plug>(easymotion-b)
-nmap <leader><leader>j <Plug>(easymotion-bd-jk)
-
-" Case insensitive
-let g:EasyMotion_smartcase = 1
-
-let g:EasyMotion_keys = 'asdfjkl;mvwo'
-
-"]]]
 "" UltiSnips [[[
 "
 "let g:UltiSnipsExpandTrigger="<tab>"
@@ -768,3 +753,5 @@ if &term =~ '256color'
 endif
 
 autocmd CmdwinEnter * unmap <CR>
+
+imap <c-b> <esc><cmd>set ft=bash<cr><cmd>!chmod +x %<cr>i#!/usr/bin/env bash<cr><cr>

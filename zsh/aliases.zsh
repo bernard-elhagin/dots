@@ -8,7 +8,7 @@ alias pfiles='pacman -Fl'
 
 alias ls='ls --color'
 alias  ll='ls -lh --group-directories-first'
-alias lll='ls -alh --group-directories-first'
+alias lll='ls -Alh --group-directories-first'
 alias zs='vim $HOME/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
 
@@ -40,7 +40,7 @@ alias tx='tmuxinator start'
 alias tm='tmuxinator start $(basename -s .yml $(ls ~/.config/tmuxinator | fzf))'
 
 # Global aliases
-alias -g G='| grep --color=always'
+alias -g G='| grep --color=always -E'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
 alias -g DD='>/dev/null'
@@ -58,3 +58,7 @@ alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
 # Check the weather
 alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'
+
+alias cat='bat -p --color=always'
+
+alias dpp='bat -p -l bash <<<$(declare -p '
