@@ -58,3 +58,5 @@ alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
 # Check the weather
 alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'
+
+alias dpp='bat -p -l bash <<<$(declare -p '

@@ -44,12 +44,11 @@ Plug 'vim-scripts/CSApprox'
 Plug 'rafi/awesome-vim-colorschemes'
 Plug 'scrooloose/nerdcommenter'
 Plug 'prettier/vim-prettier'
-"Plug 'machakann/vim-sandwich'
+Plug 'machakann/vim-sandwich'
 Plug 'chriskempson/base16-vim'
 Plug 'stsewd/fzf-checkout.vim'
 Plug 'szw/vim-maximizer'
 Plug 'romainl/vim-cool'
-"Plug 'markonm/traces.vim'
 Plug 'tommcdo/vim-lion'
 Plug 'preservim/tagbar'
 Plug 'kana/vim-textobj-user'
@@ -60,7 +59,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'stevearc/vim-arduino'
 Plug 'pangloss/vim-javascript'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-"Plug 'preservim/vim-markdown'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'rose-pine/vim'
@@ -439,8 +437,6 @@ hi Visual guibg=yellow guifg=black
 hi String guifg=hotpink
 hi IncSearch guibg=black guifg=#44aaff
 
-hi QuickScopePrimary cterm=underline,bold gui=underline,bold ctermfg=red guifg=red
-hi QuickScopeSecondary cterm=underline,bold gui=underline,bold ctermfg=cyan guifg=cyan
 hi MatchParen guibg=bg guifg=red gui=bold
 
 " ]]]
@@ -768,3 +764,5 @@ if &term =~ '256color'
 endif
 
 autocmd CmdwinEnter * unmap <CR>
+
+imap <c-b> <esc><cmd>set ft=bash<cr><cmd>!chmod u+x %<cr>i#!/usr/bin/env bash<cr><cr>
