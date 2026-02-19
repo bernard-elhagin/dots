@@ -20,6 +20,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'tmux'
     'zsh'
     'rofi'
+    'bat'
 )
 
 sudo pacman -Sy
