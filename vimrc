@@ -426,11 +426,11 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme archery
+colorscheme Monokai
 
 set bg=dark
 
-hi Normal guibg=grey10
+hi Normal guibg=black
 hi CursorLineNr cterm=none
 hi CursorLine cterm=none
 hi String guifg=hotpink

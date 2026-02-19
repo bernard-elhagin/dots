@@ -19,6 +19,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'zoxide'
     'tmux'
     'zsh'
+    'rofi'
 )
 
 sudo pacman -Sy
