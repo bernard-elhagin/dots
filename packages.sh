@@ -21,6 +21,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'zsh'
     'rofi'
     'bat'
+    'xfce4-terminal'
 )
 
 sudo pacman -Sy

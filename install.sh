@@ -52,7 +52,6 @@ declare -a FILES_TO_SYMLINK=(
     'tmux/tmux.conf'
     'zsh/functions'
     'zsh/aliases.zsh'
-    'zsh/aliases_work.zsh'
     'git/gitconfig'
     'git/gitignore'
     'config/starship.toml'

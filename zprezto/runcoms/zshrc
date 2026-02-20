@@ -88,6 +88,7 @@ read -r -d '' paths <<'EOF'
 /usr/local/bin
 /usr/local/sbin
 /var/lib/snapd/snap/bin
+/opt/kafka/bin
 EOF
 
 export PATH=$(tr '\n' ':' <<<$paths)

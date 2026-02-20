@@ -21,6 +21,7 @@ alias gs='git status'
 alias gc='git commit'
 alias gaa='git add --all'
 alias grh='git reset --hard'
+alias grhh='git reset --hard HEAD'
 alias ga='git commit --amend --no-edit'
 alias gcg='git config --global'
 alias gcd='cd $(git rev-parse --show-toplevel)'
@@ -54,7 +55,7 @@ alias l='export JAVA_HOME=/usr/lib/jvm/java-17-openjdk && lvim'
 # Kafka
 alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 
-#source ~/.kafka_aliases.zsh
+[[ -f ~/.kafka_aliases.zsh ]] && source ~/.kafka_aliases.zsh
 
 # Check the weather
 alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'

@@ -10,6 +10,8 @@ workers=$(/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server "$boots
 bootstrapserver=$(grep "id:" <<<"$workers" | cut -f1 -d" " | paste -sd",")
 replication=$(grep -c "id:" <<<"$workers")
 
+echo $bootstrapserver; echo $replication; exit
+
 while read topic retention partitions bootstrap; do
     retention_ms=$((retention*24*60*60*1000))
 
