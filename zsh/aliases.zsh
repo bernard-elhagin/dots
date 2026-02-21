@@ -60,4 +60,5 @@ alias kk='docker run -it --network=host edenhill/kcat:1.7.1'
 # Check the weather
 alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'
 
-alias dpp='bat -p -l bash <<<$(declare -p '
+alias dpp='(){ bat -p -l bash <<<$(declare -p $1);}'
+alias pass='(){for ((i=0; i<$1; i++)); do tr -dc "A-Za-z0-9_" < /dev/urandom | head -z -c 16 && echo; done;}'

@@ -7,12 +7,13 @@
     local = yellow
     remote = green
 [color "diff"]
-    meta = yellow
-    frag = cyan bold
-    old = red bold
-    new = blue
+	meta = "#75715e"
+	frag = "#9fef66 bold"
+	old = "#f92672"
+	new = "#a6e22e"
     commit = yellow bold
-    whitespace = red reverse
+	whitespace = red reverse
+	func = "#f8f8f2"
 [alias]
   # add
     a = add                           # add
@@ -173,3 +174,14 @@
     branch = true
     showStash = true
     showUntrackedFiles = all
+[color "status"]
+	header = "#9e9e9e italic"
+	branch = "#ffd700 bold"
+	nobranch = "#00bfff bold"
+	added = "#a6e22e bold"
+	updated = "#9fef66 bold"
+	changed = "#fd971f bold"
+	worktree = "#f92672 bold"
+	untracked = "#ae81ff"
+	ignored = "#555555"
+	unmerged = "#ffffff #ff0033 bold ul"
