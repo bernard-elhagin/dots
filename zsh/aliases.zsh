@@ -7,9 +7,9 @@ alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
 alias ls='ls --color'
-alias  ll='ls -lh --group-directories-first'
+alias ll='ls -lh --group-directories-first'
 alias lll='ls -alh --group-directories-first'
-alias zs='vim $HOME/.zshrc'
+alias zs='vim -c "normal gg4jW" ~/.zshrc'
 alias zpre='vim $HOME/.zpreztorc'
 
 alias p='cd ~/Devel/Projects'
@@ -45,6 +45,8 @@ alias -g G='| grep --color=always'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
 alias -g DD='>/dev/null'
+alias -g B='| bat -p -l bash'
+alias -g X='| xclip -selection clipboard'
 
 alias cll='clear && ll'
 
@@ -62,3 +64,8 @@ alias wtr='curl -s wttr.in/gdynia | grep -v igor_chubin'
 
 alias dpp='(){ bat -p -l bash <<<$(declare -p $1);}'
 alias pass='(){for ((i=0; i<$1; i++)); do tr -dc "A-Za-z0-9_" < /dev/urandom | head -z -c 16 && echo; done;}'
+
+alias zst='/opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties'
+alias kst='/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties'
+
+unalias rm

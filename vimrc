@@ -353,6 +353,8 @@ noremap <c-m> m
 
 map <c-c> <cmd>e ~/dots/configs.md<CR>
 
+map gf <cmd>e <cfile><cr>
+
 "map <c-r> yiwvip;s/"//g<left><left>
 
 " ]]]
