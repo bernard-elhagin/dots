@@ -21,7 +21,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'flazz/vim-colorschemes'
-Plug 'easymotion/vim-easymotion'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-vinegar'
@@ -126,7 +125,7 @@ set hidden
 set updatetime=1000
 set timeoutlen=150
 set splitbelow splitright
-set wildmode=list:full
+set wildmode=longest,list,full
 set wildmenu
 set wildignore+=*\\tmp\\*,*.sw?,*.zip,*.settings,*.esb_diagram,*\\*sandbox\\*,*.classpath,*\\.meta\\*
 set wildignore+=.git,*.orig
@@ -189,6 +188,9 @@ cnoremap <c-h> <left>
 
 let mapleader=' '
 let maplocalleader='\\'
+
+nnoremap ` '
+nnoremap ' `
 
 nnoremap ; :
 nnoremap : ;
@@ -513,22 +515,6 @@ au BufEnter *.json map =x :%!python -m json.tool<CR>
 
 " Plugin Settings -------------------------------------------------------- [[[
 
-" EasyMotion [[[
-
-let g:EasyMotion_do_mapping = 0
-
-" Jump to anywhere you want with minimal keystrokes.
-" s{char}{label}
-nmap m <Plug>(easymotion-w)
-nmap M <Plug>(easymotion-b)
-nmap <leader><leader>j <Plug>(easymotion-bd-jk)
-
-" Case insensitive
-let g:EasyMotion_smartcase = 1
-
-let g:EasyMotion_keys = 'asdfjkl;mvwo'
-
-"]]]
 "" UltiSnips [[[
 "
 "let g:UltiSnipsExpandTrigger="<tab>"
@@ -767,4 +753,10 @@ endif
 
 autocmd CmdwinEnter * unmap <CR>
 
-imap <c-b> <esc><cmd>set ft=bash<cr><cmd>!chmod u+x %<cr>i#!/usr/bin/env bash<cr><cr>
+imap <c-b> <esc><cmd>set ft=bash<cr><cmd>!chmod +x %<cr>i#!/usr/bin/env bash<cr><cr>
+
+nmap <leader>1 <cmd>.!toilet -w 200 -f term -F border<cr>
+nmap <c-up> uk<cmd>.!toilet -w 200 -f term -F border<cr>
+nmap <c-down> uj<cmd>.!toilet -w 200 -f term -F border<cr>
+
+autocmd FileChangedShell * echohl WarningMsg | echohl None

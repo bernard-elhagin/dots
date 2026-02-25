@@ -10,6 +10,7 @@ alias ls='ls --color'
 alias ll='ls -lh --group-directories-first'
 alias lll='ls -alh --group-directories-first'
 alias zs='vim -c "normal gg4jW" ~/.zshrc'
+alias zh='vim $HISTFILE'
 alias zpre='vim $HOME/.zpreztorc'
 
 alias p='cd ~/Devel/Projects'

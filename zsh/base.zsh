@@ -13,22 +13,6 @@ export VISUAL=vim
 
 export TERM="xterm-256color"
 
-# History
-HISTSIZE=50000
-HISTFILE=~/.zsh_history
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
-WORDCHARS=""
-
-setopt EXTENDED_GLOB
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
-
 read -r -d '' paths <<'EOF'
 /bin
 /home/bertold/bin
@@ -52,6 +36,22 @@ export PATH=$(tr '\n' ':' <<<$paths)
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
+
+# History
+HISTSIZE=50000
+HISTFILE=~/.zshistory
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+WORDCHARS=""
+
+setopt EXTENDED_GLOB
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
 
 # Load completions
 autoload -U compinit && compinit
