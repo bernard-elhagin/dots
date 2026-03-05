@@ -10,13 +10,17 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
     operation=$(echo "$line" | cut -f 3 -d" ")
 
     if [[ $operation == 'read' ]]; then
-        operation="read --group='*'"
+        echo "/opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation $operation --topic $topic --command-config /home/elhbe1/kafka/security/client.config"
+        echo "
+        "
+        /opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation read --group='*' --topic $topic --command-config /home/elhbe1/kafka/security/client.config
+    else
+        echo "/opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation $operation --topic $topic --command-config /home/elhbe1/kafka/security/client.config"
+        echo "
+        "
+        /opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation write --topic $topic --command-config /home/elhbe1/kafka/security/client.config
     fi
 
-    echo "kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation $operation --topic $topic --command-config ~/kafka/security/client.config"
-    echo "
-    "
-    kafka-acls.sh --bootstrap-server $bootstrap --add --allow-principal User:$user --operation $operation --topic $topic --command-config ~/kafka/security/client.config
 done < "new_acls.txt"
 
 exit 0
