@@ -16,6 +16,15 @@ else
     echo "done."
 fi
 
+# zsh
+echo -n "Copying zsh settings.."
+if [[ -d $HOME/.zsh ]]; then
+    echo "$HOME/.zsh already exists...skipping."
+else
+    ln -s "$HOME/dots/zsh" "$HOME/.zsh"
+    echo "done."
+fi
+
 # bin
 echo -n "Copying bin.."
 if [[ -d $HOME/bin ]]; then
@@ -50,8 +59,6 @@ declare -a FILES_TO_SYMLINK=(
     'fzf.sh'
     'vimrc'
     'tmux/tmux.conf'
-    'zsh/functions'
-    'zsh/aliases.zsh'
     'git/gitconfig'
     'git/gitignore'
     'config/starship.toml'
