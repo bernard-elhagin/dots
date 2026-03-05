@@ -20,6 +20,8 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'flazz/vim-colorschemes'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-fugitive'
@@ -357,6 +359,9 @@ map <c-c> <cmd>e ~/dots/configs.md<CR>
 
 map gf <cmd>e <cfile><cr>
 
+vmap = ;s/=.*//<cr>
+vmap # ;s/ #.*//<cr>
+
 "map <c-r> yiwvip;s/"//g<left><left>
 
 " ]]]
@@ -515,20 +520,22 @@ au BufEnter *.json map =x :%!python -m json.tool<CR>
 
 " Plugin Settings -------------------------------------------------------- [[[
 
-"" UltiSnips [[[
-"
-"let g:UltiSnipsExpandTrigger="<tab>"
-"let g:UltiSnipsJumpForwardTrigger="<tab>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-"
-"let g:SuperTabDefaultCompletionType = 'context'
-"
-"let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
-"let g:UltiSnipsSnippetDirectories=["~/.vim/UltiSnips", "UltiSnips"]
-"
-"let g:airline_powerline_fonts = 1
-"
-""]]]
+" UltiSnips [[[
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsListSnippets="<c-t>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+let g:SuperTabDefaultCompletionType = 'context'
+
+"let g:UltiSnipsSnippetDir="~/.vim/UltiSnips"
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+
+let g:airline_powerline_fonts = 1
+
+"]]]
+
 " Fugitive [[[
 
 nnoremap <leader>gs :silent Gstatus<cr>

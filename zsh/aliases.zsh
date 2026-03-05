@@ -16,7 +16,8 @@ alias zpre='vim $HOME/.zpreztorc'
 alias p='cd ~/Devel/Projects'
 
 alias x='exit'
-alias v='vim $(fzf)'
+alias v='vim'
+alias vf='vim $(fzf)'
 
 alias gs='git status'
 alias gc='git commit'
@@ -70,3 +71,12 @@ alias zst='/opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.
 alias kst='/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties'
 
 unalias rm
+
+alias dict='(){ sdcv $1 }'
+
+alias cx='chmod +x'
+
+alias cat='bat -p'
+
+alias def='(){ trans $1 -t en }'
+alias tra='(){ trans $1 -t pl }'
