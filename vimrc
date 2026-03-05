@@ -437,7 +437,7 @@ colorscheme rosepine
 
 set bg=dark
 
-hi Normal guibg=black
+hi Normal guibg=grey10
 hi CursorLineNr cterm=none
 hi CursorLine cterm=none
 hi String guifg=hotpink

@@ -34,3 +34,12 @@ ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
 ZSH_HIGHLIGHT_STYLES[named-fd]='none'
 ZSH_HIGHLIGHT_STYLES[numeric-fd]='none'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=blue,bold'
+
+LESS_TERMCAP_md=$'\e[01;31m'
+LESS_TERMCAP_me=$'\e[0m'
+LESS_TERMCAP_so=$'\e[01;44;33m'
+LESS_TERMCAP_se=$'\e[0m'
+LESS_TERMCAP_us=$'\e[01;32m'
+LESS_TERMCAP_ue=$'\e[0m'
+
+GREP_COLORS='mt=03;31'

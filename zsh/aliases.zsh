@@ -79,4 +79,5 @@ alias cx='chmod +x'
 alias cat='bat -p'
 
 alias def='(){ trans $1 -t en }'
-alias tra='(){ trans $1 -t pl }'
+alias ep='(){ trans $1 -from en -to pl }'
+alias pe='(){ trans $1 -from pl -to en }'
