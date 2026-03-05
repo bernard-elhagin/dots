@@ -433,7 +433,7 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme Monokai
+colorscheme rosepine
 
 set bg=dark
 
