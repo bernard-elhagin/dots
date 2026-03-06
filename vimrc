@@ -362,6 +362,9 @@ map gf <cmd>e <cfile><cr>
 vmap = ;s/=.*//<cr>
 vmap # ;s/ #.*//<cr>
 
+" copy entire function and paste below
+map <c-i> va{Vy$%o<esc>p
+
 "map <c-r> yiwvip;s/"//g<left><left>
 
 " ]]]
@@ -529,8 +532,8 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 let g:SuperTabDefaultCompletionType = 'context'
 
-"let g:UltiSnipsSnippetDir="~/.vim/UltiSnips"
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+let g:UltiSnipsSnippetDir="~/.vim/UltiSnips"
+let g:UltiSnipsSnippetDirectories=["~/.vim/plugged/vim-snippets/UltiSnips/", "UltiSnips"]
 
 let g:airline_powerline_fonts = 1
 
