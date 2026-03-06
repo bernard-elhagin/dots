@@ -60,3 +60,4 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 export GROFF_NO_SGR=1
 export MANPAGER='less -F -s -M +Gg'
 
+source ~/Projects/kafka-zsh-completions/kafka.plugin.zsh
