@@ -102,7 +102,6 @@ set relativenumber
 set gdefault
 set nobackup
 set noswapfile
-set dir=c:\tmp,c:\temp,.
 set autoread
 set ffs=unix,dos
 set expandtab
@@ -127,7 +126,9 @@ set hidden
 set updatetime=1000
 set timeoutlen=150
 set splitbelow splitright
-set wildmode=longest,list,full
+set wildmode=list:longest,full
+set wildoptions=pum,fuzzy
+set wildignorecase
 set wildmenu
 set wildignore+=*\\tmp\\*,*.sw?,*.zip,*.settings,*.esb_diagram,*\\*sandbox\\*,*.classpath,*\\.meta\\*
 set wildignore+=.git,*.orig
@@ -210,7 +211,7 @@ nnoremap <C-Space> "*p
 nnoremap <CS-Space> gg"*yG:q!<CR>
 
 " Rerun last shell command
-nnoremap <leader>r :!<UP><CR>
+nnoremap <leader>r :!clear && %<CR>
 
 " Toggle paste mode
 nnoremap <leader>p :set paste!<CR>
@@ -221,9 +222,10 @@ nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
 nnoremap <leader>l <C-w>l
 nnoremap <leader>h <C-w>h
-nnoremap <leader>x <C-w>c
+nnoremap <leader>x <C-w>q
 nnoremap <leader>o <C-w>o
 nnoremap <leader>_ <C-w>_
+nnoremap <C-w>x <C-w>q
 
 noremap <c-p> yap']p
 
@@ -763,7 +765,7 @@ endif
 
 autocmd CmdwinEnter * unmap <CR>
 
-imap <c-b> <esc><cmd>set ft=bash<cr><cmd>!chmod +x %<cr>i#!/usr/bin/env bash<cr><cr>
+imap <c-b> <esc><cmd>set ft=bash<cr>i#!/usr/bin/env bash<cr><cr>
 
 nmap <leader>1 <cmd>.!toilet -w 200 -f term -F border<cr>
 nmap <c-up> uk<cmd>.!toilet -w 200 -f term -F border<cr>

@@ -1,3 +1,6 @@
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
 # less() color output
 export LESS=-iXFR
 
@@ -47,7 +50,6 @@ setopt hist_find_no_dups
 
 # Load completions
 autoload -U compinit && compinit
-
 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
