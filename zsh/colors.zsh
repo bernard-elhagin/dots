@@ -42,4 +42,4 @@ LESS_TERMCAP_se=$'\e[0m'
 LESS_TERMCAP_us=$'\e[01;32m'
 LESS_TERMCAP_ue=$'\e[0m'
 
-GREP_COLORS='mt=03;31'
+GREP_COLORS='mt=03;32'

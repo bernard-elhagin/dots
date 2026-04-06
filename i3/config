@@ -159,16 +159,16 @@ bindsym $mod+Ctrl+Left workspace prev
 # to display names or symbols instead of plain workspace numbers you can use
 # something like: set $ws1 1:mail
 #                 set $ws2 2:
-set $ws1  "1 - Mutt "
-set $ws2  "2 - WWW "
-set $ws3  "3 - TV "
-set $ws4  "4 - Music "
-set $ws5  "5 - Devel "
-set $ws6  "6 - Downloads "
-set $ws7  "7 - Terminal "
-set $ws8  "8 - Terminal2 "
-set $ws9  "9 - Terminal3 "
-set $ws10 "10 - Terminal4 "
+set $ws1  "1 - Terminal "
+set $ws2  "2 - Terminal "
+set $ws3  "3 - Terminal "
+set $ws4  "4 - Terminal "
+set $ws5  "5 - Mutt "
+set $ws6  "6 - WWW "
+set $ws7  "7 - TV "
+set $ws8  "8 - Music "
+set $ws9  "9 - Devel "
+set $ws10 "10 - Downloads "
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1

@@ -83,3 +83,5 @@ alias ep='(){ trans $1 -from en -to pl }'
 alias pe='(){ trans $1 -from pl -to en }'
 
 alias ranger='yazi'
+
+alias tidal='flatpak run com.mastermindzh.tidal-hifi'

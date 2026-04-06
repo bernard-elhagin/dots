@@ -22,6 +22,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'rofi'
     'bat'
     'xfce4-terminal'
+    'translate-shell'
 )
 
 sudo pacman -Sy
