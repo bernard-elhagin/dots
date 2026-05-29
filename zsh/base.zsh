@@ -34,7 +34,10 @@ HISTSIZE=50000
 HISTFILE=~/.zshistory
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
-WORDCHARS=""
+
+#WORDCHARS='*?_-.[]~=/&;!#$%^(){}<>'
+
+WORDCHARS="_"
 
 setopt EXTENDED_GLOB
 setopt appendhistory
@@ -59,4 +62,4 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 export GROFF_NO_SGR=1
 export MANPAGER='less -F -s -M +Gg'
 
-source ~/Projects/kafka-zsh-completions/kafka.plugin.zsh
+source ~/Development/Projects/kafka-zsh-completions/kafka.plugin.zsh
