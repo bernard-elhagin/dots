@@ -777,3 +777,5 @@ nmap <c-down> uj<cmd>.!toilet -w 200 -f term -F border<cr>
 autocmd FileChangedShell * echohl WarningMsg | echohl None
 
 autocmd BufEnter .zshrc map <return> gf
+
+set t_Co=256
