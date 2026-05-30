@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doublecmd>
+  <Tabs>
+    <OpenedTabs>
+      <Left>
+        <ActiveTab>0</ActiveTab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="D&amp;D 1e Against the Giants.pdf">/run/media/bertold/Data/Books/DnD/D&amp;D 1e/</Path>
+                  <Path Filename="run">/</Path>
+                  <Path Filename="media">/run/</Path>
+                  <Path Filename="bertold">/run/media/</Path>
+                  <Path Filename="Media">/run/media/bertold/</Path>
+                  <Path Filename="Temp">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Temp/</Path>
+                  <Path Filename="Games">/run/media/bertold/Media/</Path>
+                  <Path Filename="P5R Saves">/run/media/bertold/Media/Games/</Path>
+                  <Path Filename="76561198000920853">/run/media/bertold/Media/Games/P5R Saves/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/P5R Saves/76561198000920853/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/P5R Saves/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/</Path>
+                  <Path Filename="Media">/run/media/bertold/Media/</Path>
+                  <Path Filename="Images">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Images/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Media">/run/media/bertold/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Linux">/run/media/bertold/Media/Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Books/Linux/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Books/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 2">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/Season 2/</Path>
+                  <Path Filename="Season 3">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/Season 3/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 1">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/Season 1/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/</Path>
+                  <Path Filename="Fringe.S02.720p.BluRay.x264-SiNNERS">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Fringe.S02.720p.BluRay.x264-SiNNERS/</Path>
+                  <Path Filename="Harry Potter Audio Books 1-7; Read by Stephen Fry [MP3]">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Harry Potter Audio Books 1-7; Read by Stephen Fry [MP3]/</Path>
+                  <Path Filename="Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 2">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/Season 2/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/</Path>
+                  <Path Filename="Family Ties">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 1">/run/media/bertold/Media/Media/Incoming/Family Ties/</Path>
+                  <Path Filename="Family Ties - S01E14 - The Fugitive Part 1.m4v">/run/media/bertold/Media/Media/Incoming/Family Ties/Season 1/</Path>
+                  <Path Filename="home">/</Path>
+                  <Path Filename="bertold">/home/</Path>
+                  <Path Filename="Downloads">/home/bertold/</Path>
+                  <Path Filename="NonSteamLaunchers.desktop.download">/home/bertold/Downloads/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+          <Options>3</Options>
+          <LockPath>/home/bertold/Downloads/</LockPath>
+          <Title>Downloads</Title>
+        </Tab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="Temp">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Temp/</Path>
+                  <Path Filename="Games">/run/media/bertold/Media/</Path>
+                  <Path Filename="P5R Saves">/run/media/bertold/Media/Games/</Path>
+                  <Path Filename="76561198000920853">/run/media/bertold/Media/Games/P5R Saves/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/P5R Saves/76561198000920853/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/P5R Saves/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Games/</Path>
+                  <Path Filename="Media">/run/media/bertold/Media/</Path>
+                  <Path Filename="Images">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Images/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Media">/run/media/bertold/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Linux">/run/media/bertold/Media/Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Books/Linux/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Books/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/Media/</Path>
+                  <Path Filename="Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 2">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/Season 2/</Path>
+                  <Path Filename="Season 3">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/Season 3/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Buffy The Vampire Slayer Season 1 to 7 Mp4 1080p/</Path>
+                  <Path Filename="Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 1">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/Season 1/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Beavis and Butt-Head 1993 Mega Pack Mixed x264 [i_c]/</Path>
+                  <Path Filename="Fringe.S02.720p.BluRay.x264-SiNNERS">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Fringe.S02.720p.BluRay.x264-SiNNERS/</Path>
+                  <Path Filename="Harry Potter Audio Books 1-7; Read by Stephen Fry [MP3]">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Harry Potter Audio Books 1-7; Read by Stephen Fry [MP3]/</Path>
+                  <Path Filename="Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 2">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/Season 2/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Media/Incoming/Friends (1994) Season 1-10 S01-S10 (1080p BluRay x265 HEVC 10bit AAC 5.1 Silence)/</Path>
+                  <Path Filename="Family Ties">/run/media/bertold/Media/Media/Incoming/</Path>
+                  <Path Filename="Season 1">/run/media/bertold/Media/Media/Incoming/Family Ties/</Path>
+                  <Path Filename="Family Ties - S01E14 - The Fugitive Part 1.m4v">/run/media/bertold/Media/Media/Incoming/Family Ties/Season 1/</Path>
+                  <Path Filename="home">/</Path>
+                  <Path Filename="bertold">/home/</Path>
+                  <Path Filename="Downloads">/home/bertold/</Path>
+                  <Path Filename="..">/home/bertold/Downloads/</Path>
+                  <Path Filename="Pictures">/home/bertold/</Path>
+                  <Path Filename="Screenshots">/home/bertold/Pictures/</Path>
+                  <Path Filename="..">/home/bertold/Pictures/Screenshots/</Path>
+                  <Path Filename="..">/home/bertold/Pictures/</Path>
+                  <Path Filename="Pictures">/home/bertold/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+        </Tab>
+      </Left>
+      <Right>
+        <ActiveTab>4</ActiveTab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="BACKUP">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/BACKUP/</Path>
+                  <Path Filename="!Downloads">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/!Downloads/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/</Path>
+                  <Path Filename="SSDT7">/run/media/bertold/</Path>
+                  <Path Filename="0Migration">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="E-Media">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="Media">/run/media/bertold/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="Have You Been Paying Attention - S11E19 - Episode 19 (1080p HDTV AAC5.1 H.265)-TLMCC.mkv">/run/media/bertold/Media/Video/UKPanel/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+          <Options>3</Options>
+          <LockPath>/run/media/bertold/Media/Video/UKPanel/</LockPath>
+          <Title>UKPanel</Title>
+        </Tab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="BACKUP">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/BACKUP/</Path>
+                  <Path Filename="!Downloads">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/!Downloads/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/</Path>
+                  <Path Filename="SSDT7">/run/media/bertold/</Path>
+                  <Path Filename="0Migration">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="E-Media">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="Family Ties">/run/media/bertold/Media/Incoming/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+          <Options>3</Options>
+          <LockPath>/run/media/bertold/Media/Incoming/</LockPath>
+          <Title>Incoming</Title>
+        </Tab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="BACKUP">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/BACKUP/</Path>
+                  <Path Filename="!Downloads">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/!Downloads/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/</Path>
+                  <Path Filename="SSDT7">/run/media/bertold/</Path>
+                  <Path Filename="0Migration">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="E-Media">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="Media">/run/media/bertold/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="Series 08">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/Series 08/</Path>
+                  <Path Filename="Have I Got News for You (1990) - S71E09 - Katherine Ryan, Jo Coburn, John Tothill (1080p iP WEB-DL AAC2.0 HFR H.264)-RelaTVity.mkv">/run/media/bertold/Media/Video/UKPanel/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+        </Tab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="BACKUP">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/BACKUP/</Path>
+                  <Path Filename="!Downloads">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/!Downloads/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/</Path>
+                  <Path Filename="SSDT7">/run/media/bertold/</Path>
+                  <Path Filename="0Migration">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="E-Media">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="Family Ties">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Season 1">/run/media/bertold/Media/Incoming/Family Ties/</Path>
+                  <Path Filename="Family Ties - S01E17 - French Lessons.m4v">/run/media/bertold/Media/Incoming/Family Ties/Season 1/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+        </Tab>
+        <Tab>
+          <FileView Type="columns">
+            <Sortings>
+              <Sorting>
+                <Direction>1</Direction>
+                <Function>12</Function>
+              </Sorting>
+            </Sortings>
+            <History>
+              <Entry Active="True">
+                <FileSource Type="FileSystem"/>
+                <Paths>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="Books">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Books/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="BACKUP">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/BACKUP/</Path>
+                  <Path Filename="!Downloads">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/!Downloads/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Migration">/run/media/bertold/Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="TV">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Migration/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/</Path>
+                  <Path Filename="SSDT7">/run/media/bertold/</Path>
+                  <Path Filename="0Migration">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="E-Media">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="Media">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="TV">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/E-Media/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/0Migration/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/SSDT7/</Path>
+                  <Path Filename="Media">/run/media/bertold/</Path>
+                  <Path Filename="Incoming">/run/media/bertold/Media/</Path>
+                  <Path Filename="..">/run/media/bertold/Media/Incoming/</Path>
+                  <Path Filename="Video">/run/media/bertold/Media/</Path>
+                  <Path Filename="UKPanel">/run/media/bertold/Media/Video/</Path>
+                  <Path Filename="Have You Been Paying Attention - S11E19 - Episode 19 (1080p HDTV AAC5.1 H.265)-TLMCC.mkv">/run/media/bertold/Media/Video/UKPanel/</Path>
+                  <Path Filename="..">/run/media/bertold/Ventoy/</Path>
+                </Paths>
+              </Entry>
+            </History>
+            <ColumnsView>
+              <ColumnsSet>Default</ColumnsSet>
+            </ColumnsView>
+          </FileView>
+        </Tab>
+      </Right>
+    </OpenedTabs>
+  </Tabs>
+</doublecmd>

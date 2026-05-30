@@ -49,6 +49,11 @@ mkdir -p "$HOME/.config/i3"
 ln -s "$HOME/dots/i3/config" "$HOME/.config/i3/config"
 echo "done."
 
+# double commander
+echo -n "Copying doublecmd settings.."
+ln -s "$HOME/dots/config/doublecmd/" "$HOME/.config/doublecmd"
+echo "done."
+
 declare -a FILES_TO_SYMLINK=(
     'zprezto/runcoms/zlogin'
     'zprezto/runcoms/zlogout'

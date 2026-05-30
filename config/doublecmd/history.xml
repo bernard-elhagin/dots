@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doublecmd>
+  <History>
+    <Navigation>
+      <Item Value="/run/media/bertold/Media/Incoming/Family Ties/Season 1/"/>
+      <Item Value="/run/media/bertold/Media/Video/UKPanel/"/>
+      <Item Value="/run/media/bertold/SSDT7/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/E-Media/"/>
+      <Item Value="/home/bertold/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/E-Media/Media/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/E-Media/Books/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/E-Media/Books/Linux/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/"/>
+      <Item Value="/run/media/bertold/Media/Incoming/"/>
+      <Item Value="/run/media/bertold/Media/"/>
+      <Item Value="/run/media/bertold/Media/Migration/"/>
+      <Item Value="/run/media/bertold/"/>
+      <Item Value="/run/media/bertold/SSDT7/!Downloads/"/>
+      <Item Value="/run/media/bertold/SSDT7/BACKUP/"/>
+      <Item Value="/run/media/bertold/SSDT7/BACKUP/BACKUP/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/P5R Saves/"/>
+      <Item Value="/run/media/bertold/SSDT7/0Migration/E-Media/Media/TV/"/>
+      <Item Value="/run/media/bertold/SSDT7/$RECYCLE.BIN/"/>
+      <Item Value="/run/media/bertold/SSDT7/$RECYCLE.BIN/S-1-5-21-4036236205-2914099348-946492217-1004/"/>
+      <Item Value="/run/media/bertold/Media/Video/"/>
+      <Item Value="/home/bertold/Downloads/"/>
+      <Item Value="/home/bertold/snap/"/>
+      <Item Value="/home/bertold/snap/teams-for-linux/"/>
+      <Item Value="/home/bertold/Templates/"/>
+      <Item Value="/home/bertold/thunderbird/"/>
+      <Item Value="/home/bertold/tmp/"/>
+      <Item Value="/home/bertold/.tmux/"/>
+      <Item Value="/home/bertold/.tmux/plugins/"/>
+      <Item Value="/home/bertold/.cache/"/>
+      <Item Value="/home/"/>
+      <Item Value="/home/bertold/Faugus/"/>
+      <Item Value="/home/bertold/Faugus/rockstar-launcher/"/>
+      <Item Value="/home/bertold/Faugus/rockstar-launcher/drive_c/"/>
+      <Item Value="/home/bertold/.local/"/>
+      <Item Value="/home/bertold/.local/share/"/>
+      <Item Value="/home/bertold/.local/share/hyprlauncher/"/>
+      <Item Value="/home/bertold/.local/share/Valve Corporation/"/>
+      <Item Value="/home/bertold/.local/share/Valve Corporation/SteamLink/"/>
+      <Item Value="/home/bertold/.local/share/hyprland/"/>
+      <Item Value="/home/bertold/.local/share/umu/"/>
+      <Item Value="/home/bertold/.local/share/umu/compatibilitytools/"/>
+      <Item Value="/home/bertold/.local/share/umu/compatibilitytools/UMU-Latest/"/>
+      <Item Value="/home/bertold/.local/share/Steam___/"/>
+      <Item Value="/home/bertold/.local/share/Steam___/Steam/"/>
+      <Item Value="/home/bertold/.local/share/Steam/"/>
+      <Item Value="/home/bertold/.wine/"/>
+      <Item Value="/home/bertold/.wine/drive_c/"/>
+      <Item Value="/home/bertold/.wine/drive_c/Program Files/"/>
+      <Item Value="/home/bertold/Pictures/"/>
+    </Navigation>
+    <CommandLine/>
+    <FileMask/>
+    <VolumeSize/>
+    <CreateDirectories>
+      <Item Value="Misc" Tag="0"/>
+      <Item Value="TV" Tag="0"/>
+      <Item Value="Migration" Tag="0"/>
+      <Item Value="Media" Tag="0"/>
+      <Item Value="UKPanel" Tag="0"/>
+      <Item Value="Video" Tag="0"/>
+      <Item Value="Incoming" Tag="0"/>
+      <Item Value="E-Media" Tag="0"/>
+    </CreateDirectories>
+    <SearchText/>
+    <SearchTextPath/>
+    <ReplaceText/>
+    <ReplaceTextPath/>
+    <RenameNameMask/>
+    <RenameExtMask/>
+    <SearchDirectories/>
+    <SearchExcludeFiles/>
+    <SearchExcludeDirectories/>
+  </History>
+</doublecmd>

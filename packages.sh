@@ -21,6 +21,9 @@ declare -a PACKAGES_TO_INSTALL=(
     'rofi'
     'bat'
     'translate-shell'
+    'doublecmd-qt6'
+    'btop'
+    'gparted'
 )
 
 sudo pacman -Sy
