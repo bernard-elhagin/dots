@@ -453,6 +453,9 @@ hi IncSearch guibg=black guifg=#44aaff
 
 hi MatchParen guibg=bg guifg=red gui=bold
 
+set guioptions-=m
+set guioptions-=T
+
 " ]]]
 
 " Filetype Settings ------------------------------------------------------ [[[

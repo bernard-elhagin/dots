@@ -26,8 +26,8 @@ floating_modifier $mod
 # workspace_layout tabbed <stacking|tabbed>
 
 # Configure border style <normal|1pixel|pixel xx|none|pixel>
-new_window pixel 1
-new_float normal
+default_border pixel 1
+default_floating_border normal
 
 # Hide borders
 #hide_edge_borders none
@@ -399,19 +399,19 @@ exec xmodmap -e "keysym Caps_Lock = Escape" # set Caps Lock to Esc
 bar {
     font xft:xos4 Terminus Regular 9
     position top
-    set $height 16
+    #set $height 16
     tray_output none
     #status_command bumblebee-status -m uptime arch-update date time -p date.format="%a, %d. %b %Y" time.format="%H:%M:%S" -t iceberg-dark-powerline
-    colors{
-        background #232323
-        statusline #DCDCDC
-    }
+    #colors{
+        #background #232323
+        #statusline #DCDCDC
+    #}
 }
 
 bar {
     font xft:xos4 Terminus Regular 9
     position bottom
-    set $height 16
+    #set $height 16
     colors {
         background #1d2021
         focused_workspace  #cb9e83 #665c54 #ebdbb2

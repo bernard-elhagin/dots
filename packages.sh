@@ -6,7 +6,6 @@ declare -a PACKAGES_TO_INSTALL=(
     'git'
     'fzf'
     'fasd'
-    'starship'
     'git-delta'
     'ranger'
     'make'
@@ -21,7 +20,6 @@ declare -a PACKAGES_TO_INSTALL=(
     'zsh'
     'rofi'
     'bat'
-    'xfce4-terminal'
     'translate-shell'
 )
 
