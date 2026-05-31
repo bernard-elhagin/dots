@@ -1675,9 +1675,9 @@
       FilePanel : {
         CursorBorderColor : -2147483635,
         ForeColor : -2147483640,
-        BackColor : -2147483643,
-        BackColor2 : -2147483643,
-        MarkColor : 255,
+        BackColor : 0,
+        BackColor2 : 723466,
+        MarkColor : 65535,
         CursorColor : 8344832,
         CursorText : -2147483634,
         GridLine : 4737096,
