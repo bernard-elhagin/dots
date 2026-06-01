@@ -160,10 +160,10 @@
     <Position Save="True">
       <Left>0</Left>
       <Top>30</Top>
-      <Width>2552</Width>
+      <Width>2502</Width>
       <Height>1338</Height>
       <PixelsPerInch>96</PixelsPerInch>
-      <Maximized>False</Maximized>
+      <Maximized>True</Maximized>
       <Splitter>50</Splitter>
     </Position>
   </MainWindow>

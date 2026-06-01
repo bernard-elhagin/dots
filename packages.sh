@@ -24,6 +24,7 @@ declare -a PACKAGES_TO_INSTALL=(
     'doublecmd-qt6'
     'btop'
     'gparted'
+    'haruna'
 )
 
 sudo pacman -Sy

@@ -2,62 +2,63 @@
 <doublecmd>
   <History>
     <Navigation>
+      <Item Value="/home/bertold/Pictures/"/>
+      <Item Value="/home/bertold/Pictures/X/"/>
+      <Item Value="/home/bertold/"/>
+      <Item Value="/home/bertold/Downloads/"/>
+      <Item Value="/home/bertold/Downloads/Incoming/"/>
+      <Item Value="/home/"/>
+      <Item Value="/"/>
+      <Item Value="/bin/"/>
+      <Item Value="/run/"/>
+      <Item Value="/run/media/"/>
+      <Item Value="/run/media/bertold/"/>
       <Item Value="/run/media/bertold/Media/"/>
       <Item Value="/run/media/bertold/Media/Video/"/>
+      <Item Value="/run/media/bertold/Media/Video/TV/"/>
+      <Item Value="/home/bertold/Downloads/Incoming/Austin Powers International Man of Mystery (1997) - 1080p/"/>
+      <Item Value="/home/bertold/Downloads/Incoming/Commodore 64 gigatorrent/"/>
+      <Item Value="/home/bertold/Projects/linux_szkolenie/"/>
+      <Item Value="/home/bertold/Projects/linux_szkolenie/demo/"/>
+      <Item Value="/home/bertold/Projects/linux_szkolenie/pics/"/>
+      <Item Value="/home/bertold/Projects/"/>
+      <Item Value="/home/bertold/Pictures/wallpapers/"/>
+      <Item Value="/home/bertold/Pictures/wallpapers/Dynamic-Wallpapers/"/>
+      <Item Value="/home/bertold/Pictures/wallpapers/Dynamic-Wallpapers/Light/"/>
+      <Item Value="/home/bertold/Pictures/wallpapers/Dynamic-Wallpapers/Dark/"/>
+      <Item Value="/home/bertold/Pictures/Screenshots/"/>
+      <Item Value="/run/media/bertold/Media/Games/"/>
+      <Item Value="/run/media/bertold/Media/Games/SteamLibrary/"/>
+      <Item Value="/run/media/bertold/Media/Games/SteamLibrary/steamapps/"/>
+      <Item Value="/run/media/bertold/Media/Games/SteamLibrary/steamapps/common/"/>
+      <Item Value="/run/media/bertold/Media/SteamLibrary/"/>
+      <Item Value="/run/media/bertold/Media/SteamLibrary/steamapps/"/>
+      <Item Value="/run/media/bertold/Media/Incoming/"/>
+      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/"/>
+      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/Media/"/>
+      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/GoG/"/>
+      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/$RECYCLE.BIN/"/>
       <Item Value="/run/media/bertold/Media/Video/Movies/"/>
       <Item Value="/run/media/bertold/Media/Books/"/>
       <Item Value="/run/media/bertold/Media/Books/Uncategorized/"/>
       <Item Value="/run/media/bertold/Media/Books/Atari-Gaming-ebooks-2017/"/>
-      <Item Value="/run/media/bertold/Media/Incoming/"/>
       <Item Value="/run/media/bertold/Media/Incoming/Liu G. Calculus. Formulations and Solutions with Python 2025/"/>
       <Item Value="/run/media/bertold/Media/Incoming/Kerr D. Effective Shell. A Practical User&apos;s Guide...on the Command Line 2025/"/>
       <Item Value="/run/media/bertold/Media/Radio/"/>
       <Item Value="/run/media/bertold/Media/Incoming/CBS Radio Mystery Theater/"/>
       <Item Value="/run/media/bertold/Media/Incoming/Essential Calculus Skills Practice Workbook with Full Solutions/"/>
       <Item Value="/run/media/bertold/Media/Video/UKPanel/"/>
-      <Item Value="/run/media/bertold/Media/Video/TV/"/>
       <Item Value="/run/media/bertold/Media/Video/Documentaries/"/>
       <Item Value="/run/media/bertold/Media/Video/Magic/"/>
       <Item Value="/run/media/bertold/Media/Video/Educational/"/>
       <Item Value="/run/media/bertold/SSDT7/x/"/>
-      <Item Value="/run/media/bertold/SSDT7/"/>
-      <Item Value="/run/media/bertold/SSDT7/BACKUP/"/>
-      <Item Value="/run/media/bertold/SSDT7/BACKUP/Temp/"/>
-      <Item Value="/run/media/bertold/SSDT7/BACKUP/BACKUP/"/>
-      <Item Value="/run/media/bertold/Media/Music/"/>
-      <Item Value="/run/media/bertold/Media/Video/UKPanel/Series 08/"/>
-      <Item Value="/run/media/bertold/Media/Incoming/Family Ties/"/>
-      <Item Value="/"/>
-      <Item Value="/run/"/>
-      <Item Value="/run/media/"/>
-      <Item Value="/run/media/bertold/"/>
-      <Item Value="/run/media/bertold/Media/Music/B/"/>
-      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/Media/"/>
-      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/Media/Music/"/>
-      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/Media/Music/B/"/>
-      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/Media/Music/!IL/"/>
-      <Item Value="/run/media/bertold/SSDT7/x/What We Do in the Shadows (2019) Season 4 S04 (1080p HULU WEB-DL x265 HEVC 10bit EAC3 5.1 Ghost)/"/>
-      <Item Value="/run/media/bertold/SSDT7/x/Wawa/"/>
-      <Item Value="/run/media/bertold/Media/SteamLibrary/"/>
-      <Item Value="/run/media/bertold/Media/SteamLibrary/steamapps/"/>
-      <Item Value="/run/media/bertold/Media/SteamLibrary/steamapps/common/"/>
-      <Item Value="/run/media/bertold/Seagate Backup Plus Drive/"/>
-      <Item Value="/home/bertold/Pictures/wallpapers/"/>
-      <Item Value="/home/bertold/Pictures/"/>
-      <Item Value="/home/bertold/Pictures/Screenshots/"/>
-      <Item Value="/home/bertold/"/>
-      <Item Value="/home/"/>
-      <Item Value="/home/bertold/Faugus/"/>
-      <Item Value="/home/bertold/Faugus/rockstar-launcher/"/>
-      <Item Value="/home/bertold/Faugus/rockstar-launcher/drive_c/"/>
-      <Item Value="/home/bertold/Faugus/rockstar-launcher/drive_c/Program Files/"/>
-      <Item Value="/home/bertold/Downloads/"/>
-      <Item Value="/home/bertold/dots/"/>
     </Navigation>
     <CommandLine/>
     <FileMask/>
     <VolumeSize/>
     <CreateDirectories>
+      <Item Value="X" Tag="0"/>
+      <Item Value="Games" Tag="0"/>
       <Item Value="Movies" Tag="0"/>
       <Item Value="Radio" Tag="0"/>
       <Item Value="Documentaries" Tag="0"/>
