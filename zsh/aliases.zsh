@@ -2,8 +2,6 @@
 alias pacman='pacman --color=always'
 alias pac="pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S"
 alias yac="yay -Slq | fzf --multi --preview 'yay -Si {1}' | xargs -ro yay -S"
-alias yss='yay -Ss'
-alias ys='yay -S'
 alias pfiles='pacman -Fl'
 
 alias ls='ls --color'
@@ -84,4 +82,11 @@ alias pe='(){ trans $1 -from pl -to en }'
 
 alias ranger='yazi'
 
+alias yay='paru'
+
 alias tidal='flatpak run com.mastermindzh.tidal-hifi'
+
+alias ss='sudo systemctl'
+alias sss='sudo systemctl status'
+
+alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'

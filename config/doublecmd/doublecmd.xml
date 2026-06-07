@@ -216,7 +216,7 @@
     <ColumnsTitleLikeValues>False</ColumnsTitleLikeValues>
     <CutTextToColumnWidth>True</CutTextToColumnWidth>
     <ExtendCellWidth>False</ExtendCellWidth>
-    <ShowSystemFiles>False</ShowSystemFiles>
+    <ShowSystemFiles>True</ShowSystemFiles>
     <ListFilesInThread>True</ListFilesInThread>
     <LoadIconsSeparately>True</LoadIconsSeparately>
     <DelayLoadingTabs>True</DelayLoadingTabs>
@@ -479,10 +479,10 @@
     </MultiRename>
   </FileOperations>
   <Tabs>
-    <Options>54033</Options>
+    <Options>49937</Options>
     <CharacterLimit>32</CharacterLimit>
     <Position>0</Position>
-    <ActionOnDoubleClick>2</ActionOnDoubleClick>
+    <ActionOnDoubleClick>1</ActionOnDoubleClick>
   </Tabs>
   <Log Enabled="False" Count="0" LogFileWithDateInName="False">
     <FileName>%DC_CONFIG_PATH%/doublecmd.log</FileName>
@@ -730,7 +730,7 @@
           <Title>Name</Title>
           <Unique>3AA9D8D4-2505-4DFE-A89F-E21B26CAA968</Unique>
           <FuncString>[DC().GETFILENAMENOEXT{}]</FuncString>
-          <Width>715</Width>
+          <Width>669</Width>
           <Align>0</Align>
           <Font>
             <Name>DejaVu Sans</Name>
@@ -762,7 +762,7 @@
           <Title>Size</Title>
           <Unique>2AE4F715-7944-4DF9-882D-BDCE6F02C68E</Unique>
           <FuncString>[DC().GETFILESIZE{}]</FuncString>
-          <Width>183</Width>
+          <Width>185</Width>
           <Align>1</Align>
           <Font>
             <Name>DejaVu Sans</Name>
@@ -778,7 +778,7 @@
           <Title>Date</Title>
           <Unique>5BDAF78E-F5BE-4339-89B8-55BDC946B1D1</Unique>
           <FuncString>[DC().GETFILETIME{}]</FuncString>
-          <Width>224</Width>
+          <Width>276</Width>
           <Align>1</Align>
           <Font>
             <Name>DejaVu Sans</Name>

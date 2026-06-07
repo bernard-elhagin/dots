@@ -30,7 +30,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # History
-HISTSIZE=50000
+HISTSIZE=500000
 HISTFILE=~/.zshistory
 SAVEHIST=$HISTSIZE
 HISTDUP=erase

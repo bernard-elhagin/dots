@@ -151,6 +151,9 @@
     lineNumber = false
 [http]
 	sslVerify = false
+	lowSpeedLimit = 1000
+	lowSpeedTime = 60
+	postBuffer = 524288000
 [https]
 	sslVerify = false
 [credential]

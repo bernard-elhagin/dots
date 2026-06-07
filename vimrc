@@ -76,9 +76,6 @@ endif
 
 " ]]]
 
-" Temporary
-let g:traces_enabled=0
-
 " Basic Options ---------------------------------------------------------- [[[
 set history=3000
 set encoding=utf-8
@@ -368,6 +365,10 @@ vmap # ;s/ #.*//<cr>
 map <c-i> va{Vy$%o<esc>p
 
 "map <c-r> yiwvip;s/"//g<left><left>
+
+nnoremap <cr> <cmd>w<cr><c-l>
+
+nnoremap <c-l> <cmd>noh<cr><cl>
 
 " ]]]
 

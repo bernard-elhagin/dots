@@ -24,3 +24,7 @@ lazy-lock.json
 .luarc.json
 kafka.txt
 xrandr.sh
+config/doublecmd/history.xml
+config/doublecmd/pixmaps.cache
+config/doublecmd/session.ini
+config/doublecmd/tabs.xml
