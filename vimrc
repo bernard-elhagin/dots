@@ -63,6 +63,7 @@ Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'EdenEast/nightfox.nvim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'rose-pine/vim'
+Plug 'vimwiki/vimwiki'
 
 call plug#end()
 

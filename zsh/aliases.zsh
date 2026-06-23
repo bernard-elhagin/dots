@@ -86,7 +86,4 @@ alias yay='paru'
 
 alias tidal='flatpak run com.mastermindzh.tidal-hifi'
 
-alias ss='sudo systemctl'
-alias sss='sudo systemctl status'
-
 alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'
