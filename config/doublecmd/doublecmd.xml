@@ -160,8 +160,8 @@
     <Position Save="True">
       <Left>0</Left>
       <Top>30</Top>
-      <Width>1271</Width>
-      <Height>1392</Height>
+      <Width>1272</Width>
+      <Height>1364</Height>
       <PixelsPerInch>96</PixelsPerInch>
       <Maximized>True</Maximized>
       <Splitter>50</Splitter>
@@ -730,7 +730,7 @@
           <Title>Name</Title>
           <Unique>3AA9D8D4-2505-4DFE-A89F-E21B26CAA968</Unique>
           <FuncString>[DC().GETFILENAMENOEXT{}]</FuncString>
-          <Width>669</Width>
+          <Width>625</Width>
           <Align>0</Align>
           <Font>
             <Name>DejaVu Sans</Name>
@@ -746,7 +746,7 @@
           <Title>Ext</Title>
           <Unique>E3A48772-6B9B-4FC1-88F0-B62271392E3D</Unique>
           <FuncString>[DC().GETFILEEXT{}]</FuncString>
-          <Width>144</Width>
+          <Width>163</Width>
           <Align>0</Align>
           <Font>
             <Name>DejaVu Sans</Name>
@@ -762,7 +762,7 @@
           <Title>Size</Title>
           <Unique>2AE4F715-7944-4DF9-882D-BDCE6F02C68E</Unique>
           <FuncString>[DC().GETFILESIZE{}]</FuncString>
-          <Width>185</Width>
+          <Width>208</Width>
           <Align>1</Align>
           <Font>
             <Name>DejaVu Sans</Name>
@@ -778,7 +778,7 @@
           <Title>Date</Title>
           <Unique>5BDAF78E-F5BE-4339-89B8-55BDC946B1D1</Unique>
           <FuncString>[DC().GETFILETIME{}]</FuncString>
-          <Width>276</Width>
+          <Width>272</Width>
           <Align>1</Align>
           <Font>
             <Name>DejaVu Sans</Name>

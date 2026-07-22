@@ -1,0 +1,8 @@
+session_name: my-test-project
+windows:
+  - window_name: editor
+    panes:
+      - shell_command:
+        - vim
+      - shell_command:
+        - git status

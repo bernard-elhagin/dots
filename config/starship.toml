@@ -11,7 +11,7 @@ truncation_length = 10
 style="bold blue"
 
 [character]
-success_symbol = ' '
+success_symbol = '󰑃 '
 
 [package]
 disabled = true
