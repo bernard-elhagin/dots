@@ -115,6 +115,7 @@
   # 'git push' will push the current branch to its tracking branch
   # the usual default is to push all branches
     default = upstream
+	recurseSubmodules = check
 [core]
     autocrlf = input
     editor = vim
@@ -188,3 +189,11 @@
 	untracked = "#ae81ff"
 	ignored = "#555555"
 	unmerged = "#ffffff #ff0033 bold ul"
+[commit]
+	gpgSign = false
+[gui]
+	pruneduringfetch = true
+[smartgit "submodule"]
+	fetchalways = false
+	update = true
+	initializenew = true

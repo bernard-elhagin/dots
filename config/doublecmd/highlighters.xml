@@ -29,7 +29,7 @@
       <DefaultFilter>HTML Document (*.htm,*.html)|*.htm;*.html</DefaultFilter>
     </Highlighter>
     <Highlighter Tag="1" Name="INI file">
-      <DefaultFilter>INI Files (*.ini)|*.ini</DefaultFilter>
+      <DefaultFilter>INI Files (*.ini;*.desktop;*.service)|*.ini;*.desktop;*.service</DefaultFilter>
     </Highlighter>
     <Highlighter Tag="0" Name="JSON">
       <DefaultFilter>JSON|*.json</DefaultFilter>
