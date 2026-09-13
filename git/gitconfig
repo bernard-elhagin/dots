@@ -7,13 +7,13 @@
     local = yellow
     remote = green
 [color "diff"]
-	meta = "#75715e"
-	frag = "#9fef66 bold"
-	old = "#f92672"
-	new = "#a6e22e"
+    meta = "#75715e"
+    frag = "#9fef66 bold"
+    old = "#f92672"
+    new = "#a6e22e"
     commit = yellow bold
-	whitespace = red reverse
-	func = "#f8f8f2"
+    whitespace = red reverse
+    func = "#f8f8f2"
 [alias]
   # add
     a = add                           # add
@@ -95,7 +95,7 @@
     g = grep --break --heading
     undo = reset --hard \"HEAD@{1}\"
 [format]
-    #pretty = %C(blue)%as%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
+    pretty = %C(blue)%as%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
 [mergetool]
     prompt = false
     keepBackup = false
@@ -105,7 +105,7 @@
 [merge]
     summary = true
     verbosity = 1
-	tool = meld
+    tool = meld
     conflictstyle = merge
 [apply]
     whitespace = nowarn
@@ -115,7 +115,7 @@
   # 'git push' will push the current branch to its tracking branch
   # the usual default is to push all branches
     default = upstream
-	recurseSubmodules = check
+    recurseSubmodules = check
 [core]
     autocrlf = input
     editor = vim
@@ -137,7 +137,7 @@
     path = .gitconfig.user
 [user]
     email = bernard.elhagin@gmail.com
-	name = Bernard El-Hagin
+    name = Bernard El-Hagin
 [color "diff-highlight"]
     oldNormal = red bold
     oldHighlight = cyan bold 55
@@ -151,16 +151,16 @@
     extendedRegexp = true
     lineNumber = false
 [http]
-	sslVerify = false
-	lowSpeedLimit = 1000
-	lowSpeedTime = 60
-	postBuffer = 524288000
+    sslVerify = false
+    lowSpeedLimit = 1000
+    lowSpeedTime = 60
+    postBuffer = 524288000
 [https]
-	sslVerify = false
+    sslVerify = false
 [credential]
     helper = cache --timeout=360000
 [pull]
-	rebase = true
+    rebase = true
 [init]
     defaultBranch = master
 [interactive]
@@ -179,21 +179,21 @@
     showStash = true
     showUntrackedFiles = all
 [color "status"]
-	header = "#9e9e9e italic"
-	branch = "#ffd700 bold"
-	nobranch = "#00bfff bold"
-	added = "#a6e22e bold"
-	updated = "#9fef66 bold"
-	changed = "#fd971f bold"
-	worktree = "#f92672 bold"
-	untracked = "#ae81ff"
-	ignored = "#555555"
-	unmerged = "#ffffff #ff0033 bold ul"
+    header = "#9e9e9e italic"
+    branch = "#ffd700 bold"
+    nobranch = "#00bfff bold"
+    added = "#a6e22e bold"
+    updated = "#9fef66 bold"
+    changed = "#fd971f bold"
+    worktree = "#f92672 bold"
+    untracked = "#ae81ff"
+    ignored = "#555555"
+    unmerged = "#ffffff #ff0033 bold ul"
 [commit]
-	gpgSign = false
+    gpgSign = false
 [gui]
-	pruneduringfetch = true
+    pruneduringfetch = true
 [smartgit "submodule"]
-	fetchalways = false
-	update = true
-	initializenew = true
+    fetchalways = false
+    update = true
+    initializenew = true

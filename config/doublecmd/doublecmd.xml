@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<doublecmd DCVersion="1.2.7 gamma" ConfigVersion="16">
+<doublecmd DCVersion="1.2.8 gamma" ConfigVersion="16">
   <Toolbars>
     <MainToolbar>
       <Row>
@@ -160,8 +160,8 @@
     <Position Save="True">
       <Left>0</Left>
       <Top>30</Top>
-      <Width>2552</Width>
-      <Height>665</Height>
+      <Width>1270</Width>
+      <Height>1367</Height>
       <PixelsPerInch>96</PixelsPerInch>
       <Maximized>True</Maximized>
       <Splitter>50</Splitter>
@@ -444,7 +444,7 @@
     <NtfsHourTimeDelay>False</NtfsHourTimeDelay>
     <AutoExtractOpenMask/>
     <SearchDefaultTemplate/>
-    <ProgressKind>0</ProgressKind>
+    <ProgressKind>2</ProgressKind>
     <Confirmations>15</Confirmations>
     <Options>
       <Symlink>0</Symlink>
@@ -729,7 +729,7 @@
           <Title>Name</Title>
           <Unique>3AA9D8D4-2505-4DFE-A89F-E21B26CAA968</Unique>
           <FuncString>[DC().GETFILENAMENOEXT{}]</FuncString>
-          <Width>588</Width>
+          <Width>885</Width>
           <Align>0</Align>
           <Font>
             <Name>DejaVu Sans</Name>

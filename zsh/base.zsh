@@ -9,6 +9,7 @@ export TERM="xterm-256color"
 read -r -d '' paths <<'EOF'
 /bin
 /home/bertold/bin
+/home/bertold/bin/Digital
 /home/bertold/.local/bin
 /usr/bin
 /usr/bin/core_perl
@@ -66,3 +67,5 @@ export GROFF_NO_SGR=1
 export MANPAGER='less -F -s -M +Gg'
 
 source ~/Development/Projects/kafka-zsh-completions/kafka.plugin.zsh
+
+export GIT_DISCOVERY_ACROSS_FILESYSTEM=1

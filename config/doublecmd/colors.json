@@ -4,9 +4,9 @@
       Name : "Light",
       FilePanel : {
         CursorBorderColor : -2147483635,
-        ForeColor : -2147483640,
-        BackColor : -2147483643,
-        BackColor2 : -2147483643,
+        ForeColor : 16777215,
+        BackColor : 0,
+        BackColor2 : 0,
         MarkColor : 255,
         CursorColor : -2147483635,
         CursorText : -2147483634,
@@ -1341,6 +1341,14 @@
                 }
               ],
               Ranges : [
+                {
+                  Name : "Remark //",
+                  Attributes : "$00A00000,$80000005;False:True."
+                },
+                {
+                  Name : "Remark /*...*/",
+                  Attributes : "$00A00000,$80000005;False:True."
+                },
                 {
                   Name : "Strings \"..\"",
                   Attributes : "$00000080,$80000005;False:True.",
@@ -3040,6 +3048,14 @@
                 }
               ],
               Ranges : [
+                {
+                  Name : "Remark //",
+                  Attributes : "$00C09B61,$80000005;False:True."
+                },
+                {
+                  Name : "Remark /*...*/",
+                  Attributes : "$00C09B61,$80000005;False:True."
+                },
                 {
                   Name : "Strings \"..\"",
                   Attributes : "$00898BB9,$80000005;False:True.",

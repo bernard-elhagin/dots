@@ -440,18 +440,19 @@ endif
 
 let g:airline_theme='papercolor'
 
-colorscheme rosepine
+"colorscheme rosepine
+colorscheme adventurous
 
 set bg=dark
 
-hi Normal guibg=grey10
-hi CursorLineNr cterm=none
-hi CursorLine cterm=none
-hi String guifg=hotpink
-hi Search guibg=yellow guifg=black
-hi Visual guibg=yellow guifg=black
-hi String guifg=hotpink
-hi IncSearch guibg=black guifg=#44aaff
+"hi Normal guibg=grey10
+"hi CursorLineNr cterm=none
+"hi CursorLine cterm=none
+"hi String guifg=hotpink
+"hi Search guibg=yellow guifg=black
+"hi Visual guibg=yellow guifg=black
+"hi String guifg=hotpink
+"hi IncSearch guibg=black guifg=#44aaff
 
 hi MatchParen guibg=bg guifg=red gui=bold
 
@@ -772,7 +773,7 @@ autocmd CmdwinEnter * unmap <CR>
 
 imap <c-b> <esc><cmd>set ft=bash<cr>i#!/usr/bin/env bash<cr><cr>
 
-nmap <leader>1 <cmd>.!toilet -w 200 -f term -F border<cr>
+nmap <leader>0 <cmd>.!toilet -w 200 -f term -F border<cr>
 nmap <c-up> uk<cmd>.!toilet -w 200 -f term -F border<cr>
 nmap <c-down> uj<cmd>.!toilet -w 200 -f term -F border<cr>
 

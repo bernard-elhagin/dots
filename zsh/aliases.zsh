@@ -41,7 +41,7 @@ alias tx='tmuxinator start'
 alias tm='tmuxinator start $(basename -s .yml $(ls ~/.config/tmuxinator | fzf))'
 
 # Global aliases
-alias -g G='| grep --color=always'
+alias -g G='| grep -E --color=always'
 alias -g L='| less -r'
 alias -g D='2>/dev/null'
 alias -g DD='>/dev/null'
@@ -87,3 +87,5 @@ alias yay='paru'
 alias tidal='flatpak run com.mastermindzh.tidal-hifi'
 
 alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'
+
+alias media='cd /run/media/bertold/Media'
