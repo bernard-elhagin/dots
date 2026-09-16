@@ -1,0 +1,7 @@
+2:thunderbird
+4:doublecmd
+5:xfce4-terminal
+3:steam
+2:discord
+1:firefox
+1:xfce4-terminal

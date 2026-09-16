@@ -89,3 +89,5 @@ alias tidal='flatpak run com.mastermindzh.tidal-hifi'
 alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'
 
 alias media='cd /run/media/bertold/Media'
+
+alias df=duf
