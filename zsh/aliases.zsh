@@ -91,3 +91,7 @@ alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'
 alias media='cd /run/media/bertold/Media'
 
 alias df=duf
+
+alias hyp='vim -c "norm gg" ~/.config/hypr/hyprland.lua'
+
+alias g='glg --all'
