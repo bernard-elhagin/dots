@@ -116,9 +116,10 @@
   # the usual default is to push all branches
     default = upstream
     recurseSubmodules = check
+	autoSetupRemote = false
 [core]
     autocrlf = input
-    editor = vim
+	editor = vim
     excludesfile = ~/.gitignore
     pager = delta --dark --paging=auto --syntax-theme base16-256 --diff-so-fancy
 [advice]
@@ -136,8 +137,8 @@
 [include]
     path = .gitconfig.user
 [user]
-    email = bernard.elhagin@gmail.com
-    name = Bernard El-Hagin
+	email = bernard.elhagin@gmail.com
+	name = Bernard El-Hagin
 [color "diff-highlight"]
     oldNormal = red bold
     oldHighlight = cyan bold 55
