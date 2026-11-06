@@ -295,7 +295,15 @@ hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "down" }))
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
+    local workspace = i
+    hl.bind(mainMod .. " + " .. key, function()
+        local active = hl.get_active_workspace()
+        if active ~= nil and active.id == workspace then
+            hl.dispatch(hl.dsp.focus({ workspace = "previous" }))
+        else
+            hl.dispatch(hl.dsp.focus({ workspace = workspace }))
+        end
+    end)
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
 end
 

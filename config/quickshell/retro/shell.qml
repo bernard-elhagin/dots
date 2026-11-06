@@ -138,7 +138,7 @@ ShellRoot {
                             text: "AMBER_OS"
                             color: osArea.containsMouse ? "#11100D" : "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 15
+                            font.pixelSize: 17
                             font.bold: true
                         }
 
@@ -181,13 +181,20 @@ ShellRoot {
                                     text: String(modelData + 1).padStart(2, "0")
                                     color: parent.selected || parent.recentlyChanged ? "#11100D" : "#C88700"
                                     font.family: "JetBrains Mono"
-                                    font.pixelSize: 14
+                                    font.pixelSize: 16
                                     font.bold: parent.selected || parent.recentlyChanged
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = ${modelData + 1} })`)
+                                    onClicked: {
+                                        const workspace = modelData + 1
+                                        if (Hyprland.focusedWorkspace?.id === workspace) {
+                                            Hyprland.dispatch('hl.dsp.focus({ workspace = "previous" })')
+                                        } else {
+                                            Hyprland.dispatch(`hl.dsp.focus({ workspace = ${workspace} })`)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -208,28 +215,28 @@ ShellRoot {
                             text: ""
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 17
+                            font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["firefox"]) }
                         }
                         Text {
                             text: ""
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 17
+                            font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "yazi"]) }
                         }
                         Text {
                             text: ""
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 17
+                            font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal"]) }
                         }
                         Text {
                             text: ""
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 17
+                            font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "nvim"]) }
                         }
                     }
@@ -241,7 +248,7 @@ ShellRoot {
                         text: Hyprland.activeToplevel?.title || "DESKTOP"
                         color: "#C88700"
                         font.family: "JetBrains Mono"
-                        font.pixelSize: 12
+                        font.pixelSize: 14
                     }
 
                     RowLayout {
@@ -256,7 +263,7 @@ ShellRoot {
                                 text: "♫ " + modelData.trackTitle
                                 color: "#A66F00"
                                 font.family: "JetBrains Mono"
-                                font.pixelSize: 13
+                                font.pixelSize: 15
                                 elide: Text.ElideRight
                                 width: 150
                                 MouseArea {
@@ -276,7 +283,7 @@ ShellRoot {
                             text: "⏻"
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 18
+                            font.pixelSize: 20
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached([Quickshell.shellDir + "/power-menu.sh"]) }
                         }
 
@@ -337,7 +344,7 @@ ShellRoot {
                             text: shell.updateLabel
                             color: "#FFD24A"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 14
+                            font.pixelSize: 16
                         }
 
                         IdleInhibitor {
@@ -348,7 +355,7 @@ ShellRoot {
                             text: idleInhibitor.enabled ? "󰅶" : "󰾪"
                             color: idleInhibitor.enabled ? "#FFB000" : "#A66F00"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 16
+                            font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: idleInhibitor.enabled = !idleInhibitor.enabled }
                         }
 
@@ -357,7 +364,7 @@ ShellRoot {
                             text: !sink || !sink.ready || !sink.audio ? "󰖁" : sink.audio.muted ? "󰖁" : "󰕾 " + Math.round(sink.audio.volume * 100)
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 13
+                            font.pixelSize: 15
                             MouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.LeftButton | Qt.MiddleButton
@@ -375,7 +382,7 @@ ShellRoot {
                             text: shell.stats.bluetooth === "on" ? "󰂱" : "󰂲"
                             color: shell.stats.bluetooth === "on" ? "#FFB000" : "#6E4A00"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 16
+                            font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["blueman-manager"]) }
                         }
 
@@ -387,7 +394,7 @@ ShellRoot {
                                     : "󰤨 " + (shell.stats.network || "NET")
                             color: shell.stats.network && shell.stats.network !== "OFF" ? "#FFB000" : "#A66F00"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                             elide: Text.ElideRight
                             width: 78
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["bash", shell.homeDirectory + "/.config/waybar/scripts/networkmenu.sh"]) }
@@ -398,7 +405,7 @@ ShellRoot {
                             text: ""
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 15
+                            font.pixelSize: 17
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["bash", shell.homeDirectory + "/.config/waybar/scripts/vpnmenu.sh"]) }
                         }
 
@@ -406,33 +413,33 @@ ShellRoot {
                             text: "󰘚 " + (shell.stats.memory || "--") + "%"
                             color: "#C88700"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                         }
                         Text {
                             text: "󰍛 " + shell.cpuUsage + "%"
                             color: "#C88700"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                         }
                         Text {
                             text: " " + (shell.stats.temperature || "--")
                             color: "#C88700"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                         }
                         Text {
                             visible: shell.stats.brightness !== ""
                             text: "󰖙 " + (shell.stats.brightness || "")
                             color: "#A66F00"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                         }
                         Text {
                             visible: UPower.displayDevice.ready && UPower.displayDevice.isLaptopBattery
                             text: "󰁹 " + Math.round(UPower.displayDevice.percentage) + "%"
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                         }
                     }
 
@@ -440,7 +447,7 @@ ShellRoot {
                         text: Qt.formatDateTime(clock.now, "ddd dd MMM | HH:mm:ss")
                         color: "#FFB000"
                         font.family: "JetBrains Mono"
-                        font.pixelSize: 13
+                        font.pixelSize: 15
                     }
 
                     Rectangle {
@@ -454,7 +461,7 @@ ShellRoot {
                             text: "RUN  >"
                             color: launcherArea.containsMouse ? "#11100D" : "#FFB000"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 13
+                            font.pixelSize: 15
                             font.bold: true
                         }
                         MouseArea {
@@ -475,7 +482,7 @@ ShellRoot {
                     text: "Captain's Log - Stardate: " + Math.floor(clock.now.getTime() / 1000)
                     color: "#A66F00"
                     font.family: "JetBrains Mono"
-                    font.pixelSize: 12
+                    font.pixelSize: 14
                     z: 1
                 }
             }
