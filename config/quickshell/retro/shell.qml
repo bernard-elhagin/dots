@@ -476,7 +476,7 @@ ShellRoot {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(260, parent.width * 0.24)
+                    width: Math.min(360, parent.width * 0.4)
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                     text: "Captain's Log - Stardate: " + Math.floor(clock.now.getTime() / 1000)

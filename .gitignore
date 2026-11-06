@@ -34,3 +34,4 @@ Digital*/
 .crates2.json
 autoreload.sh
 hyprsession
+!vim/doc/tags

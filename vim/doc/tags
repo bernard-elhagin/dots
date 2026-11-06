@@ -1,0 +1,10 @@
+:Codex	codex.txt	/*:Codex*
+:CodexAsk	codex.txt	/*:CodexAsk*
+:CodexReview	codex.txt	/*:CodexReview*
+:CodexSelection	codex.txt	/*:CodexSelection*
+codex	codex.txt	/*codex*
+codex-commands	codex.txt	/*codex-commands*
+codex-motion	codex.txt	/*codex-motion*
+codex-project-root	codex.txt	/*codex-project-root*
+codex-requirements	codex.txt	/*codex-requirements*
+codex.txt	codex.txt	/*codex.txt*
