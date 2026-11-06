@@ -1,29 +1,34 @@
-# less() color output
-export LESS=-iXFR
+# Completion files must be on fpath before Prezto initializes its completion
+# module. Keep the per-user completion directory optional.
+[[ -d "$HOME/.zsh/my-completions" ]] && fpath=("$HOME/.zsh/my-completions" $fpath)
 
-export EDITOR=vim
-export VISUAL=vim
+# Keep the original command search order while preserving paths supplied by
+# the environment. The unique attribute also prevents duplicates in PATH.
+typeset -gU path
+path=(
+  /bin
+  "$HOME/bin"
+  "$HOME/bin/Digital"
+  "$HOME/.local/bin"
+  /usr/bin
+  /usr/bin/core_perl
+  /usr/bin/site_perl
+  /usr/bin/vendor_perl
+  /usr/lib/jvm/default/bin
+  /usr/lib/rustup/bin
+  /usr/local/bin
+  /usr/local/sbin
+  /var/lib/snapd/snap/bin
+  /opt/kafka/bin
+  $path
+)
 
-export TERM="xterm-256color"
-
-read -r -d '' paths <<'EOF'
-/bin
-/home/bertold/bin
-/home/bertold/bin/Digital
-/home/bertold/.local/bin
-/usr/bin
-/usr/bin/core_perl
-/usr/bin/site_perl
-/usr/bin/vendor_perl
-/usr/lib/jvm/default/bin
-/usr/lib/rustup/bin
-/usr/local/bin
-/usr/local/sbin
-/var/lib/snapd/snap/bin
-/opt/kafka/bin
-EOF
-
-export PATH=$(tr '\n' ':' <<<$paths)
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+[[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -52,20 +57,12 @@ setopt hist_find_no_dups
 # Turn off spelling corrections
 unsetopt correct
 
-# Load completions
-autoload -U compinit && compinit
-
-# Completion styling
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
-
 # colour in man pages
 export GROFF_NO_SGR=1
 export MANPAGER='less -F -s -M +Gg'
 
-source ~/Development/Projects/kafka-zsh-completions/kafka.plugin.zsh
+if [[ -r "$HOME/Development/Projects/kafka-zsh-completions/kafka.plugin.zsh" ]]; then
+  source "$HOME/Development/Projects/kafka-zsh-completions/kafka.plugin.zsh"
+fi
 
 export GIT_DISCOVERY_ACROSS_FILESYSTEM=1

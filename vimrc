@@ -115,7 +115,6 @@ set laststatus=2
 set path+=.,~/Devel/Projects/**
 set suffixesadd+=.xml
 set listchars=tab:▸\ ,eol:¬
-set autochdir
 set synmaxcol=200
 set fdc=0 " fold gutter
 set diffopt=internal,filler,context:3,indent-heuristic,algorithm:patience
@@ -367,7 +366,7 @@ map <c-i> va{Vy$%o<esc>p
 
 "map <c-r> yiwvip;s/"//g<left><left>
 
-nnoremap <cr> <cmd>w<cr><c-l>
+"nnoremap <cr> <cmd>w<cr><c-l>
 
 nnoremap <c-l> <cmd>noh<cr><cl>
 

@@ -7,3 +7,4 @@ source ~/.zsh/colors.zsh
 source ~/.zsh/keybindings.zsh
 source ~/.zsh/aliases.zsh
 source ~/.zsh/integrations.zsh
+source ~/.zsh/functions.zsh

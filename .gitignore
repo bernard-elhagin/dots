@@ -10,6 +10,7 @@ bin/xplr
 autoload/
 plugged/
 bin/jq
+bin/arduino-ide
 arduino-cli
 arduino-1.8.15/
 arduino/
