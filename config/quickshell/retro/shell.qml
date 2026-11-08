@@ -23,7 +23,14 @@ ShellRoot {
     property int cpuUsage: 0
     property string updateLabel: ""
     property var pomodoro: ({ running: false, text: "POMO" })
-    property string pomodoroCommand: homeDirectory + "/Development/Projects/pomodoro/pomodoro"
+    property string pomodoroCommand: homeDirectory + "/.local/bin/pomodoro"
+
+    function isoWeek(date) {
+        const day = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+        day.setUTCDate(day.getUTCDate() + 4 - (day.getUTCDay() || 7))
+        const yearStart = new Date(Date.UTC(day.getUTCFullYear(), 0, 1))
+        return Math.ceil(((day - yearStart) / 86400000 + 1) / 7)
+    }
 
     Process {
         id: pomodoroReader
@@ -123,22 +130,43 @@ ShellRoot {
                 right: true
             }
 
-            implicitHeight: 42
-            exclusiveZone: 42
+            implicitHeight: 48
+            exclusiveZone: 48
             color: "transparent"
 
             Rectangle {
                 anchors.fill: parent
-                color: "#11100D"
+                anchors.margins: 2
+                radius: 9
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#182037" }
+                    GradientStop { position: 1; color: "#100F20" }
+                }
                 border.width: 1
-                border.color: "#6E4A00"
+                border.color: "#244854"
+
+                // Thin luminous rails, with a quieter lower edge.
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width - 24
+                    height: 1
+                    color: "#183A48"
+                }
 
                 Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
-                    height: 2
-                    color: "#FFB000"
+                    width: parent.width - 28
+                    height: 1
+                    opacity: 0.8
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0; color: "#183A48" }
+                        GradientStop { position: 0.35; color: "#00E5FF" }
+                        GradientStop { position: 0.65; color: "#B58CFF" }
+                        GradientStop { position: 1; color: "#FF79B0" }
+                    }
                 }
 
                 RowLayout {
@@ -147,19 +175,24 @@ ShellRoot {
                     anchors.rightMargin: 12
                     spacing: 8
 
-                    // System menu and workspace controls keep the original amber terminal style.
+                    // Navigation deck.
                     Rectangle {
-                        Layout.fillHeight: true
-                        implicitWidth: osLabel.implicitWidth + 12
-                        color: osArea.containsMouse ? "#FFB000" : "transparent"
+                        implicitHeight: 30
+                        implicitWidth: osLabel.implicitWidth + 20
+                        radius: 5
+                        border.width: 1
+                        border.color: osArea.containsMouse ? "#00E5FF" : "#28515E"
+                        color: osArea.containsMouse ? "#163A46" : "#0D202B"
+                        Behavior on color { ColorAnimation { duration: 140 } }
 
                         Text {
                             id: osLabel
                             anchors.centerIn: parent
-                            text: "AMBER_OS"
-                            color: osArea.containsMouse ? "#11100D" : "#FFB000"
+                            text: "◈ MAELLE"
+                            color: osArea.containsMouse ? "#E1FBFF" : "#00E5FF"
                             font.family: "JetBrains Mono"
-                            font.pixelSize: 17
+                            font.pixelSize: 14
+                            font.letterSpacing: 1.5
                             font.bold: true
                         }
 
@@ -176,7 +209,7 @@ ShellRoot {
                         Layout.fillHeight: true
                         Layout.topMargin: 9
                         Layout.bottomMargin: 9
-                        color: "#6E4A00"
+                        color: "#00616E"
                     }
 
                     RowLayout {
@@ -187,27 +220,85 @@ ShellRoot {
 
                             delegate: Rectangle {
                                 required property int modelData
+                                readonly property color accent: ["#00E5FF", "#82AAFF", "#B58CFF", "#FF79B0", "#FFAD80", "#F4D58D", "#85E6B4", "#79DBEA", "#C8A7FF"][modelData]
+                                readonly property string expeditionName: ["Maelle", "Gustave", "Lune", "Sciel", "Verso", "Monoco", "Esquie", "Noco", "Gestral"][modelData]
+                                id: workspaceButton
+                                property bool tooltipReady: false
+                                Timer {
+                                    interval: 400
+                                    running: workspaceArea.containsMouse && !workspaceArea.pressed
+                                    onTriggered: workspaceButton.tooltipReady = true
+                                }
+                                PopupWindow {
+                                    visible: workspaceArea.containsMouse && !workspaceArea.pressed
+                                        && workspaceButton.tooltipReady
+                                    implicitWidth: workspaceTooltipLabel.implicitWidth + 24
+                                    implicitHeight: workspaceTooltipLabel.implicitHeight + 20
+                                    color: "transparent"
+                                    grabFocus: false
+                                    // Labels must never intercept clicks on the workspace buttons.
+                                    mask: Region {}
+                                    anchor.item: workspaceButton
+                                    anchor.edges: Edges.Bottom | Edges.Left
+                                    anchor.gravity: Edges.Bottom | Edges.Right
+                                    anchor.margins.top: 8
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: 6
+                                        color: "#100F20"
+                                        border.width: 1
+                                        border.color: "#695687"
+                                        Text {
+                                            id: workspaceTooltipLabel
+                                            anchors.centerIn: parent
+                                            text: "Expedition " + String(workspaceButton.modelData + 1).padStart(2, "0")
+                                                + " · " + workspaceButton.expeditionName
+                                            color: "#D7DEFF"
+                                            font.family: "JetBrains Mono"
+                                            font.pixelSize: 12
+                                        }
+                                    }
+                                }
                                 readonly property bool selected: Hyprland.focusedWorkspace
                                     ? Hyprland.focusedWorkspace.id === modelData + 1 : false
                                 readonly property bool recentlyChanged: barWindow.lastChangedWorkspace === modelData + 1
 
-                                width: 28
-                                height: 25
-                                color: recentlyChanged ? "#FFD24A" : selected ? "#FFB000" : "transparent"
-                                border.width: recentlyChanged ? 2 : 1
-                                border.color: recentlyChanged ? "#FFF0A3" : selected ? "#FFB000" : "#6E4A00"
+                                width: 30
+                                height: 28
+                                radius: 5
+                                color: selected ? Qt.rgba(accent.r, accent.g, accent.b, 0.20) : workspaceArea.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, 0.10) : "#0C1721"
+                                border.width: 1
+                                border.color: selected || workspaceArea.containsMouse ? accent : Qt.rgba(accent.r, accent.g, accent.b, 0.32)
+                                Behavior on color { ColorAnimation { duration: 140 } }
+                                Behavior on border.color { ColorAnimation { duration: 160 } }
+
+                                Rectangle {
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 3
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: parent.selected ? 12 : 3
+                                    height: 2
+                                    radius: 1
+                                    color: parent.accent
+                                    Behavior on width { NumberAnimation { duration: 180 } }
+                                }
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: String(modelData + 1).padStart(2, "0")
-                                    color: parent.selected || parent.recentlyChanged ? "#11100D" : "#C88700"
+                                    color: parent.selected ? "#F2F6FF" : parent.accent
                                     font.family: "JetBrains Mono"
-                                    font.pixelSize: 16
-                                    font.bold: parent.selected || parent.recentlyChanged
+                                    font.pixelSize: 13
+                                    font.bold: parent.selected
                                 }
 
                                 MouseArea {
+                                    id: workspaceArea
+                                    onExited: workspaceButton.tooltipReady = false
+                                    onPressed: workspaceButton.tooltipReady = false
                                     anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         const workspace = modelData + 1
                                         if (Hyprland.focusedWorkspace?.id === workspace) {
@@ -226,7 +317,7 @@ ShellRoot {
                         Layout.fillHeight: true
                         Layout.topMargin: 9
                         Layout.bottomMargin: 9
-                        color: "#6E4A00"
+                        color: "#00616E"
                     }
 
                     RowLayout {
@@ -234,28 +325,28 @@ ShellRoot {
 
                         Text {
                             text: ""
-                            color: "#FFB000"
+                            color: "#FFAD80"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["firefox"]) }
                         }
                         Text {
                             text: ""
-                            color: "#FFB000"
+                            color: "#82AAFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "yazi"]) }
                         }
                         Text {
                             text: ""
-                            color: "#FFB000"
+                            color: "#85E6B4"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal"]) }
                         }
                         Text {
                             text: ""
-                            color: "#FFB000"
+                            color: "#B58CFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "nvim"]) }
@@ -266,8 +357,8 @@ ShellRoot {
                         Layout.maximumWidth: 170
                         Layout.minimumWidth: 40
                         elide: Text.ElideMiddle
-                        text: Hyprland.activeToplevel?.title || "DESKTOP"
-                        color: "#C88700"
+                        text: "› " + (Hyprland.activeToplevel?.title || "SYSTEM READY")
+                        color: "#85B8C8"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 14
                     }
@@ -282,7 +373,7 @@ ShellRoot {
                                 required property var modelData
                                 visible: modelData.isPlaying && modelData.trackTitle !== ""
                                 text: "♫ " + modelData.trackTitle
-                                color: "#A66F00"
+                                color: "#C8A7FF"
                                 font.family: "JetBrains Mono"
                                 font.pixelSize: 15
                                 elide: Text.ElideRight
@@ -295,18 +386,24 @@ ShellRoot {
                         }
                     }
 
-                    Item { Layout.fillWidth: true; Layout.minimumWidth: 8 }
+                    Item { Layout.fillWidth: true; Layout.minimumWidth: 0 }
+
+                    Text {
+                        Layout.minimumWidth: 330
+                        Layout.preferredWidth: 330
+                        Layout.maximumWidth: 330
+                        horizontalAlignment: Text.AlignHCenter
+                        elide: Text.ElideRight
+                        text: "Captain's Log - Stardate: " + Math.floor(clock.now.getTime() / 1000)
+                        color: "#C8A7FF"
+                        font.family: "JetBrains Mono"
+                        font.pixelSize: 13
+                    }
+
+                    Item { Layout.fillWidth: true; Layout.minimumWidth: 0 }
 
                     RowLayout {
                         spacing: 8
-
-                        Text {
-                            text: "⏻"
-                            color: "#FFB000"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 20
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached([Quickshell.shellDir + "/power-menu.sh"]) }
-                        }
 
                         RowLayout {
                             spacing: 3
@@ -315,10 +412,13 @@ ShellRoot {
                                 delegate: Item {
                                     id: trayIcon
                                     required property var modelData
-                                    visible: !/(steam|double.?commander|doublecmd)/i.test(
+                                    readonly property bool isNetwork: /nm-applet|networkmanager|network manager|networking/i.test(
+                                        [modelData.id, modelData.title, modelData.tooltipTitle].join(" ")
+                                    )
+                                    visible: !/(steam|double.?commander|doublecmd|discord|vesktop)/i.test(
                                         [modelData.id, modelData.title, modelData.tooltipTitle, modelData.tooltipDescription].join(" ")
                                     )
-                                    width: 16
+                                    width: isNetwork ? 22 : 16
                                     height: 18
 
                                     Image {
@@ -334,8 +434,19 @@ ShellRoot {
                                     MultiEffect {
                                         anchors.fill: parent
                                         source: trayIconSource
-                                        colorization: 1.0
-                                        colorizationColor: "#FFB000"
+                                        visible: !trayIcon.isNetwork
+                                        colorization: 0.0
+                                        colorizationColor: "#00E5FF"
+                                    }
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        visible: trayIcon.isNetwork
+                                        text: shell.stats.network === "ETH" ? "󰈀"
+                                            : shell.stats.network && shell.stats.network !== "OFF" ? "󰤨" : "󰤭"
+                                        color: shell.stats.network && shell.stats.network !== "OFF" ? "#00E5FF" : "#747895"
+                                        font.family: "JetBrains Mono"
+                                        font.pixelSize: 18
                                     }
 
                                     MouseArea {
@@ -344,8 +455,14 @@ ShellRoot {
                                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                                         onClicked: mouse => {
                                             if (modelData.hasMenu && (mouse.button === Qt.RightButton || modelData.onlyMenu)) {
-                                                const point = trayIcon.mapToItem(barWindow.contentItem, 0, 0)
-                                                modelData.display(barWindow, Math.round(point.x), Math.round(point.y + trayIcon.height))
+                                                if (trayIcon.isNetwork) {
+                                                    networkTrayMenu.anchor.item = trayIcon
+                                                    networkTrayMenu.menuHandle = modelData.menu
+                                                    networkTrayMenu.visible = !networkTrayMenu.visible
+                                                } else {
+                                                    const point = trayIcon.mapToItem(barWindow.contentItem, 0, 0)
+                                                    modelData.display(barWindow, Math.round(point.x), Math.round(point.y + trayIcon.height))
+                                                }
                                             } else if (mouse.button === Qt.LeftButton) {
                                                 modelData.activate()
                                             }
@@ -363,7 +480,7 @@ ShellRoot {
                         Text {
                             visible: shell.updateLabel !== ""
                             text: shell.updateLabel
-                            color: "#FFD24A"
+                            color: "#66EFFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 16
                         }
@@ -374,7 +491,7 @@ ShellRoot {
                         }
                         Text {
                             text: idleInhibitor.enabled ? "󰅶" : "󰾪"
-                            color: idleInhibitor.enabled ? "#FFB000" : "#A66F00"
+                            color: idleInhibitor.enabled ? "#F4D58D" : "#747895"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: idleInhibitor.enabled = !idleInhibitor.enabled }
@@ -383,7 +500,7 @@ ShellRoot {
                         Text {
                             readonly property var sink: Pipewire.defaultAudioSink
                             text: !sink || !sink.ready || !sink.audio ? "󰖁" : sink.audio.muted ? "󰖁" : "󰕾 " + Math.round(sink.audio.volume * 100)
-                            color: "#FFB000"
+                            color: "#F4D58D"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             MouseArea {
@@ -401,30 +518,16 @@ ShellRoot {
 
                         Text {
                             text: shell.stats.bluetooth === "on" ? "󰂱" : "󰂲"
-                            color: shell.stats.bluetooth === "on" ? "#FFB000" : "#6E4A00"
+                            color: shell.stats.bluetooth === "on" ? "#82AAFF" : "#495571"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["blueman-manager"]) }
                         }
 
                         Text {
-                            text: shell.stats.network === "OFF"
-                                ? "󰤮"
-                                : shell.stats.network === "ETH"
-                                    ? ""
-                                    : "󰤨 " + (shell.stats.network || "NET")
-                            color: shell.stats.network && shell.stats.network !== "OFF" ? "#FFB000" : "#A66F00"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 14
-                            elide: Text.ElideRight
-                            width: 78
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["bash", shell.homeDirectory + "/.config/waybar/scripts/networkmenu.sh"]) }
-                        }
-
-                        Text {
                             visible: shell.stats.vpn === "on"
                             text: ""
-                            color: "#FFB000"
+                            color: "#B58CFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 17
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["bash", shell.homeDirectory + "/.config/waybar/scripts/vpnmenu.sh"]) }
@@ -432,67 +535,91 @@ ShellRoot {
 
                         Text {
                             text: "󰘚 " + (shell.stats.memory || "--") + "%"
-                            color: "#C88700"
+                            color: "#B58CFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             text: "󰍛 " + shell.cpuUsage + "%"
-                            color: "#C88700"
+                            color: "#82AAFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             text: " " + (shell.stats.temperature || "--")
-                            color: "#C88700"
+                            color: "#FFAD80"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             visible: shell.stats.brightness !== ""
                             text: "󰖙 " + (shell.stats.brightness || "")
-                            color: "#A66F00"
+                            color: "#F4D58D"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             visible: UPower.displayDevice.ready && UPower.displayDevice.isLaptopBattery
                             text: "󰁹 " + Math.round(UPower.displayDevice.percentage) + "%"
-                            color: "#FFB000"
+                            color: "#85E6B4"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                     }
 
                     Rectangle {
+                        id: pomodoroWidget
+                        property bool hoverReady: false
+                        Timer {
+                            interval: 350
+                            running: pomodoroArea.containsMouse
+                            onTriggered: pomodoroWidget.hoverReady = true
+                        }
                         implicitWidth: pomodoroLabel.implicitWidth + 18
-                        height: 25
-                        color: pomodoroArea.containsMouse ? "#3B2A0B" : "transparent"
+                        height: 28
+                        radius: 5
+                        color: pomodoroArea.containsMouse ? "#173342" : "#101E2B"
+                        Behavior on color { ColorAnimation { duration: 140 } }
                         border.width: 1
-                        border.color: shell.pomodoro.running ? "#FFB000" : "#6E4A00"
+                        border.color: shell.pomodoro.running ? "#00E5FF" : "#00616E"
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.margins: 4
+                            height: 2
+                            radius: 1
+                            color: "#293344"
+                            visible: shell.pomodoro.running && Number(shell.pomodoro.duration) > 0
+                            Rectangle {
+                                width: parent.width * Math.max(0, Math.min(1,
+                                    1 - Number(shell.pomodoro.remaining) / Number(shell.pomodoro.duration)))
+                                height: parent.height
+                                radius: 1
+                                color: shell.pomodoro.phase === "work" ? "#B58CFF" : "#85E6B4"
+                                Behavior on width { NumberAnimation { duration: 300 } }
+                            }
+                        }
 
                         Text {
                             id: pomodoroLabel
                             anchors.centerIn: parent
-                            text: !shell.pomodoro.running ? "◷ POMO"
+                            text: !shell.pomodoro.running ? "◷ GRADIENT"
                                 : (shell.pomodoro.paused ? "Ⅱ " : "◷ ")
-                                  + (shell.pomodoro.phase === "work" ? "FOCUS " : "BREAK ")
+                                  + (shell.pomodoro.phase === "work" ? "CHARGE " : "REST ")
                                   + shell.pomodoro.text
-                            color: !shell.pomodoro.running ? "#C88700"
-                                : shell.pomodoro.paused ? "#FFD24A"
+                            color: !shell.pomodoro.running ? "#00B4C8"
+                                : shell.pomodoro.paused ? "#66EFFF"
                                 : shell.pomodoro.phase === "work" ? "#FF7887" : "#A6D189"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                             font.bold: true
                         }
 
-                        ToolTip.visible: pomodoroArea.containsMouse
-                        ToolTip.text: shell.pomodoro.running
-                            ? "Pomodoro · " + (shell.pomodoro.completed || 0) + " sessions completed\nClick to pause/resume. Keep its terminal open."
-                            : "Start Pomodoro"
-
                         MouseArea {
                             id: pomodoroArea
+                            onExited: pomodoroWidget.hoverReady = false
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
@@ -506,47 +633,195 @@ ShellRoot {
                     }
 
                     Text {
+                        id: dateLabel
+                        property bool copied: false
                         text: Qt.formatDateTime(clock.now, "ddd dd MMM | HH:mm:ss")
-                        color: "#FFB000"
+                        color: "#D7DEFF"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 15
+                        property bool hoverReady: false
+                        Timer {
+                            interval: 350
+                            running: dateArea.containsMouse && !almanac.visible
+                            onTriggered: dateLabel.hoverReady = true
+                        }
+                        Timer { id: copyReset; interval: 2000; onTriggered: dateLabel.copied = false }
+                        MouseArea {
+                            id: dateArea
+                            anchors.fill: parent
+                            onExited: dateLabel.hoverReady = false
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            onClicked: mouse => {
+                                if (mouse.button === Qt.RightButton) {
+                                    Quickshell.execDetached(["wl-copy", "--", Qt.formatDateTime(clock.now, "yyyy-MM-dd HH:mm:ss t")])
+                                    dateLabel.copied = true
+                                    copyReset.restart()
+                                } else {
+                                    almanac.visible = !almanac.visible
+                                }
+                            }
+                        }
                     }
 
-                    Rectangle {
-                        width: 58
-                        height: 25
-                        color: launcherArea.containsMouse ? "#FFB000" : "transparent"
-                        border.width: 1
-                        border.color: "#FFB000"
+
+                }
+
+
+            }
+
+            TrayMenu {
+                id: networkTrayMenu
+                visible: false
+                anchor.edges: Edges.Bottom | Edges.Right
+                anchor.gravity: Edges.Bottom | Edges.Left
+                anchor.margins.top: 8
+            }
+
+            PopupWindow {
+                id: pomodoroTooltip
+                visible: pomodoroArea.containsMouse && pomodoroWidget.hoverReady
+                implicitWidth: 350
+                implicitHeight: pomodoroTooltipContent.implicitHeight + 32
+                color: "transparent"
+                grabFocus: false
+                anchor.item: pomodoroWidget
+                anchor.edges: Edges.Bottom | Edges.Right
+                anchor.gravity: Edges.Bottom | Edges.Left
+                anchor.margins.top: 8
+                Rectangle {
+                    anchors.fill: parent
+                    color: "#100F20"
+                    radius: 10
+                    border.width: 1
+                    border.color: "#695687"
+                    Column {
+                        id: pomodoroTooltipContent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: 16
+                        spacing: 8
                         Text {
-                            anchors.centerIn: parent
-                            text: "RUN  >"
-                            color: launcherArea.containsMouse ? "#11100D" : "#FFB000"
+                            text: "GRADIENT CHARGE"
+                            color: "#00E5FF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             font.bold: true
                         }
-                        MouseArea {
-                            id: launcherArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: Quickshell.execDetached(["rofi", "-show", "drun"])
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: !shell.pomodoro.running ? "Ready for a focus session"
+                                : (shell.pomodoro.phase === "work" ? "Focus" : "Rest")
+                                  + (shell.pomodoro.paused ? " · Paused" : " · In progress")
+                                  + " · " + shell.pomodoro.text
+                            color: "#D7DEFF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 13
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: "Expeditions completed today: " + Number(shell.pomodoro.completedToday || 0)
+                            color: "#85E6B4"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 12
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: shell.pomodoro.running
+                                ? "Click to pause/resume\nKeep its terminal open"
+                                : "Click to start Pomodoro"
+                            color: "#85B8C8"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 11
                         }
                     }
                 }
+            }
 
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(360, parent.width * 0.4)
-                    horizontalAlignment: Text.AlignHCenter
-                    elide: Text.ElideRight
-                    text: "Captain's Log - Stardate: " + Math.floor(clock.now.getTime() / 1000)
-                    color: "#A66F00"
-                    font.family: "JetBrains Mono"
-                    font.pixelSize: 14
-                    z: 1
+            PopupWindow {
+                id: clockTooltip
+                visible: dateArea.containsMouse && dateLabel.hoverReady && !almanac.visible
+                implicitWidth: 350
+                implicitHeight: clockTooltipContent.implicitHeight + 32
+                color: "transparent"
+                grabFocus: false
+                anchor.item: dateLabel
+                anchor.edges: Edges.Bottom | Edges.Right
+                anchor.gravity: Edges.Bottom | Edges.Left
+                anchor.margins.top: 8
+                Rectangle {
+                    anchors.fill: parent
+                    color: "#100F20"
+                    radius: 10
+                    border.width: 1
+                    border.color: "#695687"
+                    Column {
+                        id: clockTooltipContent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: 16
+                        spacing: 8
+                        Text {
+                            text: "LUMIÈRE ALMANAC"
+                            color: "#00E5FF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 15
+                            font.bold: true
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: dateLabel.copied ? "Date and time copied"
+                                : Qt.formatDateTime(clock.now, "dddd, d MMMM yyyy")
+                            color: dateLabel.copied ? "#85E6B4" : "#D7DEFF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 13
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: "ISO week " + shell.isoWeek(clock.now)
+                                + " · " + Qt.formatDateTime(clock.now, "tttt (t)")
+                            color: "#D2B8FF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 12
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: "Expeditions completed today: " + Number(shell.pomodoro.completedToday || 0)
+                            color: "#85E6B4"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 12
+                        }
+                        Text {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            text: "Click to open calendar\nRight-click to copy date and time"
+                            color: "#85B8C8"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 11
+                        }
+                    }
                 }
+            }
+
+            Almanac {
+                id: almanac
+                visible: false
+                now: clock.now
+                completedToday: Number(shell.pomodoro.completedToday || 0)
+                anchorHovered: dateArea.containsMouse
+                anchor.item: dateLabel
+                anchor.edges: Edges.Bottom | Edges.Right
+                anchor.gravity: Edges.Bottom | Edges.Left
+                anchor.margins.top: 8
             }
 
             QtObject {

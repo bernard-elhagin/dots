@@ -145,6 +145,10 @@ command -v hyprctl >/dev/null 2>&1 || {
     printf 'Missing required command: hyprctl\n' >&2
     exit 1
 }
+if ! workspace_result="$(hyprctl dispatch 'hl.dsp.workspace.move({ workspace = "3", monitor = "DP-1" })' 2>&1)"; then
+    printf 'Could not move workspace 3 to DP-1: %s\n' "$workspace_result" >&2
+    exit 1
+fi
 if ! workspace_result="$(hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })' 2>&1)"; then
     printf 'Could not switch to workspace 3: %s\n' "$workspace_result" >&2
     exit 1

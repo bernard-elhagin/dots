@@ -2,9 +2,19 @@
 
 set -euo pipefail
 
+DOTS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
 declare -a CORE_PACKAGES=(
     'gvim'
     'neovim'
+    'python-pynvim'
+    'perl'
+    'jdk25-openjdk'
+    'nodejs'
+    'npm'
+    'pnpm'
+    'curl'
+    'ctags'
     'git'
     'fzf'
     'fasd'
@@ -30,6 +40,42 @@ declare -a DESKTOP_PACKAGES=(
     'hyprland'
     'quickshell'
     'rofi'
+    'hyprpaper'
+    'xdg-desktop-portal-hyprland'
+    'xdg-desktop-portal-gtk'
+
+    # Taskbar status, tray applet, network menus and Bluetooth controls.
+    'networkmanager'
+    'network-manager-applet'
+    'bluez'
+    'bluez-utils'
+    'blueman'
+    'upower'
+    'jq'
+    'libnotify'
+    'brightnessctl'
+    'pacman-contrib'
+
+    # PipeWire audio controls and media-player shortcuts.
+    'pipewire'
+    'pipewire-pulse'
+    'wireplumber'
+    'pavucontrol'
+    'playerctl'
+
+    # Applications launched by Hyprland and the taskbar.
+    'xfce4-terminal'
+    'firefox'
+    'yazi'
+    'dolphin'
+    'steam'
+    'ttf-jetbrains-mono-nerd'
+    # Also required when selecting desktop without the core profile.
+    'neovim'
+    'perl'
+    'python'
+    'fzf'
+    'wl-clipboard'
     'doublecmd-qt6'
     'gparted'
     'haruna'
@@ -65,6 +111,17 @@ case "${1:-all}" in
         exit 2
         ;;
 esac
+
+# The all profile shares a few utilities with desktop; request each only once.
+declare -A seen_packages=()
+declare -a unique_packages=()
+for package in "${PACKAGES_TO_INSTALL[@]}"; do
+    if [[ -z "${seen_packages[$package]:-}" ]]; then
+        unique_packages+=("$package")
+        seen_packages[$package]=1
+    fi
+done
+PACKAGES_TO_INSTALL=("${unique_packages[@]}")
 
 if ! command -v pacman >/dev/null 2>&1; then
     printf 'Error: pacman was not found; this installer is for Arch Linux.\n' >&2
@@ -109,4 +166,6 @@ if [[ "${1:-all}" != desktop ]]; then
         mkdir -p -- "$(dirname -- "$TPM_DIR")"
         git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
     fi
+
+    bash "$DOTS_DIR/bin/install_nvim_servers.sh"
 fi

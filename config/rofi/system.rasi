@@ -5,7 +5,7 @@ configuration {
 }
 
 * {
-  font: "JetBrainsMono Nerd Font 15";
+  font: "JetBrainsMono Nerd Font 11";
 
   bg:           #0f1115;
   bg-alt:       #151922;
@@ -17,7 +17,7 @@ configuration {
   accent:       #1793d1;
   border:       rgba(42,49,64,0.92);
 
-  spacing: 10;
+  spacing: 5;
 }
 
 window {
@@ -27,7 +27,7 @@ window {
   x-offset: 0px;
   y-offset: 0px;
 
-  width: 700px;
+  width: 540px;
 
   background-color: @panel;
   border: 2px;
@@ -38,7 +38,7 @@ window {
 mainbox {
   orientation: horizontal;
   children: [ "powerside", "message" ];
-  padding: 10px 10px 10px 10px;
+  padding: 6px;
   background-color: transparent;
 }
 
@@ -50,7 +50,7 @@ powerside {
  orientation: vertical;
   children: [ "listview" ];
   expand: false;
-  width: 64px;
+  width: 44px;
 
   background-color: @panel;
   border: 2px;
@@ -70,7 +70,7 @@ message {
   background-color: transparent;
   enabled: true;
   expand: true;
-  padding: 8px 0px 4px 8px;
+  padding: 4px 0px 2px 6px;
 }
 
 textbox {
@@ -99,8 +99,8 @@ element {
   border: 2px;
   border-color: transparent;
   border-radius: 1px;
-  width: 48px;
-  padding: 17px 0px;
+  width: 34px;
+  padding: 11px 0px;
 }
 
 element selected {

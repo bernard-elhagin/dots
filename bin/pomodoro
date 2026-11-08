@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+launcher="$(readlink -f -- "${BASH_SOURCE[0]}")"
+app_dir="$(cd -- "$(dirname -- "$launcher")/../apps/pomodoro" && pwd)"
+exec perl "$app_dir/pomodoro" "$@"

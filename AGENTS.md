@@ -1,5 +1,10 @@
 # Repository Guidelines
 
+## User Preferences
+
+Assume the user is using the Codex CLI in a terminal unless they explicitly say
+otherwise. Give CLI instructions rather than GUI navigation by default.
+
 ## Project Structure & Module Organization
 
 This repository manages personal Linux dotfiles and helper scripts. Top-level directories group related settings: `zsh/` and `zprezto/runcoms/` for the shell, `vim/` and `vimrc` for Vim, `tmux/` for tmux, `i3/` and `hypr/` for window managers, and `config/` for application configuration. `bin/` contains user-facing utilities; `fzf/` and `git/` hold their respective integrations. Some directories contain plugins or submodules; preserve their upstream structure when changing them.

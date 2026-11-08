@@ -51,10 +51,10 @@ EOF
 
 choice="$(
   printf '%s\n' \
-  "<span size='17000'></span>" \
-  "<span size='17000'></span>" \
-  "<span size='17000'>󰒲</span>" \
-  "<span size='17000'>⏻</span>" \
+  "<span size='13000'></span>" \
+  "<span size='13000'></span>" \
+  "<span size='13000'>󰒲</span>" \
+  "<span size='13000'>⏻</span>" \
   | rofi -dmenu \
       -theme "$THEME" \
       -mesg "$info" \

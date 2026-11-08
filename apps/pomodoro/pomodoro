@@ -1,0 +1,177 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/lib";
+use Pomodoro::Timer;
+use Pomodoro::View;
+use Pomodoro::Sound;
+use Pomodoro::Status;
+use JSON::PP qw(encode_json);
+use Getopt::Long qw(GetOptions);
+use POSIX qw(ICANON ECHO TCSANOW VMIN VTIME);
+use IO::Select;
+use Time::HiRes qw(clock_gettime CLOCK_MONOTONIC);
+
+my %opts = (work => 25, short => 5, long => 15, every => 4);
+my ($help, $silent, $no_color, $show_status, $toggle);
+GetOptions(
+    'work=s' => \$opts{work}, 'short=s' => \$opts{short},
+    'long=s' => \$opts{long}, 'every=s' => \$opts{every},
+    'silent' => \$silent, 'no-color' => \$no_color, 'help|h' => \$help,
+    'status' => \$show_status, 'toggle' => \$toggle,
+) or usage(2);
+usage(0) if $help;
+usage(2) if @ARGV;
+my $status = Pomodoro::Status->new;
+if ($show_status || $toggle) {
+    my $state = $status->read;
+    if ($show_status) { print encode_json($state), "\n"; exit 0 }
+    exit($state->{running} && kill('USR1', $state->{pid}) ? 0 : 1);
+}
+for my $name (qw(work short long)) {
+    die "--$name must be a positive number of minutes (maximum 1440).\n"
+        unless $opts{$name} =~ /\A(?:\d+(?:\.\d*)?|\.\d+)\z/
+        && $opts{$name} > 0 && $opts{$name} <= 1440;
+}
+die "--every must be an integer between 1 and 100.\n"
+    unless $opts{every} =~ /\A\d+\z/ && $opts{every} >= 1 && $opts{every} <= 100;
+die "Run pomodoro in an interactive terminal (or use --help).\n"
+    unless -t STDIN && -t STDOUT;
+die "An ANSI-capable terminal is required.\n" if ($ENV{TERM} // '') eq 'dumb';
+$status->acquire;
+
+my ($saved, $raw, $terminal_active, $sound);
+my ($columns, $rows) = (80, 24);
+my $last_frame = '';
+sub terminal_size {
+    my $size = `stty size 2>/dev/null`;
+    ($rows, $columns) = ($1, $2) if $size =~ /^(\d+)\s+(\d+)/ && $1 && $2;
+    $last_frame = '';
+}
+terminal_size();
+$SIG{WINCH} = sub { terminal_size() };
+binmode STDOUT, ':encoding(UTF-8)';
+$| = 1;
+sub cleanup {
+    $sound->stop if $sound;
+    return unless $terminal_active;
+    $saved->setattr(fileno(STDIN), TCSANOW);
+    print "\e[0m\e[?25h\e[?1049l";
+    $terminal_active = 0;
+}
+END { cleanup(); $status->clear if $status }
+$SIG{INT} = sub { exit 130 };
+$SIG{TERM} = sub { exit 143 };
+$SIG{HUP} = sub { exit 129 };
+# Restore terminal modes while suspended, then re-enter the UI on resume.
+$SIG{TSTP} = sub {
+    cleanup();
+    kill 'STOP', $$;
+};
+$SIG{CONT} = sub { activate_terminal() };
+
+sub activate_terminal {
+    $raw->setattr(fileno(STDIN), TCSANOW);
+    $terminal_active = 1;
+    $last_frame = '';
+    print "\e[?1049h\e[?25l\e[2J";
+}
+
+$saved = POSIX::Termios->new;
+$saved->getattr(fileno(STDIN));
+$raw = POSIX::Termios->new;
+$raw->getattr(fileno(STDIN));
+$raw->setlflag($raw->getlflag & ~(ICANON | ECHO));
+$raw->setcc(VMIN, 1);
+$raw->setcc(VTIME, 0);
+activate_terminal();
+
+my $timer = Pomodoro::Timer->new(%opts);
+my $toggle_requested = 0;
+$SIG{USR1} = sub { $toggle_requested = 1 };
+$sound = Pomodoro::Sound->new(directory => "$FindBin::Bin/assets", silent => $silent);
+my $input = IO::Select->new(\*STDIN);
+my $previous = clock_gettime(CLOCK_MONOTONIC);
+my $message = 'Time to focus.';
+my $reset_until = 0;
+my $color = !$no_color && !exists $ENV{NO_COLOR};
+while (1) {
+    if ($toggle_requested) {
+        $timer->toggle_pause;
+        $message = $timer->paused ? 'Paused from taskbar.' : 'Resumed from taskbar.';
+        $toggle_requested = 0;
+    }
+    $sound->poll;
+    my $now = clock_gettime(CLOCK_MONOTONIC);
+    if ($timer->tick($now - $previous)) {
+        $sound->play($timer->phase);
+        $message = $timer->phase eq 'work' ? 'Break over. Time to focus.' : 'Session complete. Take a break.';
+        $reset_until = 0;
+    }
+    $previous = $now;
+    $status->publish($timer);
+    draw();
+    next unless $input->can_read(0.1);
+    my $key;
+    my $read = sysread(STDIN, $key, 1);
+    last unless defined $read && $read > 0;
+    last if lc($key) eq 'q';
+    if ($key eq ' ' || lc($key) eq 'p') {
+        $timer->toggle_pause;
+        $message = $timer->paused ? 'Paused. Breathe.' : 'Timer resumed.';
+        $reset_until = 0;
+    } elsif (lc($key) eq 'n') {
+        $timer->advance(0);
+        $sound->stop;
+        $sound->play($timer->phase);
+        $message = 'Phase skipped (not counted as a completed focus session).';
+        $reset_until = 0;
+    } elsif (lc($key) eq 'r') {
+        if ($now <= $reset_until) {
+            $timer->reset;
+            $message = 'Current phase restarted.';
+            $reset_until = 0;
+        } else {
+            $reset_until = $now + 3;
+            $message = 'Press R again within 3 seconds to restart this phase.';
+        }
+    }
+    # Charge input-processing time to the next iteration; monotonic time avoids
+    # clock adjustments and accumulating drift from repeated sleep calls.
+}
+cleanup();
+print "Finished: ", $timer->completed, " focus session(s).\n";
+
+sub draw {
+    my $frame = Pomodoro::View->render(
+        timer => $timer, columns => $columns, rows => $rows,
+        color => $color, options => \%opts, message => $message,
+    );
+    print $frame if $frame ne $last_frame;
+    $last_frame = $frame;
+}
+
+sub usage {
+    my ($status) = @_;
+    my $out = $status ? \*STDERR : \*STDOUT;
+    print {$out} <<'HELP';
+Usage: ./pomodoro [options]
+
+A terminal Pomodoro timer. Focus and break phases advance automatically.
+
+  --work MINUTES    Focus duration (default: 25)
+  --short MINUTES   Short break duration (default: 5)
+  --long MINUTES    Long break duration (default: 15)
+  --every COUNT     Focus sessions per long break (default: 4)
+  --silent          Disable phase-change sounds and terminal bell
+  --no-color        Disable colors (also respects NO_COLOR)
+  --status          Print JSON status for taskbar integration
+  --toggle          Pause/resume the running timer
+  --help, -h        Show this help
+
+Fractional minutes are supported, for example --work 0.1 for a six-second demo.
+Controls: Space/P pause/resume, N skip, R twice restart, Q quit.
+HELP
+    exit $status;
+}

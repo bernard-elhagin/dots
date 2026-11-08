@@ -1,0 +1,108 @@
+# Mako settings and defaults from the installed mako(5) manual (2026-03-29).
+# Changed settings retain their defaults as comments beside the overrides.
+# Reload after editing: makoctl reload
+
+# Global options
+max-history=5
+sort=-time
+# Default: no included configuration. Uncomment with an actual file path.
+# include=~/path/to/config
+
+# Mouse, touch, and notification actions
+on-button-left=invoke-default-action
+# on-button-middle=none
+on-button-middle=dismiss-all
+on-button-right=dismiss
+on-touch=dismiss
+# on-notify=none
+on-notify=exec pw-play /usr/share/sounds/freedesktop/stereo/message.oga
+# Actions: none, dismiss [--no-history], dismiss-all, dismiss-group,
+# invoke-action <action>, invoke-default-action, exec <command>.
+
+# Text and colors (#RRGGBB or #RRGGBBAA)
+# font=monospace 10
+font=JetBrains Mono 11
+# background-color=#285577FF
+background-color=#100F20
+# text-color=#FFFFFFFF
+text-color=#D7DEFF
+format=<b>%s</b>\n%b
+text-alignment=left
+markup=1
+
+# Dimensions in pixels. Directional values accept one to four comma-separated
+# numbers: all; vertical,horizontal; top,horizontal,bottom; top,right,bottom,left.
+# width=300
+width=350
+# height=100
+height=180
+# outer-margin=0
+outer-margin=56,8,8,8
+# margin=10
+margin=8
+# padding=5
+padding=16
+# border-size=2
+border-size=1
+# border-color=#4C7899FF
+border-color=#695687
+# border-radius=0
+border-radius=10
+progress-color=over #5588AAFF
+
+# Icons
+icons=1
+# max-icon-size=64
+max-icon-size=48
+# Empty by default; /usr/share/icons/hicolor and /usr/share/pixmaps are
+# always searched. Additional paths are colon-separated.
+icon-path=
+icon-location=left
+icon-border-radius=0
+
+# Behavior and grouping
+actions=1
+history=1
+# Milliseconds; zero disables the default timeout.
+# default-timeout=0
+default-timeout=7000
+ignore-timeout=0
+group-by=none
+# max-visible=5
+max-visible=3
+
+# Placement
+# Default output is empty (follow the focused monitor); keep our override.
+# output=
+output=DP-2
+layer=top
+anchor=top-right
+
+# Criteria-only setting: invisible=0 by default. It belongs in a section,
+# not the global options. An empty section matches all notifications.
+# Uncomment both lines to override visibility for every notification:
+# []
+# invisible=0
+
+# Built-in grouping rules, written explicitly with their default values.
+# Put any additional criteria after the global options above.
+[grouped]
+format=(%g) <b>%s</b>\n%b
+invisible=1
+
+[group-index=0]
+invisible=0
+
+# Available criteria fields (these are match conditions, not settings with
+# defaults): app-name, app-icon, summary, summary~, body, body~, urgency,
+# category, desktop-entry, actionable, expiring, mode, grouped, group-index,
+# hidden, output, anchor. See man 5 mako for matching rules and restrictions.
+
+# Keep urgent notifications visible until dismissed.
+[urgency=critical]
+# border-color=#4C7899FF
+border-color=#FF7887
+# default-timeout=0
+default-timeout=0
+# ignore-timeout=0
+ignore-timeout=1

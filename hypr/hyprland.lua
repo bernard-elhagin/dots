@@ -53,6 +53,7 @@ local runmenu     = "rofi -show run"
 hl.on("hyprland.start", function ()
     hl.exec_cmd("nm-applet")
     hl.exec_cmd("qs -n -c retro")
+    --hl.exec_cmd('openrgb --device "B650 GAMING X AX V2" --mode Static --color 000000')
 end)
 
 
@@ -346,9 +347,9 @@ hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
 
 -- Requires playerctl
-hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("playerctl next"),       { locked = true })
-hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
-hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any next"),       { locked = true })
+hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any previous"),   { locked = true })
+hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any play-pause"), { locked = true })
 
 
 --------------------------------
@@ -358,6 +359,7 @@ hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl play-pause"), { locked
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 
+hl.workspace_rule({ workspace = "3", monitor = "DP-1" })
 hl.workspace_rule({ workspace = "5", layout = "master" })
 
 -- Example window rules that are useful
