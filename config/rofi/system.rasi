@@ -1,0 +1,118 @@
+configuration {
+  show-icons: false;
+  sidebar-mode: false;
+  drun-display-format: "{name}";
+}
+
+* {
+  font: "JetBrainsMono Nerd Font 15";
+
+  bg:           #0f1115;
+  bg-alt:       #151922;
+  panel:        rgba(21, 25, 33, 0.95);
+  tile:         #0f1115;
+  text:         #e7e7e7;
+  text-dim:     #b7bcc6;
+  bg-alt:       #151922;
+  accent:       #1793d1;
+  border:       rgba(42,49,64,0.92);
+
+  spacing: 10;
+}
+
+window {
+  location: northwest;
+  anchor: northwest;
+
+  x-offset: 0px;
+  y-offset: 0px;
+
+  width: 700px;
+
+  background-color: @panel;
+  border: 2px;
+  border-color: @accent;
+  border-radius: 2px;
+}
+
+mainbox {
+  orientation: horizontal;
+  children: [ "powerside", "message" ];
+  padding: 10px 10px 10px 10px;
+  background-color: transparent;
+}
+
+inputbar {
+  enabled: false;
+}
+
+powerside {
+ orientation: vertical;
+  children: [ "listview" ];
+  expand: false;
+  width: 64px;
+
+  background-color: @panel;
+  border: 2px;
+  border-color: transparent;
+  border-radius: 0px;
+}
+
+entry {
+  enabled: false;
+}
+
+prompt {
+  enabled: false;
+}
+
+message {
+  background-color: transparent;
+  enabled: true;
+  expand: true;
+  padding: 8px 0px 4px 8px;
+}
+
+textbox {
+  background-color: transparent;
+  text-color: @text;
+  border: 1px;
+  border-color: transparent;
+  border-radius: 2px;
+}
+
+listview {
+  enabled: true;
+  columns: 1;
+  lines: 4;
+  spacing: @spacing;
+  fixed-height: true;
+  scrollbar: false;
+  background-color: transparent;
+  expand: true;
+}
+
+element {
+  background-color: transparent;
+  text-color: @text;
+
+  border: 2px;
+  border-color: transparent;
+  border-radius: 1px;
+  width: 48px;
+  padding: 17px 0px;
+}
+
+element selected {
+  border-color: @accent;
+  background-color: #1a2030;
+  border: 2px;
+}
+
+element-text {
+  horizontal-align: 0.5;
+  vertical-align: 0.5;
+  background-color: transparent;
+  text-color: @text;
+  padding: 0px 6px 0px 0px;
+}

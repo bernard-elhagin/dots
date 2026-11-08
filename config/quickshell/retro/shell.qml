@@ -22,6 +22,27 @@ ShellRoot {
     property int previousCpuIdle: 0
     property int cpuUsage: 0
     property string updateLabel: ""
+    property var pomodoro: ({ running: false, text: "POMO" })
+    property string pomodoroCommand: homeDirectory + "/Development/Projects/pomodoro/pomodoro"
+
+    Process {
+        id: pomodoroReader
+        command: [shell.pomodoroCommand, "--status"]
+        stdout: SplitParser {
+            onRead: data => {
+                try { shell.pomodoro = JSON.parse(data) }
+                catch (error) { shell.pomodoro = { running: false, text: "POMO" } }
+            }
+        }
+    }
+
+    Timer {
+        interval: 1000
+        repeat: true
+        running: true
+        onTriggered: { if (!pomodoroReader.running) pomodoroReader.running = true }
+        Component.onCompleted: pomodoroReader.running = true
+    }
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
@@ -162,7 +183,7 @@ ShellRoot {
                         spacing: 4
 
                         Repeater {
-                            model: 5
+                            model: 9
 
                             delegate: Rectangle {
                                 required property int modelData
@@ -440,6 +461,47 @@ ShellRoot {
                             color: "#FFB000"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
+                        }
+                    }
+
+                    Rectangle {
+                        implicitWidth: pomodoroLabel.implicitWidth + 18
+                        height: 25
+                        color: pomodoroArea.containsMouse ? "#3B2A0B" : "transparent"
+                        border.width: 1
+                        border.color: shell.pomodoro.running ? "#FFB000" : "#6E4A00"
+
+                        Text {
+                            id: pomodoroLabel
+                            anchors.centerIn: parent
+                            text: !shell.pomodoro.running ? "◷ POMO"
+                                : (shell.pomodoro.paused ? "Ⅱ " : "◷ ")
+                                  + (shell.pomodoro.phase === "work" ? "FOCUS " : "BREAK ")
+                                  + shell.pomodoro.text
+                            color: !shell.pomodoro.running ? "#C88700"
+                                : shell.pomodoro.paused ? "#FFD24A"
+                                : shell.pomodoro.phase === "work" ? "#FF7887" : "#A6D189"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 14
+                            font.bold: true
+                        }
+
+                        ToolTip.visible: pomodoroArea.containsMouse
+                        ToolTip.text: shell.pomodoro.running
+                            ? "Pomodoro · " + (shell.pomodoro.completed || 0) + " sessions completed\nClick to pause/resume. Keep its terminal open."
+                            : "Start Pomodoro"
+
+                        MouseArea {
+                            id: pomodoroArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (shell.pomodoro.running)
+                                    Quickshell.execDetached([shell.pomodoroCommand, "--toggle"])
+                                else
+                                    Quickshell.execDetached(["xfce4-terminal", "--title=Pomodoro", "-x", shell.pomodoroCommand])
+                            }
                         }
                     }
 

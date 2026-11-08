@@ -13,6 +13,7 @@ declare -a CORE_PACKAGES=(
     'make'
     'ripgrep'
     'xsel'
+    'wl-clipboard'
     'fd'
     'tree'
     'unzip'

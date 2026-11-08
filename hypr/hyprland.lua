@@ -52,7 +52,7 @@ local runmenu     = "rofi -show run"
 --
 hl.on("hyprland.start", function ()
     hl.exec_cmd("nm-applet")
-    hl.exec_cmd("waybar")
+    hl.exec_cmd("qs -n -c retro")
 end)
 
 
@@ -92,8 +92,8 @@ hl.env("HYPRCURSOR_SIZE", "24")
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in  = 8,
-        gaps_out = 12,
+        gaps_in  = 2,
+        gaps_out = 2,
 
         border_size = 2,
 
@@ -140,11 +140,11 @@ hl.config({
 })
 
 -- Default curves and animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
-hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
-hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
-hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
-hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
-hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
+hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1} } })
+hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1} } })
+hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}    } })
+hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1} } })
+hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}  } })
 
 -- Default springs
 hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
@@ -176,14 +176,12 @@ hl.workspace_rule({ workspace = "f[1]",   gaps_out = 0, gaps_in = 0 })
 hl.window_rule({
     name  = "no-gaps-wtv1",
     match = { float = false, workspace = "w[tv1]" },
-    border_size = 0,
     rounding    = 0,
 })
 
 hl.window_rule({
     name  = "no-gaps-f1",
     match = { float = false, workspace = "f[1]" },
-    border_size = 0,
     rounding    = 0,
 })
 
@@ -197,7 +195,8 @@ hl.config({
 -- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
 hl.config({
     master = {
-        new_status = "master",
+        new_status = "slave",
+        orientation = "right",
     },
 })
 
@@ -265,6 +264,10 @@ local mainMod = "SUPER"
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + U", hl.dsp.exec_cmd(terminal))
 
+-- Physical [ and ] keys open Steam Store and Library.
+hl.bind(mainMod .. " + code:34", hl.dsp.exec_cmd("/usr/bin/steam steam://store"))
+hl.bind(mainMod .. " + code:35", hl.dsp.exec_cmd("/usr/bin/steam steam://open/games"))
+
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 
@@ -274,6 +277,7 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(runmenu))
+hl.bind("mouse:272", hl.dsp.exec_cmd("~/.config/quickshell/retro/dismiss-power-menu.sh"), { click = true, non_consuming = true })
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + I", hl.dsp.layout("togglesplit"))    -- dwindle only
 hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ monitor = "DP-2" }))
@@ -284,6 +288,8 @@ hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "down" }))
 hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.window.move({ monitor = "DP-2" }))
 hl.bind(mainMod .. " + CTRL + H", hl.dsp.window.move({ monitor = "DP-1" }))
+hl.bind(mainMod .. " + CTRL + right", hl.dsp.window.move({ monitor = "DP-2" }))
+hl.bind(mainMod .. " + CTRL + left", hl.dsp.window.move({ monitor = "DP-1" }))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
@@ -323,18 +329,26 @@ hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
+local reUnit = 75
+hl.bind(mainMod .. " + ALT + L", hl.dsp.window.resize({ x = reUnit,  y = 0,       relative = true }))
+hl.bind(mainMod .. " + ALT + H", hl.dsp.window.resize({ x = -reUnit, y = 0,       relative = true }))
+hl.bind(mainMod .. " + ALT + K", hl.dsp.window.resize({ x = 0,       y = -reUnit, relative = true }))
+hl.bind(mainMod .. " + ALT + J", hl.dsp.window.resize({ x = 0,       y = reUnit,  relative = true }))
+
 -- Laptop multimedia keys for volume and LCD brightness
-hl.bind(mainMod .. " + up", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind(mainMod .. " + down", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
-hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
+hl.bind(mainMod .. " + up",      hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+hl.bind(mainMod .. " + down",    hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
+hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
+hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
 
 -- Requires playerctl
-hl.bind(mainMod .. " + right",  hl.dsp.exec_cmd("playerctl next"),      { locked = true })
-hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 
 
 --------------------------------
@@ -343,6 +357,8 @@ hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("playerctl previous"),   { locked
 
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
+
+hl.workspace_rule({ workspace = "5", layout = "master" })
 
 -- Example window rules that are useful
 
@@ -393,3 +409,30 @@ hl.window_rule({
 
     fullscreen = true
 })
+
+--hl.window_rule({
+--    name  = "double-commander",
+--    match = { class = "^(doublecmd)$" },
+--    workspace = "4"
+--})
+--
+--hl.window_rule({
+--    name  = "Steam",
+--    match = { class = "^(steam)$" },
+--    workspace = "3"
+--})
+--
+--hl.window_rule({
+--    name  = "Thunderbird",
+--    match = { class = "^(thunderbird)$" },
+--    workspace = "2"
+--})
+--
+--hl.window_rule({
+--    name  = "Discord",
+--    match = { class = "^(discord)$" },
+--    workspace = "2"
+--})
+
+-- HyprMod managed settings
+require("hyprland-gui")

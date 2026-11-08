@@ -5,7 +5,6 @@ set -euo pipefail
 # Requires Python 3 and hyprctl. State defaults to ~/.config/hypr/session.json.
 exec python3 - "$@" <<'PY'
 import argparse
-import collections
 import json
 import os
 import pathlib
@@ -27,7 +26,10 @@ def run_hyprctl(*args, required=True):
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            timeout=20,
         )
+    except subprocess.TimeoutExpired:
+        raise RuntimeError("hyprctl timed out")
     except FileNotFoundError:
         raise RuntimeError("hyprctl is not installed or is not on PATH")
     if required and result.returncode != 0:
@@ -79,6 +81,7 @@ def save_session(path):
         ws = client.get("workspace") or {}
         proc = process_info(client.get("pid"))
         windows.append({
+            "savedAddress": client.get("address", ""),
             "class": client.get("class", ""),
             "initialClass": client.get("initialClass", ""),
             "title": client.get("title", ""),
@@ -89,7 +92,8 @@ def save_session(path):
             "workspace": {
                 "id": ws.get("id"),
                 "name": ws.get("name", ""),
-                "monitor": client.get("monitor", ""),
+                "monitor": next((m.get("name", "") for m in monitors
+                                 if m.get("id") == client.get("monitor")), ""),
             },
             "floating": bool(client.get("floating", False)),
             "pseudo": bool(client.get("pseudo", False)),
@@ -101,16 +105,19 @@ def save_session(path):
         })
 
     state = {
-        "version": 1,
+        "version": 2,
         "savedAt": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "monitors": [
             {"name": m.get("name", ""), "width": m.get("width"),
-             "height": m.get("height"), "scale": m.get("scale")}
+             "height": m.get("height"), "scale": m.get("scale"),
+             "id": m.get("id"), "x": m.get("x"), "y": m.get("y")}
             for m in monitors
         ],
         "workspaces": [
             {"id": w.get("id"), "name": w.get("name", ""),
-             "monitor": w.get("monitor", "")}
+             "monitor": w.get("monitor", ""),
+             "layout": w.get("tiledLayout") or w.get("layout") or option("general:layout", "str"),
+             "masterOrientation": option("master:orientation", "str") or "right"}
             for w in workspaces
         ],
         "activeWorkspace": {
@@ -126,6 +133,29 @@ def save_session(path):
         },
         "windows": windows,
     }
+
+    for workspace in state["workspaces"]:
+        selector = workspace_selector(workspace)
+        tiled = [w for w in windows if workspace_selector(w["workspace"]) == selector
+                 and not w["floating"] and not w["fullscreen"]]
+        orientation = workspace["masterOrientation"]
+        if workspace["layout"] == "master" and len(tiled) >= 2 and orientation in ("left", "right", "top", "bottom"):
+            horizontal = orientation in ("left", "right")
+            axis, cross = (0, 1) if horizontal else (1, 0)
+            # Support the common single-master arrangement; do not guess at multi-master grids.
+            if all(w.get("at") and w.get("size") for w in tiled):
+                extreme = (max if orientation in ("right", "bottom") else min)(w["at"][axis] for w in tiled)
+                masters = [w for w in tiled if w["at"][axis] == extreme]
+                if len(masters) == 1:
+                    master = masters[0]
+                    low = min(w["at"][axis] for w in tiled)
+                    high = max(w["at"][axis] + w["size"][axis] for w in tiled)
+                    order = [master] + sorted([w for w in tiled if w is not master], key=lambda w: w["at"][cross])
+                    workspace["masterPlacement"] = {
+                        "order": [w["savedAddress"] for w in order],
+                        "orientation": orientation,
+                        "ratio": master["size"][axis] / max(1, high - low),
+                    }
 
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temp_name = tempfile.mkstemp(prefix=path.name + ".", dir=path.parent)
@@ -179,6 +209,16 @@ def dispatch(name, parameter="", extra=""):
         mode = "maximized" if extra == "maximized" else "fullscreen"
         code = ("hl.dsp.window.fullscreen({ window = " + lua_string(parameter)
                  + ', action = "set", mode = ' + lua_string(mode) + " })")
+    elif name == "movetoworkspace":
+        code = ("hl.dsp.window.move({ window = " + lua_string(parameter)
+                + ", workspace = " + lua_string(extra) + ", follow = false })")
+    elif name == "fullscreenstate":
+        code = ("hl.dsp.window.fullscreen_state({ window = " + lua_string(parameter)
+                + f", internal = {int(extra)}, client = {int(extra)} }})")
+    elif name == "layout":
+        code = "hl.dsp.layout(" + lua_string(parameter) + ")"
+    elif name == "swap":
+        code = "hl.dsp.window.swap({ target = " + lua_string(parameter) + " })"
     else:
         raise RuntimeError(f"Unsupported Hyprland action: {name}")
 
@@ -190,10 +230,38 @@ def dispatch(name, parameter="", extra=""):
     return True
 
 
-def client_key(client):
-    ws = client.get("workspace") or {}
-    return (str(ws.get("name", ws.get("id", ""))),
-            str(client.get("initialClass") or client.get("class") or ""))
+def option(name, field):
+    result = run_hyprctl("-j", "getoption", name, required=False)
+    try:
+        return json.loads(result.stdout).get(field)
+    except (ValueError, AttributeError):
+        return None
+
+
+def app_class(client):
+    return client.get("initialClass") or client.get("class") or ""
+
+
+def launch_argv(saved):
+    # Steam's UI belongs to steamwebhelper, whose arguments refer to a dead
+    # parent process after logout. Ask the public launcher to show the UI.
+    if app_class(saved).lower() == "steam":
+        return ["steam", "steam://open/main"]
+    return saved.get("argv") or []
+
+
+def match_existing(saved, claimed):
+    candidates = [c for c in clients_now()
+                  if c.get("address") not in claimed and app_class(c) == app_class(saved)]
+    # Exact titles first, then same workspace. Never consume a window twice.
+    title = saved.get("title")
+    exact = [c for c in candidates if title and c.get("title") == title]
+    if exact:
+        return max(exact, key=lambda c: workspace_selector(c.get("workspace") or {}) ==
+                   workspace_selector(saved.get("workspace") or {}))
+    same_ws = [c for c in candidates if workspace_selector(c.get("workspace") or {}) ==
+               workspace_selector(saved.get("workspace") or {})]
+    return same_ws[0] if same_ws else None
 
 
 def clients_now():
@@ -204,19 +272,20 @@ def clients_now():
         return []
 
 
-def restore_window(saved, existing_counts):
+def restore_window(saved, claimed):
     ws = saved.get("workspace") or {}
     selector = workspace_selector(ws)
-    app_class = saved.get("initialClass") or saved.get("class") or ""
-    key = (str(ws.get("name", ws.get("id", ""))), str(app_class))
-    if existing_counts[key] > 0:
-        existing_counts[key] -= 1
-        print(f"Already open; leaving {app_class or 'window'} on {key[0]} alone")
+    wanted_class = app_class(saved)
+    if not wanted_class:
+        print("Skipping window with no application class", file=sys.stderr)
         return
+    opened = match_existing(saved, claimed)
+    if opened is not None:
+        return place_window(saved, opened, claimed)
 
-    argv = saved.get("argv") or []
+    argv = launch_argv(saved)
     if not argv:
-        print(f"Skipping {app_class or 'window'}: its process command was unavailable at save time", file=sys.stderr)
+        print(f"Skipping {wanted_class or 'window'}: its process command was unavailable at save time", file=sys.stderr)
         return
 
     monitor = ws.get("monitor") or ""
@@ -224,7 +293,7 @@ def restore_window(saved, existing_counts):
     if monitor and monitor in known_monitors:
         dispatch("focusmonitor", monitor)
     elif monitor:
-        print(f"Monitor {monitor!r} is not connected; opening {app_class or argv[0]} on the current monitor")
+        print(f"Monitor {monitor!r} is not connected; opening {wanted_class or argv[0]} on the current monitor")
 
     dispatch("workspace", selector)
     before = {str(c.get("address")) for c in clients_now()}
@@ -237,17 +306,19 @@ def restore_window(saved, existing_counts):
         print(f"Could not launch {argv[0]!r}: {exc}", file=sys.stderr)
         return
 
-    deadline = time.monotonic() + POLL_SECONDS
+    poll_seconds = 60 if wanted_class.lower() == "steam" else POLL_SECONDS
+    deadline = time.monotonic() + poll_seconds
     opened = None
     while time.monotonic() < deadline:
         time.sleep(0.4)
         current = clients_now()
         new_clients = [c for c in current if str(c.get("address")) not in before]
         matches = [c for c in new_clients
-                   if not app_class or (c.get("initialClass") or c.get("class")) == app_class]
-        if not matches and new_clients:
-            matches = [c for c in new_clients
-                       if str((c.get("workspace") or {}).get("name", "")) == str(ws.get("name", ""))]
+                   if not wanted_class or (c.get("initialClass") or c.get("class")) == wanted_class]
+        matches = [c for c in matches if c.get("address") not in claimed]
+        if len(matches) > 1:
+            exact = [c for c in matches if c.get("title") == saved.get("title")]
+            matches = exact if len(exact) == 1 else []
         if matches:
             opened = matches[-1]
             break
@@ -256,14 +327,25 @@ def restore_window(saved, existing_counts):
             time.sleep(0.8)
 
     if opened is None:
-        print(f"No new window detected for {app_class or argv[0]} after {POLL_SECONDS}s; it may be a single-instance app or a helper process", file=sys.stderr)
+        print(f"No new window detected for {wanted_class or argv[0]} after {poll_seconds}s; it may be a single-instance app or a helper process", file=sys.stderr)
         return
 
+    return place_window(saved, opened, claimed)
+
+
+def place_window(saved, opened, claimed):
+    selector = workspace_selector(saved.get("workspace") or {})
+    wanted_class = app_class(saved)
     address = str(opened.get("address", ""))
     if not address:
-        print(f"Opened {app_class or argv[0]}, but Hyprland returned no window address", file=sys.stderr)
+        print(f"Opened {wanted_class or 'window'}, but Hyprland returned no window address", file=sys.stderr)
         return
 
+    claimed.add(address)
+    if not dispatch("movetoworkspace", "address:" + address, selector):
+        raise RuntimeError(f"Could not place {wanted_class} on workspace {selector}")
+    if opened.get("fullscreen"):
+        dispatch("fullscreenstate", "address:" + address, "0")
     dispatch("focuswindow", "address:" + address)
     current_floating = bool(opened.get("floating", False))
     if current_floating != bool(saved.get("floating", False)):
@@ -278,16 +360,55 @@ def restore_window(saved, existing_counts):
         if len(size) >= 2:
             dispatch("resize", f"address:{address} {int(size[0])} {int(size[1])}")
 
-    if saved.get("pseudo") and not opened.get("pseudo", False):
-        dispatch("pseudo", "address:" + address, "set")
-    if saved.get("pinned") and not opened.get("pinned", False):
-        dispatch("pin", "address:" + address, "set")
-    if int(saved.get("fullscreen", 0) or 0) and not int(opened.get("fullscreen", 0) or 0):
-        dispatch("fullscreen", "address:" + address,
-                 "maximized" if int(saved.get("fullscreen", 0)) == 1 else "fullscreen")
+    for prop in ("pseudo", "pinned"):
+        if bool(saved.get(prop)) != bool(opened.get(prop)):
+            dispatch("pin" if prop == "pinned" else prop, "address:" + address,
+                     "set" if saved.get(prop) else "unset")
+    print(f"Placed {wanted_class or 'window'} on workspace {selector}")
+    return address
 
-    existing_counts[key] += 1
-    print(f"Opened {app_class or argv[0]} on workspace {selector}")
+
+def restore_master_layouts(state, restored):
+    addresses = {saved.get("savedAddress"): address for saved, address in restored}
+    current_workspaces = {workspace_selector(w): w for w in hypr_json("workspaces")}
+    for workspace in state.get("workspaces", []):
+        placement = workspace.get("masterPlacement")
+        selector = workspace_selector(workspace)
+        if not placement:
+            continue
+        current = current_workspaces.get(selector, {})
+        layout = current.get("tiledLayout") or current.get("layout") or option("general:layout", "str")
+        if layout != "master":
+            print(f"Skipping master arrangement on {selector}: current layout is {layout!r}")
+            continue
+        order = [addresses.get(a) for a in placement["order"]]
+        if not all(order):
+            print(f"Skipping master arrangement on {selector}: some windows did not restore")
+            continue
+        orientation = placement["orientation"]
+        axis, cross = (0, 1) if orientation in ("left", "right") else (1, 0)
+        dispatch("workspace", selector)
+        dispatch("layout", "orientation" + orientation)
+        dispatch("layout", f"mfact exact {max(0.1, min(0.9, placement['ratio'])):.5f}")
+        # Read actual geometry after each swap; client enumeration is not layout order.
+        for index, wanted in enumerate(order):
+            current = [c for c in clients_now()
+                       if workspace_selector(c.get("workspace") or {}) == selector
+                       and not c.get("floating")]
+            if len(current) != len(order) or any(not c.get("at") for c in current):
+                print(f"Skipping remaining master order on {selector}: window set changed")
+                break
+            extreme = (max if orientation in ("right", "bottom") else min)(c["at"][axis] for c in current)
+            masters = [c for c in current if c["at"][axis] == extreme]
+            if len(masters) != 1:
+                print(f"Skipping master order on {selector}: multiple masters are unsupported")
+                break
+            master = masters[0]
+            slots = [master] + sorted([c for c in current if c is not master], key=lambda c: c["at"][cross])
+            occupant = slots[index]["address"]
+            if occupant != wanted:
+                dispatch("focuswindow", "address:" + wanted)
+                dispatch("swap", "address:" + occupant)
 
 
 def restore_session(path):
@@ -297,7 +418,7 @@ def restore_session(path):
         raise RuntimeError(f"No saved session at {path}; run 'hypr-session.sh save' first")
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"Saved session is not valid JSON: {exc}")
-    if state.get("version") != 1:
+    if state.get("version") not in (1, 2):
         raise RuntimeError(f"Unsupported session file version: {state.get('version')!r}")
 
     monitor_names = {m.get("name") for m in hypr_json("monitors")}
@@ -313,10 +434,16 @@ def restore_session(path):
         if monitor and monitor in monitor_names:
             dispatch("moveworkspacetomonitor", f"{selector} {monitor}")
 
-    counts = collections.Counter(client_key(c) for c in clients_now())
+    claimed = set()
     windows = state.get("windows", [])
+    restored = []
     for saved in windows:
-        restore_window(saved, counts)
+        address = restore_window(saved, claimed)
+        if address:
+            restored.append((saved, address))
+    restore_master_layouts(state, restored)
+    for saved, address in restored:
+        dispatch("fullscreenstate", "address:" + address, str(int(saved.get("fullscreen", 0))))
 
     active = state.get("activeWorkspace") or {}
     active_selector = workspace_selector(active)
@@ -333,10 +460,12 @@ def restore_session(path):
     if wanted_class:
         matches = [c for c in clients_now()
                    if (c.get("initialClass") or c.get("class")) == wanted_class
-                   and (not wanted_title or c.get("title") == wanted_title)]
+                   and (not wanted_title or c.get("title") == wanted_title)
+                   and workspace_selector(c.get("workspace") or {}) == active_selector]
         if matches:
             dispatch("focuswindow", "address:" + str(matches[-1].get("address", "")))
-    print("Session restore finished. Check the reported skips and launch failures.")
+    print(f"Session restore finished: placed {len(restored)}/{len(windows)} saved windows.")
+    print("Check the reported skips and launch failures; dwindle split trees are not reconstructed.")
 
 
 def main():

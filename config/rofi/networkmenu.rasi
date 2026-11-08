@@ -1,0 +1,102 @@
+configuration {
+}
+
+* {
+    font: "JetBrainsMono Nerd Font 12";
+
+    background-color: transparent;
+    text-color:       #e9f0ff;
+    outline:          0;
+}
+
+window {
+    location:         northeast;
+    anchor:           northeast;
+    x-offset:         0px;
+    y-offset:         3px;
+    width:            600px;
+
+    background-color: rgba(22, 29, 46, 0.92);
+    border:           2px;
+    border-color:     #00e5ff;  
+    border-radius:    2px;
+    padding:          12px;
+}
+
+mainbox {
+    spacing:          10px;
+    background-color: transparent;
+    children: ["prompt", "inputbar", "listview"];
+}
+
+prompt {
+    background-color: #303a56;
+    border-radius:    1px;
+    padding:          10px 12px;
+    markup: true;
+}
+
+textbox {
+    text-color:       #aab2c5;
+}
+
+listview {
+    lines:            13;
+    spacing:          6px;
+    fixed-height:     false;
+    background-color: transparent;
+}
+
+element {
+    padding:          10px 12px;
+    border-radius:    2px;
+
+    background-color: transparent;
+    border:           0px;
+    text-color:       #e9f0ff;
+}
+
+element normal, element active, element urgent, element selected {
+    border:           0px;
+    outline:          0;
+}
+
+element selected {
+    background-color: #303a56;  
+    text-color:       #e9f0ff;
+    border: 2px;
+    border-radius: 2px;
+    border-color:     #00e5ff;
+}
+
+element active {
+    background-color: #1f2738;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+}
+
+inputbar {
+    spacing:          10px;
+    padding:          9px 10px;
+    border-radius:    2px;
+
+    background-color: #121725;
+    border:           1px;
+    border-color:     #2a334a;
+    children: [ "entry" ];
+}
+
+textbox-prompt-colon {
+    text-color:       #00e5ff;
+}
+
+entry {
+    text-color:       #e9f0ff;
+    background-color: transparent;
+    border:           0px;
+    outline:          0;
+}
+

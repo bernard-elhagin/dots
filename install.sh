@@ -54,6 +54,39 @@ link_repo_path() {
     link_path "$DOTS_DIR/$repository_path" "$HOME/$home_path"
 }
 
+install_desktop() {
+    local name
+
+    # Link configuration files individually: keep session state and local files
+    # outside the repository, and let HyprMod edit its linked settings file.
+    for name in hyprland.lua hyprland.conf hyprpaper.conf hyprland-gui.lua; do
+        link_repo_path "hypr/$name" ".config/hypr/$name"
+    done
+    link_repo_path config/quickshell .config/quickshell
+    for name in launcher system networkmenu vpn; do
+        link_repo_path "config/rofi/$name.rasi" ".config/rofi/$name.rasi"
+    done
+    for name in system networkmenu vpnmenu checkupdates; do
+        link_repo_path "config/waybar/scripts/$name.sh" ".config/waybar/scripts/$name.sh"
+    done
+}
+
+case "${1:-}" in
+    --desktop-only)
+        if (( $# != 1 )); then
+            printf 'Usage: %s [--desktop-only]\n' "$0" >&2
+            exit 2
+        fi
+        install_desktop
+        exit 0
+        ;;
+    '') ;;
+    *)
+        printf 'Usage: %s [--desktop-only]\n' "$0" >&2
+        exit 2
+        ;;
+esac
+
 # Directory configurations
 link_repo_path vim .vim
 link_repo_path zsh .zsh
@@ -62,9 +95,8 @@ link_repo_path tmux .tmux
 
 # Application configurations
 link_repo_path i3/config .config/i3/config
-link_repo_path hypr .config/hypr
 link_repo_path config/doublecmd .config/doublecmd
-link_repo_path config/quickshell .config/quickshell
+install_desktop
 
 # Individual dotfiles
 declare -a FILES_TO_SYMLINK=(

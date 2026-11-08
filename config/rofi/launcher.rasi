@@ -1,0 +1,113 @@
+configuration {
+  show-icons: true;
+  drun-display-format: "{name}";
+  display-drun: " 󰍉 ";
+  hover-select: true;
+}
+
+* {
+  font: "JetBrainsMono Nerd Font 15";
+
+  bg:     #0f1115;
+  bg-alt: #161a21;
+  text:   #e7e7e7;
+  muted:  #aab0ba;
+
+  border: #4a5160;
+  select: #20242d;
+
+  spacing: 10;
+}
+
+window {
+  location: center;
+  anchor: center;
+  width: 920px;
+
+  background-color: rgba(24, 24, 24, 0.96);
+  border: 2px;
+  border-color: @border;
+  border-radius: 1px;
+}
+
+mainbox {
+  orientation: vertical;
+  spacing: 14px;
+  padding: 18px;
+  background-color: transparent;
+}
+
+inputbar {
+  children: [ prompt, entry ];
+  background-color: @bg-alt;
+  border-color: transparent;
+  padding: 12px 14px;
+  spacing: 10px;
+}
+
+prompt {
+  background-color: transparent;
+  text-color: @muted;
+}
+
+entry {
+  background-color: transparent;
+  text-color: @text;
+  placeholder: "Search...";
+  placeholder-color: rgba(231,231,231,0.35);
+}
+
+listview {
+  background-color: transparent;
+
+  columns: 5;
+  lines: 4;
+
+  spacing: 10;
+  cycle: true;
+  dynamic: false;
+  scrollbar: false;
+
+  layout: vertical;
+  fixed-columns: true;
+  fixed-height: true;
+}
+
+element {
+  orientation: vertical;
+  children: [ element-icon, element-text ];
+
+  background-color: transparent;
+  border: 1px;
+  border-color: transparent;
+  border-radius: 1px;
+
+  padding: 22px 14px;
+  spacing: 8px;
+}
+
+element selected {
+  background-color: @select;
+  border-color: @border;
+  border: 2px;
+}
+
+element-icon {
+  background-color: transparent;
+  size: 64px;
+  horizontal-align: 0.5;
+}
+
+element-text {
+  background-color: transparent;
+  text-color: @muted;
+  horizontal-align: 0.5;
+}
+
+element selected element-text {
+  text-color: @text;
+}
+
+element-text highlight {
+  text-color: @text;
+}
