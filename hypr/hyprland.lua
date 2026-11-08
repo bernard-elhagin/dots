@@ -316,7 +316,7 @@ end
 hl.bind(mainMod .. " + Tab ", hl.dsp.focus({ workspace = "previous" }))
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("~/bin/steam_launcher.sh"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("systemctl suspend"))
@@ -395,6 +395,13 @@ hl.window_rule({
 -- overlayLayerRule:set_enabled(false)
 
 -- Hyprland-run windowrule
+hl.window_rule({
+    name = "steam-launcher",
+    match = { title = "^Steam Launcher$" },
+    float = true,
+    center = true,
+})
+
 hl.window_rule({
     name  = "move-hyprland-run",
     match = { class = "hyprland-run" },
