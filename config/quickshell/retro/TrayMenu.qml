@@ -5,6 +5,7 @@ import Quickshell
 PopupWindow {
     id: popup
     property var menuHandle: null
+    property string menuTitle: "NETWORK"
     property var trail: []
     readonly property var currentMenu: trail.length ? trail[trail.length - 1] : menuHandle
     implicitWidth: 350
@@ -47,7 +48,7 @@ PopupWindow {
                 Text {
                     Layout.fillWidth: true
                     elide: Text.ElideRight
-                    text: popup.trail.length ? popup.currentMenu.text.replace(/&([^&])/g, "$1") : "NETWORK"
+                    text: popup.trail.length ? popup.currentMenu.text.replace(/&([^&])/g, "$1") : popup.menuTitle
                     color: "#00E5FF"
                     font.family: "JetBrains Mono"
                     font.pixelSize: 15

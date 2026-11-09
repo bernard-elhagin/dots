@@ -415,6 +415,9 @@ ShellRoot {
                                     readonly property bool isNetwork: /nm-applet|networkmanager|network manager|networking/i.test(
                                         [modelData.id, modelData.title, modelData.tooltipTitle].join(" ")
                                     )
+                                    readonly property bool isFlameshot: /flameshot/i.test(
+                                        [modelData.id, modelData.title, modelData.tooltipTitle].join(" ")
+                                    )
                                     visible: !/(steam|double.?commander|doublecmd|discord|vesktop)/i.test(
                                         [modelData.id, modelData.title, modelData.tooltipTitle, modelData.tooltipDescription].join(" ")
                                     )
@@ -455,10 +458,14 @@ ShellRoot {
                                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                                         onClicked: mouse => {
                                             if (modelData.hasMenu && (mouse.button === Qt.RightButton || modelData.onlyMenu)) {
-                                                if (trayIcon.isNetwork) {
+                                                if (trayIcon.isNetwork || trayIcon.isFlameshot) {
+                                                    const alreadyOpen = networkTrayMenu.visible
+                                                        && networkTrayMenu.menuHandle === modelData.menu
+                                                    networkTrayMenu.visible = false
                                                     networkTrayMenu.anchor.item = trayIcon
                                                     networkTrayMenu.menuHandle = modelData.menu
-                                                    networkTrayMenu.visible = !networkTrayMenu.visible
+                                                    networkTrayMenu.menuTitle = trayIcon.isFlameshot ? "FLAMESHOT" : "NETWORK"
+                                                    networkTrayMenu.visible = !alreadyOpen
                                                 } else {
                                                     const point = trayIcon.mapToItem(barWindow.contentItem, 0, 0)
                                                     modelData.display(barWindow, Math.round(point.x), Math.round(point.y + trayIcon.height))

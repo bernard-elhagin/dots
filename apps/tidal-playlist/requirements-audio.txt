@@ -1,0 +1,2 @@
+# Optional: only analyze-audio requires this. FFmpeg must also be on PATH.
+numpy>=1.24,<3

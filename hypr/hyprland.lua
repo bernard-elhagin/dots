@@ -52,6 +52,7 @@ local runmenu     = "rofi -show run"
 --
 hl.on("hyprland.start", function ()
     hl.exec_cmd("nm-applet")
+    hl.exec_cmd("flameshot")
     hl.exec_cmd("qs -n -c retro")
     --hl.exec_cmd('openrgb --device "B650 GAMING X AX V2" --mode Static --color 000000')
 end)

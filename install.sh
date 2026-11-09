@@ -123,6 +123,7 @@ link_repo_path bin bin
 install_tmux
 
 # Application configurations
+link_repo_path bin/tidal-playlist .local/bin/tidal-playlist
 link_repo_path codex/skills/desktop-troubleshooting .codex/skills/desktop-troubleshooting
 link_repo_path codex/skills/shell-scripting .codex/skills/shell-scripting
 link_repo_path codex/skills/systemd-troubleshooting .codex/skills/systemd-troubleshooting
