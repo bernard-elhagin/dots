@@ -30,4 +30,7 @@ if [ "$total" -ge 120 ]; then
     class="high"
 fi
 
-echo "{\"text\":\"󰚰\",\"tooltip\":\"Pacman: $repo\nAUR: $aur\nFlatpak: $flatpak_updates\",\"class\":\"$class\"}"
+jq -cn --arg class "$class" --argjson repo "$repo" --argjson aur "$aur" \
+    --argjson flatpak "$flatpak_updates" \
+    '{text:"󰚰", tooltip:("Pacman: \($repo)\nAUR: \($aur)\nFlatpak: \($flatpak)"), class:$class,
+      repo:$repo, aur:$aur, flatpak:$flatpak}'

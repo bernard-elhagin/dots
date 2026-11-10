@@ -22,6 +22,7 @@ ShellRoot {
     property int previousCpuIdle: 0
     property int cpuUsage: 0
     property string updateLabel: ""
+    property var updates: ({})
     property var pomodoro: ({ running: false, text: "POMO" })
     property string pomodoroCommand: homeDirectory + "/.local/bin/pomodoro"
 
@@ -83,12 +84,20 @@ ShellRoot {
         stdout: SplitParser {
             onRead: data => {
                 try {
-                    shell.updateLabel = JSON.parse(data).text || ""
+                    shell.updates = JSON.parse(data)
+                    shell.updateLabel = shell.updates.text || ""
                 } catch (error) {
                     shell.updateLabel = ""
                 }
             }
         }
+    }
+
+    Process {
+        id: updateTerminal
+        // A separate terminal process lets us refresh when the updater's window closes.
+        command: ["xfce4-terminal", "--disable-server", "--title=System Update", "-x", "cachy-update"]
+        onExited: { if (!updateReader.running) updateReader.running = true }
     }
 
     Timer {
@@ -100,10 +109,10 @@ ShellRoot {
     }
 
     Timer {
-        interval: 600000
+        interval: 60000
         repeat: true
         running: true
-        onTriggered: updateReader.exec(["bash", Quickshell.shellDir + "/taskbar-status.sh", "updates"])
+        onTriggered: { if (!updateReader.running) updateReader.running = true }
         Component.onCompleted: updateReader.running = true
     }
 
@@ -485,11 +494,26 @@ ShellRoot {
                         }
 
                         Text {
+                            id: updateWidget
+                            property bool hoverReady: false
+                            Timer {
+                                interval: 500
+                                running: updateArea.containsMouse
+                                onTriggered: updateWidget.hoverReady = true
+                            }
                             visible: shell.updateLabel !== ""
                             text: shell.updateLabel
                             color: "#66EFFF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 16
+                            MouseArea {
+                                id: updateArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onExited: updateWidget.hoverReady = false
+                                onClicked: { if (!updateTerminal.running) updateTerminal.running = true }
+                            }
                         }
 
                         IdleInhibitor {
@@ -684,6 +708,62 @@ ShellRoot {
                 anchor.edges: Edges.Bottom | Edges.Right
                 anchor.gravity: Edges.Bottom | Edges.Left
                 anchor.margins.top: 8
+            }
+
+            PopupWindow {
+                id: updatesTooltip
+                visible: updateWidget.visible && updateArea.containsMouse && updateWidget.hoverReady
+                implicitWidth: 350
+                implicitHeight: updatesTooltipContent.implicitHeight + 32
+                color: "transparent"
+                grabFocus: false
+                anchor.item: updateWidget
+                anchor.edges: Edges.Bottom | Edges.Right
+                anchor.gravity: Edges.Bottom | Edges.Left
+                anchor.margins.top: 8
+                Rectangle {
+                    anchors.fill: parent
+                    color: "#100F20"
+                    radius: 10
+                    border.width: 1
+                    border.color: "#695687"
+                    Column {
+                        id: updatesTooltipContent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: 16
+                        spacing: 8
+                        Text {
+                            text: "AVAILABLE UPDATES"
+                            color: "#00E5FF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 15
+                            font.bold: true
+                        }
+                        Text {
+                            text: "Pacman: " + Number(shell.updates.repo || 0)
+                                + "\nAUR: " + Number(shell.updates.aur || 0)
+                                + "\nFlatpak: " + Number(shell.updates.flatpak || 0)
+                            color: "#D7DEFF"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 13
+                        }
+                        Text {
+                            text: "Total: " + (Number(shell.updates.repo || 0)
+                                + Number(shell.updates.aur || 0) + Number(shell.updates.flatpak || 0))
+                            color: "#85E6B4"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 12
+                        }
+                        Text {
+                            text: "Click to run cachy-update"
+                            color: "#85B8C8"
+                            font.family: "JetBrains Mono"
+                            font.pixelSize: 11
+                        }
+                    }
+                }
             }
 
             PopupWindow {

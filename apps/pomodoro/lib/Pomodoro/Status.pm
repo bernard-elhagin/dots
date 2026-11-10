@@ -57,7 +57,8 @@ sub publish {
         completed => $timer->completed, completedToday => $self->completed_today,
         remaining => $seconds, duration => $timer->duration,
         text => sprintf('%02d:%02d', int($seconds / 60), $seconds % 60) };
-    my $json = encode_json($state);
+    # Stable key order makes the unchanged-status comparison meaningful.
+    my $json = JSON::PP->new->utf8->canonical->encode($state);
     return if ($self->{last} // '') eq $json;
     my $temp = "$self->{directory}/status.$$.tmp";
     open my $output, '>', $temp or die "Cannot write timer status: $!\n";

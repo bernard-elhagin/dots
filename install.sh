@@ -92,6 +92,7 @@ install_desktop() {
     link_repo_path config/quickshell .config/quickshell
     link_repo_path config/mako/config .config/mako/config
     link_repo_path bin/pomodoro .local/bin/pomodoro
+    link_repo_path bin/openrgb-keyboard-startup .local/bin/openrgb-keyboard-startup
     for name in launcher system networkmenu vpn; do
         link_repo_path "config/rofi/$name.rasi" ".config/rofi/$name.rasi"
     done

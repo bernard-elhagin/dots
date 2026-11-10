@@ -1,0 +1,16 @@
+/* More breathing room between YouTube video cards, including CustomTube grids. */
+@-moz-document domain("youtube.com") {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-item-margin: 24px !important;
+    }
+
+    ytd-rich-grid-renderer ytd-rich-item-renderer {
+        margin-bottom: 32px !important;
+    }
+
+    /* Older channel/subscription grids used by CustomTube. */
+    #items.ytd-grid-renderer > ytd-grid-video-renderer {
+        margin-right: 24px !important;
+        margin-bottom: 32px !important;
+    }
+}

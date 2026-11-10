@@ -22,6 +22,14 @@ gaps. The installer links the entire Quickshell directory, including the bar's
 status and power-menu helpers. Hyprland starts this configuration with
 `qs -n -c retro`.
 
+At Hyprland login, `openrgb-keyboard-startup` applies the keyboard settings from
+the system OpenRGB server's `cyan` profile Monday–Thursday, or `friday`
+Friday–Sunday, using local time. It reads profiles from `/etc/openrgb/profiles`
+(`OPENRGB_PROFILE_DIR` can override this) and connects to the existing SDK server
+on `127.0.0.1:6742`. Only the SteelSeries Apex 3 TKL's Direct-mode colors and
+brightness are applied; the profiles' other device settings are untouched.
+The day is checked at login, not continuously across midnight.
+
 Workspace tooltips use Expedition character names. The Pomodoro
 widget is labeled Gradient Charge and fills a progress meter during each phase;
 it uses the bundled Pomodoro app's status fields `remaining` and `duration`.

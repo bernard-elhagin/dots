@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Use local time: cyan Monday–Thursday, friday Friday–Sunday.
+case "$(date +%u)" in
+    1|2|3|4) profile=cyan ;;
+    5|6|7) profile=friday ;;
+    *) printf 'Cannot determine the day of the week.\n' >&2; exit 1 ;;
+esac
+
+keyboard="SteelSeries Apex 3 TKL"
+profile_dir="${OPENRGB_PROFILE_DIR:-/etc/openrgb/profiles}"
+
+# OpenRGB's --profile loads all devices, even alongside --device. Read just
+# this keyboard's Direct-mode settings to leave the other devices alone.
+settings="$(python3 - "$profile_dir/$profile.json" "$keyboard" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1]) as source:
+        profile = json.load(source)
+    matches = [c for c in profile['controllers'] if c['name'] == sys.argv[2]]
+    if len(matches) != 1:
+        raise ValueError('Expected exactly one matching keyboard in the profile')
+    controller = matches[0]
+    mode = controller['modes'][controller['active_mode']]
+    if mode['name'] != 'Direct':
+        raise ValueError('Keyboard startup supports Direct-mode profiles only')
+    colors = controller['colors']
+    if not colors or any(type(c) is not int or not 0 <= c <= 0xffffff for c in colors):
+        raise ValueError('Invalid keyboard colors')
+    # OpenRGB stores colors as 0xBBGGRR; the CLI expects RRGGBB.
+    colors = ','.join(f'{c & 255:02X}{(c >> 8) & 255:02X}{(c >> 16) & 255:02X}' for c in colors)
+    low, high = mode['brightness_min'], mode['brightness_max']
+    value = mode['brightness']
+    if not low <= value <= high:
+        raise ValueError('Invalid profile brightness')
+    brightness = round(100 * (value - low) / (high - low)) if high > low else 100
+    print(mode['name'])
+    print(brightness)
+    print(colors)
+except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
+    sys.exit(f'Cannot read keyboard profile: {exc}')
+PY
+)"
+mapfile -t values <<< "$settings"
+
+printf 'Applying OpenRGB keyboard profile: %s\n' "$profile"
+exec openrgb --client 127.0.0.1:6742 --device "$keyboard" \
+    --mode "${values[0]}" --brightness "${values[1]}" --color "${values[2]}"
