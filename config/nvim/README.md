@@ -14,6 +14,10 @@ Lua. Your Vim configuration itself is unchanged. Launch with `nvim`.
 - `specs.lua` / `plugins.lua`: active Vim plugin list, settings and loading.
 - `codex.lua`: `:Codex`, `:CodexAsk`, `:CodexSelection`, `:CodexReview`, `gC{motion}`.
 
+Run `:help codex` for Codex commands, selection handling, terminal controls,
+and configuration. Command-specific help is available with `:help :CodexAsk`
+and `:help :CodexSelection`.
+
 The configuration is Lua; existing third-party Vim plugins and colorschemes
 still use their upstream implementation language.
 

@@ -35,4 +35,5 @@ Digital*/
 autoreload.sh
 hyprsession
 !vim/doc/tags
+!config/nvim/doc/tags
 *.tmp

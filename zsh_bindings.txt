@@ -1,0 +1,186 @@
+Zsh command-line editing bindings
+=================================
+
+Active keymap: Emacs (main aliases emacs).
+Captured from a freshly loaded interactive Zsh with your configuration.
+
+Notation:
+  ^A       Ctrl+A
+  ^[       Escape; usually also the Alt prefix
+  ^?       Backspace
+  ^I       Tab
+  ^M       Enter
+  ^X^E     Ctrl+X followed by Ctrl+E
+  ^[b      Alt+b, or Escape followed by b
+
+Uppercase and lowercase keys are distinct. Arrow keys and other special keys
+send escape sequences that vary between terminals. Ordinary printable
+characters use self-insert. Unbound keys use the keymap's default handling.
+
+Inside tmux, Ctrl+Q is your tmux prefix. Press Ctrl+Q twice to pass it to Zsh.
+
+To inspect bindings in your current shell:
+  bindkey -M main
+
+Complete main keymap
+-------------------
+
+bindkey -A emacs main
+"^@" glob-alias
+"^A" beginning-of-line
+"^B" backward-char
+"^D" delete-char-or-list
+"^E" end-of-line
+"^F" forward-char
+"^G" send-break
+"^H" backward-delete-char
+"^I" fzf-completion
+"^J" accept-line
+"^K" kill-line
+"^L" clear-screen
+"^M" accept-line
+"^N" history-search-forward
+"^O" accept-line-and-down-history
+"^P" history-search-backward
+"^Q" push-line-or-edit
+"^R" fzf-history-widget
+"^S" history-incremental-pattern-search-forward
+"^T" fzf-file-widget
+"^U" backward-kill-line
+"^V" quoted-insert
+"^W" backward-kill-word
+"^X^B" vi-find-prev-char
+"^X^E" edit-command-line
+"^X^F" vi-find-next-char
+"^X^J" vi-join
+"^X^K" kill-buffer
+"^X^N" infer-next-history
+"^X^O" overwrite-mode
+"^X^R" _read_comp
+"^X^S" prepend-sudo
+"^X^U" undo
+"^X^V" vi-cmd-mode
+"^X^X" exchange-point-and-mark
+"^X^]" vi-match-bracket
+"^X*" expand-word
+"^X=" what-cursor-position
+"^X?" _complete_debug
+"^XC" _correct_filename
+"^XG" list-expand
+"^Xa" _expand_alias
+"^Xc" _correct_word
+"^Xd" _list_expansions
+"^Xe" _expand_word
+"^Xg" list-expand
+"^Xh" _complete_help
+"^Xm" _most_recent_file
+"^Xn" _next_tags
+"^Xr" history-incremental-search-backward
+"^Xs" history-incremental-search-forward
+"^Xt" _complete_tag
+"^Xu" undo
+"^X~" _bash_list-choices
+"^Y" yank
+"^[^D" list-choices
+"^[^G" send-break
+"^[^H" backward-kill-word
+"^[^I" self-insert-unmeta
+"^[^J" self-insert-unmeta
+"^[^L" clear-screen
+"^[^M" self-insert-unmeta
+"^[^[OC" emacs-forward-word
+"^[^[OD" emacs-backward-word
+"^[^[[C" emacs-forward-word
+"^[^[[D" emacs-backward-word
+"^[^_" copy-prev-word
+"^[ " my-expand
+"^[!" expand-history
+"^[\"" quote-region
+"^[\$" spell-word
+"^['" quote-line
+"^[," _history-complete-newer
+"^[-" neg-argument
+"^[." insert-last-word
+"^[/" _history-complete-older
+"^[0" digit-argument
+"^[1" digit-argument
+"^[2" digit-argument
+"^[3" digit-argument
+"^[4" digit-argument
+"^[5" digit-argument
+"^[6" digit-argument
+"^[7" digit-argument
+"^[8" digit-argument
+"^[9" digit-argument
+"^[;" pound-toggle
+"^[<" beginning-of-buffer-or-history
+"^[>" end-of-buffer-or-history
+"^[?" which-command
+"^[A" accept-and-hold
+"^[B" emacs-backward-word
+"^[C" capitalize-word
+"^[D" kill-word
+"^[E" expand-cmd-path
+"^[F" emacs-forward-word
+"^[G" get-line
+"^[H" run-help
+"^[K" backward-kill-line
+"^[L" down-case-word
+"^[M" copy-prev-shell-word
+"^[N" history-search-forward
+"^[OA" history-substring-search-up
+"^[OB" history-substring-search-down
+"^[OC" forward-char
+"^[OD" backward-char
+"^[OF" end-of-line
+"^[OH" beginning-of-line
+"^[Oc" emacs-forward-word
+"^[Od" emacs-backward-word
+"^[P" history-search-backward
+"^[Q" push-line-or-edit
+"^[S" spell-word
+"^[T" transpose-words
+"^[U" up-case-word
+"^[W" copy-region-as-kill
+"^[[1;5C" forward-word
+"^[[1;5D" backward-word
+"^[[200~" bracketed-paste
+"^[[2~" overwrite-mode
+"^[[3~" delete-char
+"^[[5C" emacs-forward-word
+"^[[5D" emacs-backward-word
+"^[[A" up-line-or-history
+"^[[B" down-line-or-history
+"^[[C" forward-char
+"^[[D" backward-char
+"^[[Z" reverse-menu-complete
+"^[_" redo
+"^[a" accept-and-hold
+"^[b" emacs-backward-word
+"^[c" fzf-cd-widget
+"^[d" kill-word
+"^[e" expand-cmd-path
+"^[f" emacs-forward-word
+"^[g" get-line
+"^[h" run-help
+"^[k" backward-kill-line
+"^[l" _zlf
+"^[m" copy-prev-shell-word
+"^[n" history-search-forward
+"^[p" history-search-backward
+"^[q" push-line-or-edit
+"^[s" spell-word
+"^[t" transpose-words
+"^[u" up-case-word
+"^[w" copy-region-as-kill
+"^[x" execute-named-cmd
+"^[y" yank-pop
+"^[z" execute-last-named-cmd
+"^[|" vi-goto-column
+"^[~" _bash_complete-word
+"^[^?" backward-kill-word
+"^_" undo
+" " magic-space
+"!"-"~" self-insert
+"^?" backward-delete-char
+"\M-^@"-"\M-^?" self-insert

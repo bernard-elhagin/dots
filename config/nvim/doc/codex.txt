@@ -1,0 +1,96 @@
+*codex.txt*  Codex CLI integration for Neovim
+
+                         CODEX FOR NEOVIM                       *codex*
+
+The vim_mirror.codex module opens Codex in a bottom terminal split. It can
+start an interactive session or send a prompt, Visual selection, or motion.
+
+REQUIREMENTS                                              *codex-requirements*
+
+The `codex` executable must be on PATH and configured for use. This module
+uses Neovim's |jobstart()| with the term option, |vim.fs.root()| and
+|getregion()|; use Neovim 0.11 or later.
+
+COMMANDS                                                      *codex-commands*
+
+:Codex [prompt]                                                      *:Codex*
+    Open an interactive session in a 15-line bottom split. The optional
+    prompt is passed as a single initial prompt, not as CLI flags.
+    The terminal buffer is deleted when the process exits.
+>
+    :Codex
+    :Codex Explain this repository
+<
+:CodexAsk {prompt}                                                *:CodexAsk*
+    Run `codex exec` with the prompt in a 12-line bottom split. The output
+    remains available after the process exits.
+>
+    :CodexAsk Explain how the current project is structured
+<
+:[range]CodexSelection [prompt]                              *:CodexSelection*
+    Send the last Visual selection to `codex exec` in a 12-line split.
+    Supports characterwise, linewise, and blockwise selections. In Visual
+    mode, press : and enter the command; the range is supplied automatically.
+>
+    :'<,'>CodexSelection Explain this code
+<
+    Without a prompt, the instruction is "Use the selected text as input."
+    The selection is wrapped in <selection> markers and described as input
+    rather than instructions. The output remains open after completion.
+
+:CodexReview                                                   *:CodexReview*
+    Run `codex exec review` in a 15-line split and retain the output.
+    This is the module's literal invocation: "review" is a prompt to exec,
+    not the dedicated `codex review` subcommand.
+
+MOTION OPERATOR                                                *codex-motion*
+
+In Normal mode, gC followed by a motion or text object sends the selected
+text to Codex using the same mechanism as :CodexSelection:
+>
+    gCiw          Send the word under the cursor.
+    gCap          Send the current paragraph.
+    gC}           Send text to the end of the paragraph.
+<
+Set the default operator prompt in Lua:              *g:codex_operator_prompt*
+>
+    vim.g.codex_operator_prompt = "Explain this code"
+<
+The default is "Use the selected text as input." This setting affects the
+motion operator; pass an explicit prompt to :CodexSelection separately.
+
+PROJECT DIRECTORY                                        *codex-project-root*
+
+Codex runs in the nearest Git root found upward from the current file's
+directory. Outside Git, it uses that directory. With an unnamed buffer,
+the search starts at Neovim's current working directory.
+
+BUFFER CONTENT AND PERMISSIONS                                *codex-safety*
+
+Commands do not automatically save buffers. Selections include the current
+buffer text, including unsaved edits; files read by Codex reflect disk state.
+Use :write first when you want Codex to see your latest saved changes.
+
+One-shot prompts can edit files or run commands under your Codex permissions;
+these commands do not impose an additional read-only restriction. Selected
+text is sent to the configured Codex model/provider as part of the prompt.
+
+TERMINAL CONTROLS                                            *codex-terminal*
+
+The split starts in Terminal-mode. Press CTRL-\ CTRL-N to return to
+Terminal-Normal mode, then use ordinary window commands. Press i to resume
+terminal input. After a one-shot command exits, use :bdelete! to discard its
+terminal buffer. See |terminal-input| and |terminal-mode|.
+
+TROUBLESHOOTING                                        *codex-troubleshooting*
+
+"Codex CLI was not found in PATH": check :echo executable('codex') and
+:echo $PATH. Neovim needs access to the same CLI installation as your shell.
+
+For authentication or CLI errors, read the terminal output and verify that
+`codex` works outside Neovim. Interactive sessions close their buffer on exit;
+use :CodexAsk with a simple prompt if you need retained diagnostic output.
+
+The module loads at startup. Restart Neovim after changing its Lua code.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

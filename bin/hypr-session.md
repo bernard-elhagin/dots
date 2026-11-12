@@ -15,6 +15,9 @@ Restore matches existing windows by application class and title, preferring the
 saved workspace. If no exact title exists, it can reuse an unclaimed same-class
 window on the target workspace. Each live window can be matched only once.
 Missing windows are launched sequentially and polled for up to 15 seconds.
+Steam gets up to 180 seconds and must match the saved window title, so startup
+and dialog windows do not end the wait early. Its launcher may hand off to an
+existing process; reused windows are also checked during this wait.
 Every matched window is explicitly moved by its new address to its saved workspace.
 Workspace focus at launch time is only a hint, not the placement mechanism.
 

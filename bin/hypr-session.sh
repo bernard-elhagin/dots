@@ -16,6 +16,7 @@ import time
 
 DEFAULT_STATE = pathlib.Path.home() / ".config/hypr/session.json"
 POLL_SECONDS = 15
+STEAM_POLL_SECONDS = 180
 
 
 def run_hyprctl(*args, required=True):
@@ -252,7 +253,7 @@ def launch_argv(saved):
 
 def match_existing(saved, claimed):
     candidates = [c for c in clients_now()
-                  if c.get("address") not in claimed and app_class(c) == app_class(saved)]
+                  if c.get("address") not in claimed and window_matches(saved, c)]
     # Exact titles first, then same workspace. Never consume a window twice.
     title = saved.get("title")
     exact = [c for c in candidates if title and c.get("title") == title]
@@ -270,6 +271,16 @@ def clients_now():
     except RuntimeError as exc:
         print(f"Could not refresh window list: {exc}", file=sys.stderr)
         return []
+
+
+def window_matches(saved, client):
+    if app_class(client) != app_class(saved):
+        return False
+    # Steam maps startup/dialog windows before its main UI, and may reuse an
+    # existing window after its launcher exits. Wait for the saved UI title.
+    if app_class(saved).lower() == "steam" and saved.get("title"):
+        return client.get("title") == saved["title"]
+    return True
 
 
 def restore_window(saved, claimed):
@@ -306,15 +317,18 @@ def restore_window(saved, claimed):
         print(f"Could not launch {argv[0]!r}: {exc}", file=sys.stderr)
         return
 
-    poll_seconds = 60 if wanted_class.lower() == "steam" else POLL_SECONDS
+    is_steam = wanted_class.lower() == "steam"
+    poll_seconds = STEAM_POLL_SECONDS if is_steam else POLL_SECONDS
     deadline = time.monotonic() + poll_seconds
     opened = None
     while time.monotonic() < deadline:
         time.sleep(0.4)
         current = clients_now()
         new_clients = [c for c in current if str(c.get("address")) not in before]
-        matches = [c for c in new_clients
-                   if not wanted_class or (c.get("initialClass") or c.get("class")) == wanted_class]
+        # Steam's single-instance launcher can reopen or retitle a window that
+        # was already present before launch, so its address need not be new.
+        matches = [c for c in (current if is_steam else new_clients)
+                   if window_matches(saved, c)]
         matches = [c for c in matches if c.get("address") not in claimed]
         if len(matches) > 1:
             exact = [c for c in matches if c.get("title") == saved.get("title")]

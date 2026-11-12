@@ -1,0 +1,252 @@
+Zsh widgets
+===========
+
+239 ordinary widget names from your configured interactive Zsh.
+Dot-prefixed names invoke the original versions of the 193 built-in widgets.
+
+The right-aligned column shows bindings in the active main (Emacs) keymap.
+^A means Ctrl+A; ^[ means Escape or the Alt prefix; ^? means Backspace.
+^I is Tab; ^M is Enter. Sequences such as ^X^E mean Ctrl+X then Ctrl+E.
+Escape sequences for arrows and other special keys depend on your terminal.
+A blank binding column means the widget has no binding in this keymap.
+Inside tmux, press Ctrl+Q twice to send ^Q to Zsh.
+
+__zoxide_z_complete_helper                                                                      - Internal helper for interactive zoxide directory completion.
+_bash_complete-word                                                                         ^[~ - Complete the current word using Bash-style completion rules.
+_bash_list-choices                                                                          ^X~ - List matches using Bash-style completion rules.
+_complete_debug                                                                             ^X? - Run completion and save a diagnostic trace.
+_complete_help                                                                              ^Xh - Show completion contexts, tags, and functions in use.
+_complete_tag                                                                               ^Xt - Complete a symbol from a ctags or etags file.
+_correct_filename                                                                           ^XC - Correct the spelling of the current filename.
+_correct_word                                                                               ^Xc - Correct the spelling of the current word.
+_expand_alias                                                                               ^Xa - Expand an alias at the cursor.
+_expand_word                                                                                ^Xe - Expand the current word through the completion system.
+_history-complete-newer                                                                     ^[, - Complete the current word from newer history entries.
+_history-complete-older                                                                     ^[/ - Complete the current word from older history entries.
+_history-substring-search-zle-line-finish                                                       - Internal cleanup hook for substring history search.
+_history-substring-search-zle-line-pre-redraw                                                   - Internal redraw hook for substring history search.
+_list_expansions                                                                            ^Xd - List possible expansions of the current word.
+_most_recent_file                                                                           ^Xm - Complete the most recently modified matching filename.
+_next_tags                                                                                  ^Xn - Cycle to the next group of completion tags.
+_prezto-zle-noop                                                                                - Internal Prezto placeholder that performs no action.
+_read_comp                                                                                 ^X^R - Prompt for a completion function or explicit completion matches.
+_zlf                                                                                        ^[l - Open lf in a tmux split and connect it to the current shell.
+_zlf_handler                                                                                    - Process commands received from the lf integration.
+_zsh_highlight__zle-line-finish                                                                 - Internal syntax-highlighting hook when editing finishes.
+_zsh_highlight__zle-line-pre-redraw                                                             - Internal syntax-highlighting hook before redisplay.
+accept-and-hold                                                                        ^[A, ^[a - Execute the command and retain it for the next prompt.
+accept-and-infer-next-history                                                                   - Execute the command and recall its historical successor.
+accept-and-menu-complete                                                                        - Accept a menu completion and advance to the next candidate.
+accept-line                                                                              ^J, ^M - Finish editing and submit the command.
+accept-line-and-down-history                                                                 ^O - Execute the command and recall the next history entry.
+accept-search                                                                                   - Finish an incremental search without executing the result.
+argument-base                                                                                   - Set the numeric base used when entering numeric arguments.
+auto-suffix-remove                                                                              - Remove an automatically added completion suffix.
+auto-suffix-retain                                                                              - Preserve an automatically added completion suffix.
+backward-char                                                                    ^B, ^[OD, ^[[D - Move the cursor backward one character.
+backward-delete-char                                                                     ^H, ^? - Delete the character before the cursor.
+backward-delete-word                                                                            - Delete the word before the cursor.
+backward-kill-line                                                                 ^U, ^[K, ^[k - Cut from the cursor to the beginning of the line.
+backward-kill-word                                                               ^W, ^[^H, ^[^? - Cut the word before the cursor.
+backward-word                                                                           ^[[1;5D - Move to the beginning of the previous word.
+beep                                                                                            - Ring the terminal bell if enabled.
+beginning-of-buffer-or-history                                                              ^[< - Move to the buffer start, then to the earliest history entry.
+beginning-of-history                                                                            - Recall the earliest history entry.
+beginning-of-line                                                                      ^A, ^[OH - Move to the line start, or the previous line's start.
+beginning-of-line-hist                                                                          - Move to the line start, then backward through history.
+bracketed-paste                                                                         ^[[200~ - Insert pasted text using the terminal's bracketed-paste protocol.
+capitalize-word                                                                             ^[C - Capitalise the current word and lowercase its remaining letters.
+clear-screen                                                                           ^L, ^[^L - Clear the terminal display and redraw the prompt.
+complete-word                                                                                   - Complete the word at the cursor.
+copy-prev-shell-word                                                                   ^[M, ^[m - Duplicate the previous word using shell quoting rules.
+copy-prev-word                                                                             ^[^_ - Duplicate the preceding whitespace-delimited word.
+copy-region-as-kill                                                                    ^[W, ^[w - Copy the marked region into the kill ring.
+deactivate-region                                                                               - Cancel the active region or visual selection.
+delete-char                                                                               ^[[3~ - Delete the character under the cursor.
+delete-char-or-list                                                                          ^D - Delete a character, or list completions at the end of the line.
+delete-word                                                                                     - Delete from the cursor to the end of the word.
+describe-key-briefly                                                                            - Read a key sequence and show its assigned widget.
+digit-argument                                 ^[0, ^[1, ^[2, ^[3, ^[4, ^[5, ^[6, ^[7, ^[8, ^[9 - Add a digit to the next widget's numeric argument.
+down-case-word                                                                              ^[L - Convert the current word to lowercase.
+down-history                                                                                    - Recall the next history entry.
+down-line                                                                                       - Move down one line within the editing buffer.
+down-line-or-history                                                                       ^[[B - Move down a buffer line, then forward through history.
+down-line-or-search                                                                             - Move down a line, then search forward by the first word.
+edit-command-line                                                                          ^X^E - Open the command buffer in your configured external editor.
+editor-info                                                                                     - Update Prezto's editor-mode information for the prompt.
+emacs-backward-word                                       ^[^[OD, ^[^[[D, ^[B, ^[Od, ^[[5D, ^[b - Move backward using Emacs-style word boundaries.
+emacs-forward-word                                        ^[^[OC, ^[^[[C, ^[F, ^[Oc, ^[[5C, ^[f - Move forward using Emacs-style word boundaries.
+end-of-buffer-or-history                                                                    ^[> - Move to the buffer end, then to the latest history entry.
+end-of-history                                                                                  - Recall the latest history entry.
+end-of-line                                                                            ^E, ^[OF - Move to the line end, or the next line's end.
+end-of-line-hist                                                                                - Move to the line end, then forward through history.
+end-of-list                                                                                     - Move the prompt below a displayed completion list.
+exchange-point-and-mark                                                                    ^X^X - Swap the cursor and mark, normally activating the region.
+execute-last-named-cmd                                                                      ^[z - Repeat the last widget invoked by name.
+execute-named-cmd                                                                           ^[x - Prompt for a widget name and invoke it.
+expand-cmd-path                                                                        ^[E, ^[e - Replace the command name with its full executable path.
+expand-dot-to-parent-directory-path                                                             - Extend consecutive dots into parent-directory paths.
+expand-history                                                                              ^[! - Expand history references throughout the command buffer.
+expand-or-complete                                                                              - Try shell expansion, then attempt completion.
+expand-or-complete-prefix                                                                       - Expand or complete the word prefix before the cursor.
+expand-or-complete-with-indicator                                                               - Perform expansion or completion with Prezto's visual indicator.
+expand-word                                                                                 ^X* - Perform shell expansion on the current word.
+fasd-complete                                                                                   - Complete using files and directories tracked by fasd.
+fasd-complete-d                                                                                 - Complete directories tracked by fasd.
+fasd-complete-f                                                                                 - Complete files tracked by fasd.
+forward-char                                                                     ^F, ^[OC, ^[[C - Move the cursor forward one character.
+forward-word                                                                            ^[[1;5C - Move to the end of the next word.
+fzf-cd-widget                                                                               ^[c - Choose a directory with fzf and change into it.
+fzf-completion                                                                               ^I - Invoke fzf's configured completion integration.
+fzf-file-widget                                                                              ^T - Choose files with fzf and insert their paths.
+fzf-history-widget                                                                           ^R - Search command history with fzf and recall a selection.
+get-line                                                                               ^[G, ^[g - Insert the top entry from the editing-buffer stack.
+glob-alias                                                                                   ^@ - Expand aliases and shell expressions, then insert a space.
+gosmacs-transpose-chars                                                                         - Swap the two characters immediately before the cursor.
+history-beginning-search-backward                                                               - Search older commands matching the text before the cursor.
+history-beginning-search-forward                                                                - Search newer commands matching the text before the cursor.
+history-incremental-pattern-search-backward                                                     - Search older history interactively using a Zsh pattern.
+history-incremental-pattern-search-forward                                                   ^S - Search newer history interactively using a Zsh pattern.
+history-incremental-search-backward                                                         ^Xr - Search older history interactively as you type.
+history-incremental-search-forward                                                          ^Xs - Search newer history interactively as you type.
+history-search-backward                                                            ^P, ^[P, ^[p - Find an older command beginning with the current first word.
+history-search-forward                                                             ^N, ^[N, ^[n - Find a newer command beginning with the current first word.
+history-substring-search-down                                                              ^[OB - Find a newer command containing the typed substring.
+history-substring-search-up                                                                ^[OA - Find an older command containing the typed substring.
+infer-next-history                                                                         ^X^N - Recall the command following a historical match for this line.
+insert-last-word                                                                            ^[. - Insert the previous command's last word and cycle through history.
+kill-buffer                                                                                ^X^K - Cut the entire editing buffer.
+kill-line                                                                                    ^K - Cut from the cursor to the end of the line.
+kill-region                                                                                     - Cut the text between the cursor and mark.
+kill-whole-line                                                                                 - Cut the entire current line.
+kill-word                                                                              ^[D, ^[d - Cut from the cursor to the end of the word.
+list-choices                                                                               ^[^D - Display completion candidates for the current word.
+list-expand                                                                            ^XG, ^Xg - Display the current word's possible shell expansions.
+magic-space                                                                                     - Expand history references and insert a space.
+menu-complete                                                                                   - Cycle through completion candidates in the command buffer.
+menu-expand-or-complete                                                                         - Expand the word or cycle through completion candidates.
+my-expand                                                                                   ^[  - Try alias expansion, then word expansion if that fails.
+neg-argument                                                                                ^[- - Make the next widget's numeric argument negative.
+overwrite-mode                                                                      ^X^O, ^[[2~ - Toggle character overwriting and update Prezto's prompt state.
+pound-insert                                                                                    - Toggle leading comment characters and submit the buffer.
+pound-toggle                                                                                ^[; - Toggle a leading comment character without submitting the buffer.
+prepend-sudo                                                                               ^X^S - Add sudo unless the buffer already begins with su or sudo.
+push-input                                                                                      - Save the whole multiline command and return to a fresh prompt.
+push-line                                                                                       - Save the editing buffer and temporarily clear the command line.
+push-line-or-edit                                                                  ^Q, ^[Q, ^[q - Save a top-level command or gather continuation lines for editing.
+put-replace-selection                                                                           - Replace the selected text with the kill buffer's contents.
+quote-line                                                                                  ^[' - Quote the entire editing buffer.
+quote-region                                                                                ^[" - Quote the marked region.
+quoted-insert                                                                                ^V - Insert the next typed character literally.
+read-command                                                                                    - Read a key and return its widget name in REPLY.
+recursive-edit                                                                                  - Start a nested editing session inside a custom widget.
+redisplay                                                                                       - Redraw the editing buffer.
+redo                                                                                        ^[_ - Reapply a previously undone change.
+reset-prompt                                                                                    - Re-expand and redraw the prompts.
+reverse-menu-complete                                                                      ^[[Z - Cycle backward through completion candidates.
+run-help                                                                               ^[H, ^[h - Invoke the help handler for the current command.
+select-a-blank-word                                                                             - Select a whitespace-delimited word and adjacent whitespace.
+select-a-shell-word                                                                             - Select a shell argument including its surrounding quotes.
+select-a-word                                                                                   - Select a Vi-style word and adjacent whitespace.
+select-in-blank-word                                                                            - Select a whitespace-delimited word without adjacent whitespace.
+select-in-shell-word                                                                            - Select a shell argument without its surrounding matching quotes.
+select-in-word                                                                                  - Select a Vi-style word without adjacent whitespace.
+self-insert                                                            "!"-"~", "\M-^@"-"\M-^?" - Insert the character represented by the pressed key.
+self-insert-unmeta                                                             ^[^I, ^[^J, ^[^M - Remove the Meta prefix and insert the resulting character.
+send-break                                                                             ^G, ^[^G - Abort the current editing operation.
+set-local-history                                                                               - Toggle whether history navigation includes imported commands.
+set-mark-command                                                                                - Set the mark at the cursor for region operations.
+spell-word                                                                        ^[$, ^[S, ^[s - Attempt spelling correction on the current word.
+split-undo                                                                                      - Start a separate undo group.
+transpose-chars                                                                                 - Exchange neighbouring characters.
+transpose-words                                                                        ^[T, ^[t - Exchange neighbouring words.
+undefined-key                                                                                   - Report an undefined key, normally by ringing the bell.
+undo                                                                              ^X^U, ^Xu, ^_ - Undo the previous editing change.
+universal-argument                                                                              - Supply a numeric argument, multiplying by four on repetition.
+up-case-word                                                                           ^[U, ^[u - Convert the current word to uppercase.
+up-history                                                                                      - Recall the previous history entry.
+up-line                                                                                         - Move up one line within the editing buffer.
+up-line-or-history                                                                         ^[[A - Move up a buffer line, then backward through history.
+up-line-or-search                                                                               - Move up a line, then search backward by the first word.
+user:zle-line-finish                                                                            - Saved user editing-finish hook used by the hook machinery.
+vi-add-eol                                                                                      - Move to the line end and enter Vi insert mode.
+vi-add-next                                                                                     - Enter Vi insert mode after the cursor.
+vi-backward-blank-word                                                                          - Move backward over a whitespace-delimited word.
+vi-backward-blank-word-end                                                                      - Move to the end of the previous whitespace-delimited word.
+vi-backward-char                                                                                - Move left one character without crossing a line boundary.
+vi-backward-delete-char                                                                         - Delete the preceding character within Vi editing boundaries.
+vi-backward-kill-word                                                                           - Cut the preceding word within Vi insert-mode boundaries.
+vi-backward-word                                                                                - Move to the beginning of the previous Vi-style word.
+vi-backward-word-end                                                                            - Move to the end of the previous Vi-style word.
+vi-beginning-of-line                                                                            - Move to the current line's beginning.
+vi-caps-lock-panic                                                                              - Ignore input until a lowercase key is pressed.
+vi-change                                                                                       - Change text covered by the following motion.
+vi-change-eol                                                                                   - Cut to the line end and enter insert mode.
+vi-change-whole-line                                                                            - Cut the whole line and enter insert mode.
+vi-cmd-mode                                                                                ^X^V - Enter Vi command mode.
+vi-delete                                                                                       - Cut text covered by the following motion.
+vi-delete-char                                                                                  - Delete the character under the cursor using Vi behaviour.
+vi-digit-or-beginning-of-line                                                                   - Enter a numeric zero or move to the line beginning.
+vi-down-case                                                                                    - Lowercase text covered by the following motion.
+vi-down-line-or-history                                                                         - Move down or recall newer history, then find the first nonblank.
+vi-end-of-line                                                                                  - Move to the current line's end.
+vi-fetch-history                                                                                - Recall a history entry by its numeric event number.
+vi-find-next-char                                                                          ^X^F - Move to the next occurrence of a typed character.
+vi-find-next-char-skip                                                                          - Move just before the next occurrence of a typed character.
+vi-find-prev-char                                                                          ^X^B - Move to the previous occurrence of a typed character.
+vi-find-prev-char-skip                                                                          - Move just after the previous occurrence of a typed character.
+vi-first-non-blank                                                                              - Move to the first nonblank character on the line.
+vi-forward-blank-word                                                                           - Move to the beginning of the next whitespace-delimited word.
+vi-forward-blank-word-end                                                                       - Move to the end of the next whitespace-delimited word.
+vi-forward-char                                                                                 - Move right one character using Vi motion rules.
+vi-forward-word                                                                                 - Move to the beginning of the next Vi-style word.
+vi-forward-word-end                                                                             - Move to the end of the next Vi-style word.
+vi-goto-column                                                                              ^[| - Move to the column specified by the numeric argument.
+vi-goto-mark                                                                                    - Move to a previously set Vi mark.
+vi-goto-mark-line                                                                               - Move to the first nonblank character on a marked line.
+vi-history-search-backward                                                                      - Prompt for a string and search older history.
+vi-history-search-forward                                                                       - Prompt for a string and search newer history.
+vi-indent                                                                                       - Indent lines covered by the following motion.
+vi-insert                                                                                       - Enter Vi insert mode and update Prezto's prompt state.
+vi-insert-bol                                                                                   - Enter insert mode at the first nonblank character.
+vi-join                                                                                    ^X^J - Join the current line with the following line.
+vi-kill-eol                                                                                     - Cut from the cursor to the line end.
+vi-kill-line                                                                                    - Cut the current line using Vi insert-mode rules.
+vi-match-bracket                                                                           ^X^] - Move to the matching bracket.
+vi-open-line-above                                                                              - Insert a new line above and enter insert mode.
+vi-open-line-below                                                                              - Insert a new line below and enter insert mode.
+vi-oper-swap-case                                                                               - Swap case in text covered by the following motion.
+vi-pound-insert                                                                                 - Toggle a comment character at the current line's beginning.
+vi-put-after                                                                                    - Paste from the selected register after the cursor.
+vi-put-before                                                                                   - Paste from the selected register before the cursor.
+vi-quoted-insert                                                                                - Show a caret and insert the next character literally.
+vi-repeat-change                                                                                - Repeat the previous Vi editing change.
+vi-repeat-find                                                                                  - Repeat the last character-finding motion.
+vi-repeat-search                                                                                - Repeat the last Vi history search.
+vi-replace                                                                                      - Enter overwrite mode and update Prezto's prompt state.
+vi-replace-chars                                                                                - Replace characters with the next typed character.
+vi-rev-repeat-find                                                                              - Repeat the last character find in the opposite direction.
+vi-rev-repeat-search                                                                            - Repeat the last Vi history search in the opposite direction.
+vi-set-buffer                                                                                   - Choose a Vi register for the next cut, copy, or paste.
+vi-set-mark                                                                                     - Set a named Vi mark at the cursor.
+vi-substitute                                                                                   - Delete characters and enter insert mode.
+vi-swap-case                                                                                    - Swap character case at the cursor.
+vi-undo-change                                                                                  - Undo the last modification, or redo it on repetition.
+vi-unindent                                                                                     - Unindent lines covered by the following motion.
+vi-up-case                                                                                      - Uppercase text covered by the following motion.
+vi-up-line-or-history                                                                           - Move up or recall older history, then find the first nonblank.
+vi-yank                                                                                         - Copy text covered by the following motion into a register.
+vi-yank-eol                                                                                     - Copy from the cursor to the line end.
+vi-yank-whole-line                                                                              - Copy the entire current line.
+visual-line-mode                                                                                - Toggle Vi linewise selection.
+visual-mode                                                                                     - Toggle Vi characterwise selection.
+what-cursor-position                                                                        ^X= - Display the cursor position and character information.
+where-is                                                                                        - Show the keys bound to a specified widget.
+which-command                                                                               ^[? - Show how the current command name resolves.
+yank                                                                                         ^Y - Paste the most recently cut or copied text.
+yank-pop                                                                                    ^[y - Replace the last yank with another kill-ring entry.
+zle-keymap-select                                                                               - Update editor information when the active keymap changes.
+zle-line-finish                                                                                 - Run registered hooks when command-line editing finishes.
+zle-line-init                                                                                   - Initialise terminal editing mode and Prezto prompt information.
+zle-line-pre-redraw                                                                             - Run registered hooks before the command line is redrawn.
+zle-reset-prompt                                                                                - Refresh Prezto's prompt according to the editing context.

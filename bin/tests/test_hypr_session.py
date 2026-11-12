@@ -20,6 +20,36 @@ def window(address, title='editor', ws=5, x=1000, y=0, width=1000, height=1000):
 
 
 class SessionTests(unittest.TestCase):
+    def test_steam_waits_past_old_timeout_and_ignores_startup_window(self):
+        saved = window('old', title='Steam')
+        saved['initialClass'] = 'steam'
+        splash = window('splash', title='Updating Steam', ws=5)
+        splash['initialClass'] = 'steam'
+        opened = window('main', title='Steam', ws=2)
+        opened['initialClass'] = 'steam'
+        clock = [0]
+
+        def sleep(seconds):
+            clock[0] += seconds
+
+        def clients():
+            return [opened] if clock[0] >= 90 else [splash]
+
+        with patch.object(mod, 'clients_now', side_effect=clients), patch.object(mod, 'hypr_json', return_value=[]), patch.object(mod, 'dispatch', return_value=True) as dispatch, patch.object(mod.subprocess, 'Popen') as launch, patch.object(mod.time, 'sleep', side_effect=sleep), patch.object(mod.time, 'monotonic', side_effect=lambda: clock[0]):
+            launch.return_value.poll.return_value = 0
+            self.assertEqual(mod.restore_window(saved, set()), 'main')
+            self.assertGreaterEqual(clock[0], 90)
+            dispatch.assert_any_call('movetoworkspace', 'address:main', '5')
+
+    def test_steam_accepts_existing_window_retargeted_by_launcher(self):
+        saved = window('old', title='Steam')
+        saved['initialClass'] = 'steam'
+        startup = window('reused', title='Updating Steam', ws=2)
+        startup['initialClass'] = 'steam'
+        opened = dict(startup, title='Steam')
+        with patch.object(mod, 'clients_now', side_effect=[[startup], [startup], [opened]]), patch.object(mod, 'hypr_json', return_value=[]), patch.object(mod, 'dispatch', return_value=True), patch.object(mod.subprocess, 'Popen'), patch.object(mod.time, 'sleep'):
+            self.assertEqual(mod.restore_window(saved, set()), 'reused')
+
     def test_steam_helper_snapshot_launches_main_client(self):
         saved = window('old')
         saved.update(initialClass='steam', argv=['./steamwebhelper', '-steampid=3567'])
