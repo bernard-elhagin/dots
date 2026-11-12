@@ -421,6 +421,12 @@ hl.window_rule({
     fullscreen = true
 })
 
+hl.window_rule({
+    name = "haruna-start-fullscreen",
+    match = { class = "^(org\\.kde\\.haruna)$" },
+    fullscreen = true,
+})
+
 --hl.window_rule({
 --    name  = "double-commander",
 --    match = { class = "^(doublecmd)$" },

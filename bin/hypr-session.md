@@ -11,6 +11,39 @@ arguments and working directories, workspace/monitor assignments, window
 identity, floating geometry and fullscreen state. Snapshot permissions are 600.
 Restoring launches saved argument arrays directly, without evaluating shell code.
 
+## Persistent startup commands
+
+Add an optional `startup` object to a window in the JSON snapshot. Its `argv`
+replaces the captured process command when that window needs launching. `cwd`
+overrides its working directory; an explicit missing directory causes an error.
+`class` identifies the newly launched window and should be unique when multiple
+terminals are saved. For example:
+
+```json
+"startup": {
+  "argv": ["xfce4-terminal", "--disable-server", "--class=CodexSession",
+           "--title=Codex", "--working-directory=/home/bertold/dots",
+           "-x", "zsh", "-ic", "codex resume"],
+  "cwd": "/home/bertold/dots",
+  "class": "CodexSession"
+}
+```
+
+These are literal argument arrays, not shell command strings. Only explicitly
+invoking a shell (as above) interprets shell syntax. Existing matched windows
+are reused without rerunning startup commands. Codex opens its session picker;
+changing the last argument to `codex resume --last` resumes the latest session.
+
+Saving preserves startup settings by the live window address/class, then a
+unique configured class, then a unique title/class/workspace match. Dynamic
+titles therefore work reliably with a unique class. Closed or ambiguous startup
+entries are retained with a warning so their settings are not lost; they remain
+eligible to launch on restore. Remove the old entry to stop restoring it.
+Invalid startup settings prevent overwriting the snapshot. Keep this file
+trusted: restore runs the commands it contains with your user permissions.
+
+## Window placement
+
 Restore matches existing windows by application class and title, preferring the
 saved workspace. If no exact title exists, it can reuse an unclaimed same-class
 window on the target workspace. Each live window can be matched only once.

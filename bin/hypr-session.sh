@@ -71,6 +71,17 @@ def workspace_selector(workspace):
 
 
 def save_session(path):
+    previous_windows = []
+    if path.exists():
+        try:
+            previous = json.loads(path.read_text(encoding="utf-8"))
+            previous_windows = previous["windows"]
+            if not isinstance(previous_windows, list):
+                raise ValueError("windows must be an array")
+            for saved in previous_windows:
+                startup_options(saved)
+        except (ValueError, KeyError, TypeError) as exc:
+            raise RuntimeError(f"Refusing to overwrite invalid session settings: {exc}")
     clients = hypr_json("clients")
     workspaces = hypr_json("workspaces")
     monitors = hypr_json("monitors")
@@ -104,6 +115,8 @@ def save_session(path):
             "size": client.get("size"),
             "focusHistoryID": client.get("focusHistoryID"),
         })
+
+    preserve_startups(previous_windows, windows)
 
     state = {
         "version": 2,
@@ -243,7 +256,58 @@ def app_class(client):
     return client.get("initialClass") or client.get("class") or ""
 
 
+def startup_options(saved):
+    if not isinstance(saved, dict):
+        raise ValueError("each window must be an object")
+    startup = saved.get("startup")
+    if startup is None:
+        return {}
+    if not isinstance(startup, dict):
+        raise ValueError("startup must be an object")
+    argv = startup.get("argv")
+    if not isinstance(argv, list) or not argv or any(
+            not isinstance(arg, str) or "\0" in arg for arg in argv) or not argv[0]:
+        raise ValueError("startup.argv must be a nonempty array of command arguments")
+    for key in ("cwd", "class"):
+        if key in startup and (not isinstance(startup[key], str) or not startup[key]
+                               or "\0" in startup[key]):
+            raise ValueError(f"startup.{key} must be a nonempty string")
+    return startup
+
+
+def preserve_startups(previous, windows):
+    claimed = set()
+    for saved in previous:
+        startup = startup_options(saved)
+        if not startup:
+            continue
+        available = [i for i in range(len(windows)) if i not in claimed]
+        exact = [i for i in available if saved.get("savedAddress")
+                 and windows[i].get("savedAddress") == saved["savedAddress"]
+                 and app_class(windows[i]) == app_class(saved)]
+        identified = [i for i in available if startup.get("class")
+                      and app_class(windows[i]) == startup["class"]]
+        titled = [i for i in available if app_class(windows[i]) == app_class(saved)
+                  and windows[i].get("title") == saved.get("title")
+                  and workspace_selector(windows[i]["workspace"]) ==
+                  workspace_selector(saved.get("workspace") or {})]
+        candidates = exact or identified or titled
+        if len(candidates) == 1:
+            index = candidates[0]
+            windows[index]["startup"] = startup
+            claimed.add(index)
+        else:
+            # Keep settings for a closed or ambiguous window rather than lose
+            # them or attach its command to an unrelated terminal.
+            print(f"Retaining unmatched startup entry for {app_class(saved)}", file=sys.stderr)
+            windows.append(dict(saved))
+            claimed.add(len(windows) - 1)
+
+
 def launch_argv(saved):
+    startup = startup_options(saved)
+    if startup:
+        return startup["argv"]
     # Steam's UI belongs to steamwebhelper, whose arguments refer to a dead
     # parent process after logout. Ask the public launcher to show the UI.
     if app_class(saved).lower() == "steam":
@@ -252,8 +316,18 @@ def launch_argv(saved):
 
 
 def match_existing(saved, claimed):
-    candidates = [c for c in clients_now()
+    current = clients_now()
+    if saved.get("startup"):
+        same_live_window = [c for c in current if c.get("address") not in claimed
+                            and c.get("address") == saved.get("savedAddress")
+                            and c.get("pid") == saved.get("pid")
+                            and app_class(c) == app_class(saved)]
+        if len(same_live_window) == 1:
+            return same_live_window[0]
+    candidates = [c for c in current
                   if c.get("address") not in claimed and window_matches(saved, c)]
+    if startup_options(saved).get("class") and len(candidates) == 1:
+        return candidates[0]
     # Exact titles first, then same workspace. Never consume a window twice.
     title = saved.get("title")
     exact = [c for c in candidates if title and c.get("title") == title]
@@ -274,7 +348,8 @@ def clients_now():
 
 
 def window_matches(saved, client):
-    if app_class(client) != app_class(saved):
+    wanted_class = startup_options(saved).get("class", app_class(saved))
+    if app_class(client) != wanted_class:
         return False
     # Steam maps startup/dialog windows before its main UI, and may reuse an
     # existing window after its launcher exits. Wait for the saved UI title.
@@ -308,7 +383,9 @@ def restore_window(saved, claimed):
 
     dispatch("workspace", selector)
     before = {str(c.get("address")) for c in clients_now()}
-    cwd = saved.get("cwd")
+    cwd = startup_options(saved).get("cwd", saved.get("cwd"))
+    if saved.get("startup") and cwd and not os.path.isdir(cwd):
+        raise RuntimeError(f"Startup working directory does not exist: {cwd}")
     if not cwd or not os.path.isdir(cwd):
         cwd = str(pathlib.Path.home())
     try:
@@ -434,6 +511,11 @@ def restore_session(path):
         raise RuntimeError(f"Saved session is not valid JSON: {exc}")
     if state.get("version") not in (1, 2):
         raise RuntimeError(f"Unsupported session file version: {state.get('version')!r}")
+    try:
+        for saved in state.get("windows", []):
+            startup_options(saved)
+    except ValueError as exc:
+        raise RuntimeError(f"Invalid startup settings: {exc}")
 
     monitor_names = {m.get("name") for m in hypr_json("monitors")}
     for workspace in state.get("workspaces", []):

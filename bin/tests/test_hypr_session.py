@@ -20,6 +20,72 @@ def window(address, title='editor', ws=5, x=1000, y=0, width=1000, height=1000):
 
 
 class SessionTests(unittest.TestCase):
+    def test_startup_command_and_directory_used_for_launch(self):
+        saved = window('old')
+        argv = ['terminal', '--title=two words', '-x', 'program', 'literal;argument']
+        saved['startup'] = dict(argv=argv, cwd='/tmp', **{'class': 'CodexSession'})
+        opened = dict(window('new', ws=2), initialClass='CodexSession')
+        with patch.object(mod, 'clients_now', side_effect=[[], [], [opened]]), patch.object(mod, 'hypr_json', return_value=[]), patch.object(mod, 'dispatch', return_value=True), patch.object(mod.subprocess, 'Popen') as launch, patch.object(mod.time, 'sleep'):
+            self.assertEqual(mod.restore_window(saved, set()), 'new')
+            self.assertEqual(launch.call_args.args[0], argv)
+            self.assertEqual(launch.call_args.kwargs['cwd'], '/tmp')
+            self.assertNotIn('shell', launch.call_args.kwargs)
+
+    def test_startup_survives_repeated_saves_with_new_address_and_title(self):
+        old = window('old', title='original')
+        old['startup'] = dict(argv=['terminal', '-x', 'codex', 'resume'], **{'class': 'CodexSession'})
+        live = dict(window('new', title='changing title'), initialClass='CodexSession')
+        responses = dict(clients=[live], workspaces=[], monitors=[], activeworkspace={}, activewindow={})
+        with tempfile.TemporaryDirectory() as directory, patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'process_info', return_value=dict(argv=['captured'], cwd='/tmp')):
+            path = Path(directory) / 'session.json'
+            path.write_text(json.dumps(dict(version=2, windows=[old])))
+            for address in ('new', 'newer'):
+                live['address'] = address
+                live['title'] += ' changed'
+                mod.save_session(path)
+                saved = json.loads(path.read_text())['windows']
+                self.assertEqual(len(saved), 1)
+                self.assertEqual(saved[0]['startup'], old['startup'])
+                self.assertEqual(saved[0]['savedAddress'], address)
+
+    def test_startup_preserved_for_current_window_despite_changed_title(self):
+        old = window('same', title='before')
+        old['startup'] = dict(argv=['terminal'])
+        live = window('same', title='after')
+        mod.preserve_startups([old], [live])
+        self.assertEqual(live['startup'], old['startup'])
+
+    def test_ambiguous_startup_is_retained_not_attached_to_arbitrary_window(self):
+        old = window('old')
+        old['startup'] = dict(argv=['terminal'])
+        windows = [window('a'), window('b')]
+        mod.preserve_startups([old], windows)
+        self.assertNotIn('startup', windows[0])
+        self.assertNotIn('startup', windows[1])
+        self.assertEqual(windows[2], old)
+
+    def test_startup_existing_window_is_reused_without_launch(self):
+        saved = dict(window('live'), pid=123, startup=dict(argv=['terminal'], **{'class':'CodexSession'}))
+        live = dict(window('live', title='changed'), pid=123)
+        with patch.object(mod, 'clients_now', return_value=[live]), patch.object(mod, 'dispatch', return_value=True), patch.object(mod.subprocess, 'Popen') as launch:
+            self.assertEqual(mod.restore_window(saved, set()), 'live')
+            launch.assert_not_called()
+
+    def test_invalid_startup_does_not_overwrite_saved_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'session.json'
+            content = json.dumps(dict(windows=[dict(startup=dict(argv='not an array'))]))
+            path.write_text(content)
+            with self.assertRaises(RuntimeError):
+                mod.save_session(path)
+            self.assertEqual(path.read_text(), content)
+
+    def test_startup_unique_class_reuses_changed_title_on_wrong_workspace(self):
+        saved = dict(window('old'), startup=dict(argv=['terminal'], **{'class':'CodexSession'}))
+        live = dict(window('new', title='different', ws=2), initialClass='CodexSession')
+        with patch.object(mod, 'clients_now', return_value=[live]):
+            self.assertEqual(mod.match_existing(saved, set()), live)
+
     def test_steam_waits_past_old_timeout_and_ignores_startup_window(self):
         saved = window('old', title='Steam')
         saved['initialClass'] = 'steam'
