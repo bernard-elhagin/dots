@@ -21,9 +21,9 @@ PopupWindow {
     Rectangle {
         anchors.fill: parent
         radius: 10
-        color: "#100F20"
+        color: "#101D21"
         border.width: 1
-        border.color: "#695687"
+        border.color: "#36565C"
         focus: true
         Keys.onEscapePressed: popup.visible = false
         ColumnLayout {
@@ -36,7 +36,7 @@ PopupWindow {
             RowLayout {
                 Text {
                     text: popup.trail.length ? "‹" : "◈"
-                    color: "#D2B8FF"
+                    color: "#DCC998"
                     font.pixelSize: 18
                     MouseArea {
                         anchors.fill: parent
@@ -49,14 +49,14 @@ PopupWindow {
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     text: popup.trail.length ? popup.currentMenu.text.replace(/&([^&])/g, "$1") : popup.menuTitle
-                    color: "#00E5FF"
+                    color: "#73DACA"
                     font.family: "JetBrains Mono"
                     font.pixelSize: 15
                     font.bold: true
                 }
                 Text {
                     text: "×"
-                    color: "#D2B8FF"
+                    color: "#DCC998"
                     font.pixelSize: 20
                     MouseArea {
                         anchors.fill: parent
@@ -83,12 +83,12 @@ PopupWindow {
                             width: entries.width
                             height: modelData.isSeparator ? 9 : 34
                             radius: 4
-                            color: !modelData.isSeparator && rowArea.containsMouse && modelData.enabled ? "#29203E" : "transparent"
+                            color: !modelData.isSeparator && rowArea.containsMouse && modelData.enabled ? "#284448" : "transparent"
                             Rectangle {
                                 anchors.verticalCenter: parent.verticalCenter
                                 width: parent.width
                                 height: 1
-                                color: "#393148"
+                                color: "#30474A"
                                 visible: row.modelData.isSeparator
                             }
                             RowLayout {
@@ -100,20 +100,20 @@ PopupWindow {
                                 Text {
                                     text: row.modelData.checkState === Qt.Checked ? "✓" : ""
                                     Layout.preferredWidth: 12
-                                    color: "#85E6B4"
+                                    color: "#9DC6A5"
                                     font.pixelSize: 13
                                 }
                                 Text {
                                     Layout.fillWidth: true
                                     text: row.modelData.text.replace(/&([^&])/g, "$1")
                                     elide: Text.ElideRight
-                                    color: !row.modelData.enabled ? "#68617B" : rowArea.containsMouse ? "#D2B8FF" : "#D7DEFF"
+                                    color: !row.modelData.enabled ? "#91A7A0" : rowArea.containsMouse ? "#DCC998" : "#E8E6DD"
                                     font.family: "JetBrains Mono"
                                     font.pixelSize: 12
                                 }
                                 Text {
                                     text: row.modelData.hasChildren ? "›" : ""
-                                    color: "#B58CFF"
+                                    color: "#E9C46A"
                                     font.pixelSize: 18
                                 }
                             }

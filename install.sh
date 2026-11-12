@@ -129,6 +129,7 @@ link_repo_path codex/skills/desktop-troubleshooting .codex/skills/desktop-troubl
 link_repo_path codex/skills/shell-scripting .codex/skills/shell-scripting
 link_repo_path codex/skills/systemd-troubleshooting .codex/skills/systemd-troubleshooting
 link_repo_path codex/skills/dotfile-management .codex/skills/dotfile-management
+link_repo_path codex/skills/purchase-recommendations .codex/skills/purchase-recommendations
 link_repo_path i3/config .config/i3/config
 link_repo_path config/doublecmd .config/doublecmd
 link_repo_path config/nvim .config/nvim

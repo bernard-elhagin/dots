@@ -148,11 +148,11 @@ ShellRoot {
                 anchors.margins: 2
                 radius: 9
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#182037" }
-                    GradientStop { position: 1; color: "#100F20" }
+                    GradientStop { position: 0; color: "#192D32" }
+                    GradientStop { position: 1; color: "#101D21" }
                 }
                 border.width: 1
-                border.color: "#244854"
+                border.color: "#36565C"
 
                 // Thin luminous rails, with a quieter lower edge.
                 Rectangle {
@@ -160,7 +160,7 @@ ShellRoot {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width - 24
                     height: 1
-                    color: "#183A48"
+                    color: "#29484E"
                 }
 
                 Rectangle {
@@ -171,10 +171,10 @@ ShellRoot {
                     opacity: 0.8
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0; color: "#183A48" }
-                        GradientStop { position: 0.35; color: "#00E5FF" }
-                        GradientStop { position: 0.65; color: "#B58CFF" }
-                        GradientStop { position: 1; color: "#FF79B0" }
+                        GradientStop { position: 0; color: "#29484E" }
+                        GradientStop { position: 0.35; color: "#73DACA" }
+                        GradientStop { position: 0.65; color: "#E9C46A" }
+                        GradientStop { position: 1; color: "#D6B86A" }
                     }
                 }
 
@@ -190,15 +190,15 @@ ShellRoot {
                         implicitWidth: osLabel.implicitWidth + 20
                         radius: 5
                         border.width: 1
-                        border.color: osArea.containsMouse ? "#00E5FF" : "#28515E"
-                        color: osArea.containsMouse ? "#163A46" : "#0D202B"
+                        border.color: osArea.containsMouse ? "#73DACA" : "#36565C"
+                        color: osArea.containsMouse ? "#28484C" : "#15272C"
                         Behavior on color { ColorAnimation { duration: 140 } }
 
                         Text {
                             id: osLabel
                             anchors.centerIn: parent
                             text: "◈ MAELLE"
-                            color: osArea.containsMouse ? "#E1FBFF" : "#00E5FF"
+                            color: osArea.containsMouse ? "#F0F4E9" : "#73DACA"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                             font.letterSpacing: 1.5
@@ -218,7 +218,7 @@ ShellRoot {
                         Layout.fillHeight: true
                         Layout.topMargin: 9
                         Layout.bottomMargin: 9
-                        color: "#00616E"
+                        color: "#426B6B"
                     }
 
                     RowLayout {
@@ -229,7 +229,7 @@ ShellRoot {
 
                             delegate: Rectangle {
                                 required property int modelData
-                                readonly property color accent: ["#00E5FF", "#82AAFF", "#B58CFF", "#FF79B0", "#FFAD80", "#F4D58D", "#85E6B4", "#79DBEA", "#C8A7FF"][modelData]
+                                readonly property color accent: ["#73DACA", "#8BBDB5", "#E9C46A", "#D6B86A", "#D9B984", "#E9C46A", "#9DC6A5", "#82C8BC", "#C9C29A"][modelData]
                                 readonly property string expeditionName: ["Maelle", "Gustave", "Lune", "Sciel", "Verso", "Monoco", "Esquie", "Noco", "Gestral"][modelData]
                                 id: workspaceButton
                                 property bool tooltipReady: false
@@ -254,15 +254,15 @@ ShellRoot {
                                     Rectangle {
                                         anchors.fill: parent
                                         radius: 6
-                                        color: "#100F20"
+                                        color: "#101D21"
                                         border.width: 1
-                                        border.color: "#695687"
+                                        border.color: "#36565C"
                                         Text {
                                             id: workspaceTooltipLabel
                                             anchors.centerIn: parent
                                             text: "Expedition " + String(workspaceButton.modelData + 1).padStart(2, "0")
                                                 + " · " + workspaceButton.expeditionName
-                                            color: "#D7DEFF"
+                                            color: "#E8E6DD"
                                             font.family: "JetBrains Mono"
                                             font.pixelSize: 12
                                         }
@@ -275,7 +275,7 @@ ShellRoot {
                                 width: 30
                                 height: 28
                                 radius: 5
-                                color: selected ? Qt.rgba(accent.r, accent.g, accent.b, 0.20) : workspaceArea.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, 0.10) : "#0C1721"
+                                color: selected ? Qt.rgba(accent.r, accent.g, accent.b, 0.20) : workspaceArea.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, 0.10) : "#14252A"
                                 border.width: 1
                                 border.color: selected || workspaceArea.containsMouse ? accent : Qt.rgba(accent.r, accent.g, accent.b, 0.32)
                                 Behavior on color { ColorAnimation { duration: 140 } }
@@ -295,7 +295,7 @@ ShellRoot {
                                 Text {
                                     anchors.centerIn: parent
                                     text: String(modelData + 1).padStart(2, "0")
-                                    color: parent.selected ? "#F2F6FF" : parent.accent
+                                    color: parent.selected ? "#F4F1E7" : parent.accent
                                     font.family: "JetBrains Mono"
                                     font.pixelSize: 13
                                     font.bold: parent.selected
@@ -326,7 +326,7 @@ ShellRoot {
                         Layout.fillHeight: true
                         Layout.topMargin: 9
                         Layout.bottomMargin: 9
-                        color: "#00616E"
+                        color: "#426B6B"
                     }
 
                     RowLayout {
@@ -334,28 +334,28 @@ ShellRoot {
 
                         Text {
                             text: ""
-                            color: "#FFAD80"
+                            color: "#D9B984"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["firefox"]) }
                         }
                         Text {
                             text: ""
-                            color: "#82AAFF"
+                            color: "#8BBDB5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "yazi"]) }
                         }
                         Text {
                             text: ""
-                            color: "#85E6B4"
+                            color: "#9DC6A5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal"]) }
                         }
                         Text {
                             text: ""
-                            color: "#B58CFF"
+                            color: "#E9C46A"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 19
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "nvim"]) }
@@ -367,7 +367,7 @@ ShellRoot {
                         Layout.minimumWidth: 40
                         elide: Text.ElideMiddle
                         text: "› " + (Hyprland.activeToplevel?.title || "SYSTEM READY")
-                        color: "#85B8C8"
+                        color: "#A2B5AF"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 14
                     }
@@ -382,7 +382,7 @@ ShellRoot {
                                 required property var modelData
                                 visible: modelData.isPlaying && modelData.trackTitle !== ""
                                 text: "♫ " + modelData.trackTitle
-                                color: "#C8A7FF"
+                                color: "#C9C29A"
                                 font.family: "JetBrains Mono"
                                 font.pixelSize: 15
                                 elide: Text.ElideRight
@@ -404,7 +404,7 @@ ShellRoot {
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
                         text: "Captain's Log - Stardate: " + Math.floor(clock.now.getTime() / 1000)
-                        color: "#C8A7FF"
+                        color: "#C9C29A"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 13
                     }
@@ -448,7 +448,7 @@ ShellRoot {
                                         source: trayIconSource
                                         visible: !trayIcon.isNetwork
                                         colorization: 0.0
-                                        colorizationColor: "#00E5FF"
+                                        colorizationColor: "#73DACA"
                                     }
 
                                     Text {
@@ -456,7 +456,7 @@ ShellRoot {
                                         visible: trayIcon.isNetwork
                                         text: shell.stats.network === "ETH" ? "󰈀"
                                             : shell.stats.network && shell.stats.network !== "OFF" ? "󰤨" : "󰤭"
-                                        color: shell.stats.network && shell.stats.network !== "OFF" ? "#00E5FF" : "#747895"
+                                        color: shell.stats.network && shell.stats.network !== "OFF" ? "#73DACA" : "#91A7A0"
                                         font.family: "JetBrains Mono"
                                         font.pixelSize: 18
                                     }
@@ -503,7 +503,7 @@ ShellRoot {
                             }
                             visible: shell.updateLabel !== ""
                             text: shell.updateLabel
-                            color: "#66EFFF"
+                            color: "#ADE7DA"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 16
                             MouseArea {
@@ -522,7 +522,7 @@ ShellRoot {
                         }
                         Text {
                             text: idleInhibitor.enabled ? "󰅶" : "󰾪"
-                            color: idleInhibitor.enabled ? "#F4D58D" : "#747895"
+                            color: idleInhibitor.enabled ? "#E9C46A" : "#91A7A0"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: idleInhibitor.enabled = !idleInhibitor.enabled }
@@ -531,7 +531,7 @@ ShellRoot {
                         Text {
                             readonly property var sink: Pipewire.defaultAudioSink
                             text: !sink || !sink.ready || !sink.audio ? "󰖁" : sink.audio.muted ? "󰖁" : "󰕾 " + Math.round(sink.audio.volume * 100)
-                            color: "#F4D58D"
+                            color: "#E9C46A"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             MouseArea {
@@ -549,7 +549,7 @@ ShellRoot {
 
                         Text {
                             text: shell.stats.bluetooth === "on" ? "󰂱" : "󰂲"
-                            color: shell.stats.bluetooth === "on" ? "#82AAFF" : "#495571"
+                            color: shell.stats.bluetooth === "on" ? "#8BBDB5" : "#667F7C"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 18
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["blueman-manager"]) }
@@ -558,7 +558,7 @@ ShellRoot {
                         Text {
                             visible: shell.stats.vpn === "on"
                             text: ""
-                            color: "#B58CFF"
+                            color: "#E9C46A"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 17
                             MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["bash", shell.homeDirectory + "/.config/waybar/scripts/vpnmenu.sh"]) }
@@ -566,33 +566,33 @@ ShellRoot {
 
                         Text {
                             text: "󰘚 " + (shell.stats.memory || "--") + "%"
-                            color: "#B58CFF"
+                            color: "#E9C46A"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             text: "󰍛 " + shell.cpuUsage + "%"
-                            color: "#82AAFF"
+                            color: "#8BBDB5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             text: " " + (shell.stats.temperature || "--")
-                            color: "#FFAD80"
+                            color: "#D9B984"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             visible: shell.stats.brightness !== ""
                             text: "󰖙 " + (shell.stats.brightness || "")
-                            color: "#F4D58D"
+                            color: "#E9C46A"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
                         Text {
                             visible: UPower.displayDevice.ready && UPower.displayDevice.isLaptopBattery
                             text: "󰁹 " + Math.round(UPower.displayDevice.percentage) + "%"
-                            color: "#85E6B4"
+                            color: "#9DC6A5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                         }
@@ -609,10 +609,10 @@ ShellRoot {
                         implicitWidth: pomodoroLabel.implicitWidth + 18
                         height: 28
                         radius: 5
-                        color: pomodoroArea.containsMouse ? "#173342" : "#101E2B"
+                        color: pomodoroArea.containsMouse ? "#284448" : "#192D32"
                         Behavior on color { ColorAnimation { duration: 140 } }
                         border.width: 1
-                        border.color: shell.pomodoro.running ? "#00E5FF" : "#00616E"
+                        border.color: shell.pomodoro.running ? "#73DACA" : "#426B6B"
 
                         Rectangle {
                             anchors.left: parent.left
@@ -621,14 +621,14 @@ ShellRoot {
                             anchors.margins: 4
                             height: 2
                             radius: 1
-                            color: "#293344"
+                            color: "#30474A"
                             visible: shell.pomodoro.running && Number(shell.pomodoro.duration) > 0
                             Rectangle {
                                 width: parent.width * Math.max(0, Math.min(1,
                                     1 - Number(shell.pomodoro.remaining) / Number(shell.pomodoro.duration)))
                                 height: parent.height
                                 radius: 1
-                                color: shell.pomodoro.phase === "work" ? "#B58CFF" : "#85E6B4"
+                                color: shell.pomodoro.phase === "work" ? "#E9C46A" : "#9DC6A5"
                                 Behavior on width { NumberAnimation { duration: 300 } }
                             }
                         }
@@ -640,9 +640,9 @@ ShellRoot {
                                 : (shell.pomodoro.paused ? "Ⅱ " : "◷ ")
                                   + (shell.pomodoro.phase === "work" ? "CHARGE " : "REST ")
                                   + shell.pomodoro.text
-                            color: !shell.pomodoro.running ? "#00B4C8"
-                                : shell.pomodoro.paused ? "#66EFFF"
-                                : shell.pomodoro.phase === "work" ? "#FF7887" : "#A6D189"
+                            color: !shell.pomodoro.running ? "#70AFA6"
+                                : shell.pomodoro.paused ? "#ADE7DA"
+                                : shell.pomodoro.phase === "work" ? "#E8837C" : "#A6C993"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 14
                             font.bold: true
@@ -667,7 +667,7 @@ ShellRoot {
                         id: dateLabel
                         property bool copied: false
                         text: Qt.formatDateTime(clock.now, "ddd dd MMM | HH:mm:ss")
-                        color: "#D7DEFF"
+                        color: "#E9C46A"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 15
                         property bool hoverReady: false
@@ -723,10 +723,10 @@ ShellRoot {
                 anchor.margins.top: 8
                 Rectangle {
                     anchors.fill: parent
-                    color: "#100F20"
+                    color: "#101D21"
                     radius: 10
                     border.width: 1
-                    border.color: "#695687"
+                    border.color: "#36565C"
                     Column {
                         id: updatesTooltipContent
                         anchors.left: parent.left
@@ -736,7 +736,7 @@ ShellRoot {
                         spacing: 8
                         Text {
                             text: "AVAILABLE UPDATES"
-                            color: "#00E5FF"
+                            color: "#73DACA"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             font.bold: true
@@ -745,20 +745,20 @@ ShellRoot {
                             text: "Pacman: " + Number(shell.updates.repo || 0)
                                 + "\nAUR: " + Number(shell.updates.aur || 0)
                                 + "\nFlatpak: " + Number(shell.updates.flatpak || 0)
-                            color: "#D7DEFF"
+                            color: "#E8E6DD"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 13
                         }
                         Text {
                             text: "Total: " + (Number(shell.updates.repo || 0)
                                 + Number(shell.updates.aur || 0) + Number(shell.updates.flatpak || 0))
-                            color: "#85E6B4"
+                            color: "#9DC6A5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 12
                         }
                         Text {
                             text: "Click to run cachy-update"
-                            color: "#85B8C8"
+                            color: "#A2B5AF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 11
                         }
@@ -779,10 +779,10 @@ ShellRoot {
                 anchor.margins.top: 8
                 Rectangle {
                     anchors.fill: parent
-                    color: "#100F20"
+                    color: "#101D21"
                     radius: 10
                     border.width: 1
-                    border.color: "#695687"
+                    border.color: "#36565C"
                     Column {
                         id: pomodoroTooltipContent
                         anchors.left: parent.left
@@ -792,7 +792,7 @@ ShellRoot {
                         spacing: 8
                         Text {
                             text: "GRADIENT CHARGE"
-                            color: "#00E5FF"
+                            color: "#73DACA"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             font.bold: true
@@ -804,7 +804,7 @@ ShellRoot {
                                 : (shell.pomodoro.phase === "work" ? "Focus" : "Rest")
                                   + (shell.pomodoro.paused ? " · Paused" : " · In progress")
                                   + " · " + shell.pomodoro.text
-                            color: "#D7DEFF"
+                            color: "#E8E6DD"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 13
                         }
@@ -812,7 +812,7 @@ ShellRoot {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: "Expeditions completed today: " + Number(shell.pomodoro.completedToday || 0)
-                            color: "#85E6B4"
+                            color: "#9DC6A5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 12
                         }
@@ -822,7 +822,7 @@ ShellRoot {
                             text: shell.pomodoro.running
                                 ? "Click to pause/resume\nKeep its terminal open"
                                 : "Click to start Pomodoro"
-                            color: "#85B8C8"
+                            color: "#A2B5AF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 11
                         }
@@ -843,10 +843,10 @@ ShellRoot {
                 anchor.margins.top: 8
                 Rectangle {
                     anchors.fill: parent
-                    color: "#100F20"
+                    color: "#101D21"
                     radius: 10
                     border.width: 1
-                    border.color: "#695687"
+                    border.color: "#36565C"
                     Column {
                         id: clockTooltipContent
                         anchors.left: parent.left
@@ -856,7 +856,7 @@ ShellRoot {
                         spacing: 8
                         Text {
                             text: "LUMIÈRE ALMANAC"
-                            color: "#00E5FF"
+                            color: "#73DACA"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 15
                             font.bold: true
@@ -866,7 +866,7 @@ ShellRoot {
                             wrapMode: Text.WordWrap
                             text: dateLabel.copied ? "Date and time copied"
                                 : Qt.formatDateTime(clock.now, "dddd, d MMMM yyyy")
-                            color: dateLabel.copied ? "#85E6B4" : "#D7DEFF"
+                            color: dateLabel.copied ? "#9DC6A5" : "#E8E6DD"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 13
                         }
@@ -875,7 +875,7 @@ ShellRoot {
                             wrapMode: Text.WordWrap
                             text: "ISO week " + shell.isoWeek(clock.now)
                                 + " · " + Qt.formatDateTime(clock.now, "tttt (t)")
-                            color: "#D2B8FF"
+                            color: "#DCC998"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 12
                         }
@@ -883,7 +883,7 @@ ShellRoot {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: "Expeditions completed today: " + Number(shell.pomodoro.completedToday || 0)
-                            color: "#85E6B4"
+                            color: "#9DC6A5"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 12
                         }
@@ -891,7 +891,7 @@ ShellRoot {
                             width: parent.width
                             wrapMode: Text.WordWrap
                             text: "Click to open calendar\nRight-click to copy date and time"
-                            color: "#85B8C8"
+                            color: "#A2B5AF"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 11
                         }

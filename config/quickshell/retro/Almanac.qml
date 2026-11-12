@@ -38,13 +38,13 @@ PopupWindow {
         implicitWidth: 30
         implicitHeight: 26
         radius: 4
-        color: area.containsMouse ? "#343052" : "#192535"
+        color: area.containsMouse ? "#30474A" : "#192D32"
         border.width: 1
-        border.color: "#574C79"
+        border.color: "#42615F"
         Text {
             anchors.centerIn: parent
             text: parent.label
-            color: "#D2B8FF"
+            color: "#DCC998"
             font.family: "JetBrains Mono"
             font.pixelSize: 13
         }
@@ -60,9 +60,9 @@ PopupWindow {
     Rectangle {
         anchors.fill: parent
         radius: 10
-        color: "#100F20"
+        color: "#101D21"
         border.width: 1
-        border.color: "#695687"
+        border.color: "#36565C"
         focus: true
         HoverHandler { id: calendarHover }
         Keys.onEscapePressed: almanac.visible = false
@@ -75,7 +75,7 @@ PopupWindow {
                 Text {
                     Layout.fillWidth: true
                     text: "LUMIÈRE ALMANAC"
-                    color: "#00E5FF"
+                    color: "#73DACA"
                     font.family: "JetBrains Mono"
                     font.pixelSize: 15
                     font.bold: true
@@ -88,7 +88,7 @@ PopupWindow {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     text: Qt.formatDateTime(almanac.month, "MMMM yyyy")
-                    color: "#D7DEFF"
+                    color: "#E8E6DD"
                     font.family: "JetBrains Mono"
                     font.pixelSize: 14
                 }
@@ -107,7 +107,7 @@ PopupWindow {
                         Layout.fillWidth: true
                         horizontalAlignment: Text.AlignHCenter
                         text: modelData
-                        color: "#B58CFF"
+                        color: "#E9C46A"
                         font.family: "JetBrains Mono"
                         font.pixelSize: 12
                     }
@@ -123,14 +123,14 @@ PopupWindow {
                         Layout.fillHeight: true
                         Layout.minimumHeight: 24
                         radius: 4
-                        color: isToday ? "#153E4A" : "transparent"
+                        color: isToday ? "#28484C" : "transparent"
                         border.width: isToday ? 1 : 0
-                        border.color: "#00E5FF"
+                        border.color: "#73DACA"
                         Text {
                             anchors.centerIn: parent
                             text: parent.day.getDate()
-                            color: parent.isToday ? "#00E5FF"
-                                : parent.day.getMonth() === almanac.month.getMonth() ? "#D7DEFF" : "#55546D"
+                            color: parent.isToday ? "#73DACA"
+                                : parent.day.getMonth() === almanac.month.getMonth() ? "#E8E6DD" : "#728C86"
                             font.family: "JetBrains Mono"
                             font.pixelSize: 13
                             font.bold: parent.isToday
@@ -144,7 +144,7 @@ PopupWindow {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignRight
                     text: "Expeditions completed today: " + almanac.completedToday
-                    color: "#85E6B4"
+                    color: "#9DC6A5"
                     font.family: "JetBrains Mono"
                     font.pixelSize: 10
                 }
