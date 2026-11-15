@@ -232,6 +232,9 @@ ShellRoot {
                                 required property int modelData
                                 readonly property color accent: ["#A5B4FC", "#A4BBD8", "#E7D39B", "#CFBF91", "#D8C7A6", "#E7D39B", "#A6CECA", "#A7C0DB", "#B8B8DE"][modelData]
                                 readonly property string expeditionName: ["Maelle", "Gustave", "Lune", "Sciel", "Verso", "Monoco", "Esquie", "Noco", "Gestral"][modelData]
+                                readonly property string workspaceLabel: ["WWW", "Email", "Games", "Files", "Codex", "Music", "Video", "Lab", "Study"][modelData]
+                                    ?? ""
+                                readonly property string workspaceIcon: ["󰑃", "󰇮", "󰊗", "󰉋", "", "󰝚", "󰕧", "", ""][modelData] ?? ""
                                 id: workspaceButton
                                 property bool tooltipReady: false
                                 Timer {
@@ -273,7 +276,7 @@ ShellRoot {
                                     ? Hyprland.focusedWorkspace.id === modelData + 1 : false
                                 readonly property bool recentlyChanged: barWindow.lastChangedWorkspace === modelData + 1
 
-                                width: 30
+                                width: Math.max(30, workspaceButtonLabel.implicitWidth + 20)
                                 height: 28
                                 radius: 5
                                 color: selected ? Qt.rgba(accent.r, accent.g, accent.b, 0.20) : workspaceArea.containsMouse ? Qt.rgba(accent.r, accent.g, accent.b, 0.10) : "#151F31"
@@ -294,8 +297,10 @@ ShellRoot {
                                 }
 
                                 Text {
+                                    id: workspaceButtonLabel
                                     anchors.centerIn: parent
-                                    text: String(modelData + 1).padStart(2, "0")
+                                    text: String(modelData + 1) + (workspaceButton.workspaceLabel
+                                        ? " " + workspaceButton.workspaceIcon + " " + workspaceButton.workspaceLabel : "")
                                     color: parent.selected ? "#F5F7FF" : parent.accent
                                     font.family: "JetBrains Mono"
                                     font.pixelSize: 13
@@ -457,8 +462,10 @@ ShellRoot {
                                         id: trayIconArea
                                         anchors.fill: parent
                                         acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
                                         onClicked: mouse => {
-                                            if (modelData.hasMenu && (mouse.button === Qt.RightButton || modelData.onlyMenu)) {
+                                            if (modelData.hasMenu && (trayIcon.isNetwork || mouse.button === Qt.RightButton || modelData.onlyMenu)) {
                                                 if (trayIcon.isNetwork || trayIcon.isFlameshot) {
                                                     const alreadyOpen = networkTrayMenu.visible
                                                         && networkTrayMenu.menuHandle === modelData.menu
@@ -692,12 +699,13 @@ ShellRoot {
                 }
 
                 Text {
+                    readonly property int centerOffset: 160
                     anchors.centerIn: parent
-                    // Shrink symmetrically if side widgets reach the centre.
-                    // This preserves the centre position and avoids drawing over controls.
+                    anchors.horizontalCenterOffset: centerOffset
+                    // Keep the offset fixed while shrinking clear of side controls.
                     width: Math.max(0, Math.min(330,
-                        parent.width - 2 * (barContent.x + captainSpace.x),
-                        2 * (barContent.x + captainSpace.x + captainSpace.width) - parent.width))
+                        parent.width + 2 * centerOffset - 2 * (barContent.x + captainSpace.x),
+                        2 * (barContent.x + captainSpace.x + captainSpace.width) - parent.width - 2 * centerOffset))
                     visible: width > 0
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight

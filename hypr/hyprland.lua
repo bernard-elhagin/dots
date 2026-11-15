@@ -424,7 +424,14 @@ hl.window_rule({
 hl.window_rule({
     name = "haruna-start-fullscreen",
     match = { class = "^(org\\.kde\\.haruna)$" },
+    workspace = "7",
     fullscreen = true,
+})
+
+hl.window_rule({
+    name = "tidal-music-workspace",
+    match = { class = "^(com\\.mastermindzh\\.tidal-hifi)$" },
+    workspace = "6",
 })
 
 --hl.window_rule({

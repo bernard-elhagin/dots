@@ -47,5 +47,7 @@ PY
 mapfile -t values <<< "$settings"
 
 printf 'Applying OpenRGB keyboard profile: %s\n' "$profile"
-exec openrgb --client 127.0.0.1:6742 --device "$keyboard" \
+# The long-running SDK server can retain a dead HID handle after a USB
+# reconnect. Detect the current keyboard instead of using its cached device.
+exec openrgb --noautoconnect --device "$keyboard" \
     --mode "${values[0]}" --brightness "${values[1]}" --color "${values[2]}"

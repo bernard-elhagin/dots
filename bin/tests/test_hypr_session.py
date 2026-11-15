@@ -20,6 +20,29 @@ def window(address, title='editor', ws=5, x=1000, y=0, width=1000, height=1000):
 
 
 class SessionTests(unittest.TestCase):
+    def test_dwindle_pair_restores_order_and_size(self):
+        left = window('old-left', ws=2, x=0, width=1872)
+        right = window('old-right', ws=2, x=1880, width=672)
+        monitor = dict(name='DP-2', width=2560, height=1440, scale=1, x=2560, y=0)
+        workspace = dict(id=2, name='2', monitor='DP-2', layout='dwindle')
+        state = dict(windows=[left, right], monitors=[monitor], workspaces=[workspace])
+        # Current windows have the opposite order and a different split size.
+        live = [window('right', ws=2, x=0), window('left', ws=2, x=1008)]
+        responses = dict(workspaces=[workspace], monitors=[monitor])
+        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live), patch.object(mod, 'dispatch', return_value=True) as dispatch:
+            mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
+            dispatch.assert_any_call('swap', 'address:right')
+            dispatch.assert_any_call('resize', 'address:left 1872 1000')
+        # Extra tiled windows must prevent changing the split.
+        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live + [window('extra', ws=2)]), patch.object(mod, 'dispatch') as dispatch:
+            mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
+            dispatch.assert_not_called()
+        # Exact saved pixel geometry is unsafe after a display change.
+        responses['monitors'] = [dict(monitor, scale=2)]
+        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live), patch.object(mod, 'dispatch') as dispatch:
+            mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
+            dispatch.assert_not_called()
+
     def test_startup_command_and_directory_used_for_launch(self):
         saved = window('old')
         argv = ['terminal', '--title=two words', '-x', 'program', 'literal;argument']
@@ -128,6 +151,13 @@ class SessionTests(unittest.TestCase):
     def test_other_apps_keep_saved_command(self):
         saved = window('old')
         self.assertEqual(mod.launch_argv(saved), ['editor'])
+
+    def test_discord_versioned_snapshot_uses_stable_launcher(self):
+        saved = window('old')
+        saved.update(initialClass='discord', argv=['/missing/app-1.0.168/Discord'])
+        self.assertEqual(mod.launch_argv(saved), ['discord'])
+        saved['startup'] = dict(argv=['custom-discord', '--flag'])
+        self.assertEqual(mod.launch_argv(saved), ['custom-discord', '--flag'])
 
     def test_duplicate_matching_claims_distinct_windows(self):
         saved = window('old')

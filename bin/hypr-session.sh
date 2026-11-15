@@ -312,6 +312,10 @@ def launch_argv(saved):
     # parent process after logout. Ask the public launcher to show the UI.
     if app_class(saved).lower() == "steam":
         return ["steam", "steam://open/main"]
+    # Discord updates replace its versioned executable directory. The public
+    # launcher resolves the current version, including for older snapshots.
+    if app_class(saved).lower() == "discord":
+        return ["discord"]
     return saved.get("argv") or []
 
 
@@ -502,6 +506,60 @@ def restore_master_layouts(state, restored):
                 dispatch("swap", "address:" + occupant)
 
 
+def restore_dwindle_pairs(state, restored):
+    """Restore a two-leaf split; do not guess at larger dwindle trees."""
+    addresses = {saved.get("savedAddress"): address for saved, address in restored}
+    workspaces = {workspace_selector(w): w for w in hypr_json("workspaces")}
+    monitors = {m.get("name"): m for m in hypr_json("monitors")}
+    for workspace in state.get("workspaces", []):
+        selector = workspace_selector(workspace)
+        current = workspaces.get(selector, {})
+        layout = current.get("tiledLayout") or current.get("layout") or option("general:layout", "str")
+        if workspace.get("layout") != "dwindle" or layout != "dwindle":
+            continue
+        saved = [w for w in state.get("windows", [])
+                 if workspace_selector(w.get("workspace") or {}) == selector
+                 and not w.get("floating") and not w.get("fullscreen")]
+        if len(saved) != 2 or any(not w.get("at") or not w.get("size") for w in saved):
+            continue
+        wanted = [addresses.get(w.get("savedAddress")) for w in saved]
+        live = [c for c in clients_now()
+                if workspace_selector(c.get("workspace") or {}) == selector
+                and not c.get("floating")]
+        if not all(wanted) or {c.get("address") for c in live} != set(wanted):
+            print(f"Skipping dwindle pair on {selector}: window set changed")
+            continue
+        old_monitor = next((m for m in state.get("monitors", [])
+                            if m.get("name") == workspace.get("monitor")), None)
+        new_monitor = monitors.get(current.get("monitor"))
+        fields = ("name", "width", "height", "scale", "x", "y")
+        if not old_monitor or not new_monitor or any(old_monitor.get(k) != new_monitor.get(k) for k in fields):
+            print(f"Skipping dwindle pair on {selector}: monitor geometry changed")
+            continue
+        # Both leaves must form one horizontal or vertical split.
+        if saved[0]["at"][1] == saved[1]["at"][1] and saved[0]["size"][1] == saved[1]["size"][1]:
+            axis = 0
+        elif saved[0]["at"][0] == saved[1]["at"][0] and saved[0]["size"][0] == saved[1]["size"][0]:
+            axis = 1
+        else:
+            continue
+        first = min(saved, key=lambda w: w["at"][axis])
+        address = addresses[first["savedAddress"]]
+        dispatch("workspace", selector)
+        dispatch("focuswindow", "address:" + address)
+        live_axis = 0 if live[0]["at"][0] != live[1]["at"][0] else 1
+        if live_axis != axis:
+            dispatch("layout", "togglesplit")
+            time.sleep(0.1)
+        live = [c for c in clients_now() if c.get("address") in wanted]
+        occupant = min(live, key=lambda c: c["at"][axis])["address"]
+        if occupant != address:
+            dispatch("swap", "address:" + occupant)
+        width, height = first["size"]
+        dispatch("resize", f"address:{address} {int(width)} {int(height)}")
+        print(f"Restored two-window dwindle geometry on workspace {selector}")
+
+
 def restore_session(path):
     try:
         state = json.loads(path.read_text(encoding="utf-8"))
@@ -538,6 +596,7 @@ def restore_session(path):
         if address:
             restored.append((saved, address))
     restore_master_layouts(state, restored)
+    restore_dwindle_pairs(state, restored)
     for saved, address in restored:
         dispatch("fullscreenstate", "address:" + address, str(int(saved.get("fullscreen", 0))))
 
@@ -561,7 +620,7 @@ def restore_session(path):
         if matches:
             dispatch("focuswindow", "address:" + str(matches[-1].get("address", "")))
     print(f"Session restore finished: placed {len(restored)}/{len(windows)} saved windows.")
-    print("Check the reported skips and launch failures; dwindle split trees are not reconstructed.")
+    print("Check the reported skips and launch failures; dwindle trees with more than two windows are not reconstructed.")
 
 
 def main():
