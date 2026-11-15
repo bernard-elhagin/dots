@@ -33,6 +33,7 @@ done
 # Read Steam's local metadata; no API key, network request, or credentials needed.
 games="$(python3 - <<'PY'
 import os
+import json
 import pathlib
 import re
 import sys
@@ -104,7 +105,23 @@ for library in sorted(libraries):
         except (OSError, ValueError, StopIteration, KeyError, TypeError) as exc:
             print(f'Skipping {manifest.name}: {exc}', file=sys.stderr)
 
-for appid, name in sorted(games.items(), key=lambda pair: (pair[1].casefold(), pair[0])):
+state = pathlib.Path(os.environ.get('XDG_STATE_HOME') or home / '.local/state')
+history_path = state / 'steam-launcher/launch-counts.json'
+try:
+    history = json.loads(history_path.read_text())
+    if not isinstance(history, dict) or any(
+        not isinstance(v, int) or isinstance(v, bool) or v < 0 for v in history.values()
+    ):
+        raise ValueError('Expected nonnegative launch counts')
+except FileNotFoundError:
+    history = {}
+except (OSError, ValueError) as exc:
+    print(f'Could not read launch history: {exc}', file=sys.stderr)
+    history = {}
+
+for appid, name in sorted(games.items(), key=lambda pair: (
+    -history.get(pair[0], 0), pair[1].casefold(), pair[0]
+)):
     print(f'{appid}\t{name}')
 PY
 )"
@@ -127,8 +144,8 @@ for dependency in fzf steam; do
 done
 
 if selection="$(printf '%s\n' "$games" | fzf --no-multi --delimiter=$'\t' \
-    --with-nth=2.. --query="$*" --prompt='Steam > ' \
-    --header='Enter: launch on workspace 3 | Esc: cancel' --height=100% --layout=reverse)"; then
+    --with-nth=2.. --tiebreak=index --query="$*" --prompt='Steam > ' \
+    --header='Frequent first, then A–Z | Enter: launch on workspace 3 | Esc: cancel' --height=100% --layout=reverse)"; then
     [[ -n "$selection" ]] || exit 0
 else
     result=$?
@@ -158,6 +175,11 @@ printf 'Launching %s...\n' "${selection#*$'\t'}"
 python3 - "$appid" <<'PY'
 import subprocess
 import sys
+import fcntl
+import json
+import os
+import pathlib
+import tempfile
 
 subprocess.Popen(
     ["steam", "steam://rungameid/" + sys.argv[1]],
@@ -166,4 +188,35 @@ subprocess.Popen(
     stderr=subprocess.DEVNULL,
     start_new_session=True,
 )
+
+# Count successful launch requests, not picker openings or cancelled selections.
+# Lock the read/modify/write and replace atomically for overlapping launchers.
+state = pathlib.Path(os.environ.get('XDG_STATE_HOME') or pathlib.Path.home() / '.local/state')
+directory = state / 'steam-launcher'
+try:
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / 'history.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        path = directory / 'launch-counts.json'
+        try:
+            history = json.loads(path.read_text())
+            if not isinstance(history, dict) or any(
+                not isinstance(v, int) or isinstance(v, bool) or v < 0 for v in history.values()
+            ):
+                raise ValueError('Expected nonnegative launch counts')
+        except FileNotFoundError:
+            history = {}
+        history[sys.argv[1]] = history.get(sys.argv[1], 0) + 1
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', dir=directory, delete=False) as output:
+                temporary = pathlib.Path(output.name)
+                json.dump(history, output)
+                output.write('\n')
+            temporary.replace(path)
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+except (OSError, ValueError) as exc:
+    print(f'Game launch requested, but history could not be updated: {exc}', file=sys.stderr)
 PY
