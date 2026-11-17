@@ -31,9 +31,6 @@
 [submodule "sjl/gundo.vim"]
     path = gundo.vim
     url = https://github.com/sjl/gundo.vim
-[submodule "godlygeek/tabular"]
-    path = tabular
-    url = https://github.com/godlygeek/tabular
 [submodule "xolox/vim-misc"]
     path = vim-misc
     url = https://github.com/xolox/vim-misc
