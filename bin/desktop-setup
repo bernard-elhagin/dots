@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+apply=false
+serial=false
+for option in "$@"; do
+    case "$option" in
+        --apply) apply=true ;;
+        --serial) serial=true ;;
+        -h|--help) printf 'Usage: desktop-setup [--apply] [--serial]\nDefault: show the plan. No services are restarted.\n'; exit 0 ;;
+        *) printf 'Unknown option: %s\n' "$option" >&2; exit 2 ;;
+    esac
+done
+if (( EUID == 0 )); then
+    printf 'Run as your regular desktop user, not root.\n' >&2
+    exit 1
+fi
+system_units=(NetworkManager.service bluetooth.service openrgb.service)
+user_units=(pipewire.socket pipewire-pulse.socket wireplumber.service arch-update.timer)
+printf 'Enable system units: %s\n' "${system_units[*]}"
+printf 'Enable user units: %s\n' "${user_units[*]}"
+printf 'Prepare /etc/openrgb; use package-provided OpenRGB udev rules.\n'
+if "$serial"; then
+    printf 'Add %s to uucp for Arduino serial access (requires a new login).\n' "$(id -un)"
+fi
+if ! "$apply"; then
+    exit 0
+fi
+# Validate everything before mutating service enablement.
+for unit in "${system_units[@]}"; do
+    systemctl cat "$unit" >/dev/null
+done
+for unit in "${user_units[@]}" mako.service hyprpaper.service; do
+    systemctl --user cat "$unit" >/dev/null
+done
+if [[ ! -r /usr/lib/udev/rules.d/60-openrgb.rules ]]; then
+    printf 'Missing OpenRGB udev rules; install the openrgb package first.\n' >&2
+    exit 1
+fi
+if "$serial"; then
+    getent group uucp >/dev/null
+fi
+sudo install -d -m 755 /etc/openrgb
+sudo systemctl enable "${system_units[@]}"
+systemctl --user daemon-reload
+systemctl --user enable "${user_units[@]}"
+if "$serial"; then
+    sudo usermod -aG uucp "$(id -un)"
+fi
+printf 'Enablement complete. Services start through normal boot/login; none were restarted.\n'

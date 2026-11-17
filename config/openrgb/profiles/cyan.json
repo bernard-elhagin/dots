@@ -1,0 +1,97 @@
+{
+  "controllers": [
+    {
+      "active_mode": 0,
+      "colors": [
+        15400704,
+        15400704,
+        15400704,
+        15400704,
+        15400704,
+        15400704,
+        15400704,
+        15400704
+      ],
+      "description": "SteelSeries Apex 3 Device",
+      "display_name": "",
+      "flags": 2,
+      "leds": [
+        {
+          "name": "LED 0"
+        },
+        {
+          "name": "LED 1"
+        },
+        {
+          "name": "LED 2"
+        },
+        {
+          "name": "LED 3"
+        },
+        {
+          "name": "LED 4"
+        },
+        {
+          "name": "LED 5"
+        },
+        {
+          "name": "LED 6"
+        },
+        {
+          "name": "LED 7"
+        }
+      ],
+      "modes": [
+        {
+          "brightness": 16,
+          "brightness_max": 16,
+          "brightness_min": 0,
+          "color_mode": 1,
+          "colors_max": 0,
+          "colors_min": 0,
+          "direction": 0,
+          "flags": 48,
+          "name": "Direct",
+          "speed": 0,
+          "speed_max": 0,
+          "speed_min": 0
+        },
+        {
+          "brightness": 16,
+          "brightness_max": 16,
+          "brightness_min": 0,
+          "color_mode": 0,
+          "colors_max": 0,
+          "colors_min": 0,
+          "direction": 0,
+          "flags": 16,
+          "name": "Rainbow Wave",
+          "speed": 0,
+          "speed_max": 0,
+          "speed_min": 0
+        }
+      ],
+      "name": "SteelSeries Apex 3 TKL",
+      "type": 5,
+      "vendor": "SteelSeries",
+      "version": "",
+      "zones": [
+        {
+          "display_name": "",
+          "flags": 0,
+          "leds_count": 8,
+          "leds_max": 8,
+          "leds_min": 8,
+          "matrix_map": {
+            "height": 0,
+            "width": 0
+          },
+          "name": "Keyboard",
+          "type": 1
+        }
+      ]
+    }
+  ],
+  "profile_name": "cyan",
+  "profile_version": 6
+}

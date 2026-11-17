@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Import only display variables needed by graphical user services, never the full environment.
+variables=()
+for name in WAYLAND_DISPLAY DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP; do
+    if [[ -n "${!name:-}" ]]; then
+        variables+=("$name")
+    fi
+done
+if (( ${#variables[@]} )); then
+    systemctl --user import-environment "${variables[@]}"
+fi
+systemctl --user start mako.service hyprpaper.service

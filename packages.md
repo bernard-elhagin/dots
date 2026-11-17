@@ -43,4 +43,4 @@ Package installation alone does not reconstruct the complete desktop. OpenRGB
 profiles and service setup, application preferences, session state and private
 credentials remain separate restoration steps. TPM is bootstrapped, but its
 configured plugins still need installation (prefix + I after loading your tmux
-configuration). These configuration/setup gaps are outside this package-list change.
+configuration). See desktop-restore.md for the separate configuration, service and private-backup workflow.

@@ -23,8 +23,9 @@ status and power-menu helpers. Hyprland starts this configuration with
 `qs -n -c retro`.
 
 At Hyprland login, `openrgb-keyboard-startup` applies the keyboard settings from
-the system OpenRGB server's `cyan` profile Monday–Thursday, or `friday`
-Friday–Sunday, using local time. It reads profiles from `/etc/openrgb/profiles`
+the managed `cyan` profile Monday–Thursday, or `friday`
+Friday–Sunday, using local time. It reads user profiles from
+`~/.config/openrgb/profiles`, with a legacy fallback to `/etc/openrgb/profiles`
 (`OPENRGB_PROFILE_DIR` can override this) and performs a fresh hardware scan,
 bypassing the SDK server's potentially stale HID handle after USB reconnection.
 Only the SteelSeries Apex 3 TKL's Direct-mode colors and

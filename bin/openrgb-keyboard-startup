@@ -9,7 +9,11 @@ case "$(date +%u)" in
 esac
 
 keyboard="SteelSeries Apex 3 TKL"
-profile_dir="${OPENRGB_PROFILE_DIR:-/etc/openrgb/profiles}"
+profile_dir="${OPENRGB_PROFILE_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/openrgb/profiles}"
+# Compatibility with installations predating the managed user profiles.
+if [[ -z "${OPENRGB_PROFILE_DIR:-}" && ! -r "$profile_dir/$profile.json" ]]; then
+    profile_dir=/etc/openrgb/profiles
+fi
 
 # OpenRGB's --profile loads all devices, even alongside --device. Read just
 # this keyboard's Direct-mode settings to leave the other devices alone.

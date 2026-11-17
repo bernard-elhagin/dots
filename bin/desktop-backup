@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+script=$(readlink -f -- "${BASH_SOURCE[0]}")
+exec python3 "$(dirname -- "$script")/desktop_backup.py" "$@"

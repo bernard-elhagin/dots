@@ -54,6 +54,19 @@ link_repo_path() {
     link_path "$DOTS_DIR/$repository_path" "$HOME/$home_path"
 }
 
+copy_repo_config() {
+    local source="$DOTS_DIR/$1" destination="$HOME/$2"
+    if [[ -f "$destination" && ! -L "$destination" ]] && cmp -s -- "$source" "$destination"; then
+        return
+    fi
+    mkdir -p -- "$(dirname -- "$destination")"
+    if [[ -e "$destination" || -L "$destination" ]]; then
+        backup_path "$destination"
+    fi
+    # Applications add history/state to these files: never write that into Git.
+    install -m 600 -- "$source" "$destination"
+}
+
 install_tmux() {
     local destination="$HOME/.tmux"
     local plugins=""
@@ -80,6 +93,7 @@ install_tmux() {
 
 install_desktop() {
     local name
+    link_repo_path bin bin
 
     # Link configuration files individually: keep session state and local files
     # outside the repository, and let HyprMod edit its linked settings file.
@@ -93,6 +107,12 @@ install_desktop() {
     link_repo_path config/mako/config .config/mako/config
     link_repo_path bin/pomodoro .local/bin/pomodoro
     link_repo_path bin/openrgb-keyboard-startup .local/bin/openrgb-keyboard-startup
+    link_repo_path bin/desktop-session-startup .local/bin/desktop-session-startup
+    link_repo_path config/openrgb/profiles .config/openrgb/profiles
+    copy_repo_config config/haruna/haruna.conf .config/haruna/haruna.conf
+    copy_repo_config config/haruna/shortcuts.conf .config/haruna/shortcuts.conf
+    copy_repo_config config/flameshot/flameshot.ini .config/flameshot/flameshot.ini
+    link_repo_path config/systemd/user/arch-update.timer .config/systemd/user/arch-update.timer
     for name in launcher system networkmenu vpn; do
         link_repo_path "config/rofi/$name.rasi" ".config/rofi/$name.rasi"
     done

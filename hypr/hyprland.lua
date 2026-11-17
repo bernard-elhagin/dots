@@ -51,6 +51,7 @@ local runmenu     = "rofi -show run"
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
+    hl.exec_cmd("~/.local/bin/desktop-session-startup")
     hl.exec_cmd("nm-applet")
     hl.exec_cmd("flameshot")
     hl.exec_cmd("qs -n -c retro")
