@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Resolve the launcher symlink so the Python module is found after installation.
+SCRIPT_PATH=$(readlink -f -- "${BASH_SOURCE[0]}") || exit 1
+SCRIPT_DIR=$(dirname -- "$SCRIPT_PATH") || exit 1
+exec python3 "$SCRIPT_DIR/looney_next.py" "$@"
