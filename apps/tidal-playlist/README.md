@@ -105,6 +105,7 @@ containing videos are rejected by track-management commands.
 
 ```bash
 ./bin/tidal-playlist discover Cooked --name 'Cooked — Third Helping' --count 20 --exclude-playlist 'Ghosts in the Rhythm'
+./bin/tidal-playlist discover --artist "Angine de Poitrine" --name "Angine de Poitrine discoveries"
 ```
 
 This creates a **local plan only**. Review it, then run `create PLAN.json --yes`.
@@ -114,6 +115,12 @@ and limits artist repetition. It excludes seed tracks, explicit excluded
 playlists, and previously recommended recordings by ID, ISRC, and normalized
 artist/title. Favorites can optionally be excluded or used as seeds; they are
 not a complete listening history.
+
+`--artist` accepts a single exact artist name (case and accents are ignored).
+Ambiguous matches are rejected. It gathers playable tracks credited to the matched
+TIDAL artist from up to 12 releases, deduplicates recordings, then uses the same
+discovery options and seed limit as playlist mode. Choose exactly one seed source:
+a playlist, `--artist`, or `--from-favorites`.
 
 Useful options:
 

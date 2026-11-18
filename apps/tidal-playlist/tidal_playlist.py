@@ -311,7 +311,7 @@ def title_base(title):
     return normalize(value)
 
 
-def track_rows(doc):
+def track_rows(doc, artist_id=None):
     included = {(r['type'], str(r['id'])): r for r in doc.get('included', [])}
     rows = []
     for ref in data_list(doc):
@@ -321,8 +321,11 @@ def track_rows(doc):
         a = track.get('attributes', {})
         if not a.get('title'):
             continue
+        credits = track.get('relationships', {}).get('artists', {}).get('data', [])
+        if artist_id is not None and not any(str(r['id']) == artist_id for r in credits):
+            continue
         names = [included.get(('artists', str(r['id'])), {}).get('attributes', {}).get('name', '')
-                 for r in track.get('relationships', {}).get('artists', {}).get('data', [])]
+                 for r in credits]
         names = [n for n in names if n]
         availability = a.get('availability')
         rows.append({'id': str(track['id']), 'artist': ', '.join(names), 'artists': names,
@@ -786,11 +789,62 @@ def delete(args):
     emit({'deleted': operation['playlist_id'], 'name': operation['name'], 'backup': str(path)})
 
 
+def artist_seeds(name, country):
+    wanted = normalize(name)
+    if not wanted:
+        raise Error('Enter an artist name.')
+    query = '/searchResults?' + urlencode({'filter[query]': name.strip(), 'countryCode': country})
+    results = data_list(api('GET', query))
+    matches = {}
+    if results:
+        path = '/searchResults/' + quote(str(results[0]['id']), safe='') + '/relationships/artists?'
+        path += urlencode({'countryCode': country, 'include': 'artists'})
+        for doc in pages(path, limit=3, bounded=True):
+            included = {str(r['id']): r for r in doc.get('included', []) if r['type'] == 'artists'}
+            for ref in data_list(doc):
+                artist = included.get(str(ref['id']), ref)
+                found = artist.get('attributes', {}).get('name', '')
+                if normalize(found) == wanted:
+                    matches[str(artist['id'])] = found
+    if not matches:
+        raise Error(f'No exact artist match for {name!r} in the {country} catalog search.')
+    if len(matches) != 1:
+        raise Error(f'Multiple TIDAL artists match {name!r}. Use a seed playlist to select the intended artist.')
+    artist_id, artist_name = next(iter(matches.items()))
+
+    # Bound catalog requests for prolific artists. Prefer release order from TIDAL
+    # and deduplicate recordings before the discovery sampler sees them.
+    path = f'/artists/{quote(artist_id, safe="")}/relationships/albums?' + urlencode({'countryCode': country})
+    albums = dict.fromkeys(str(ref['id']) for doc in pages(path, limit=3, bounded=True)
+                           for ref in data_list(doc) if ref.get('type') == 'albums')
+    seeds, seen = [], set()
+    for album_id in list(albums)[:12]:
+        path = f'/albums/{quote(album_id, safe="")}/relationships/items?' + urlencode({
+            'countryCode': country, 'include': 'items.artists'})
+        for doc in pages(path, limit=3, bounded=True):
+            for row in track_rows(doc, artist_id=artist_id):
+                keys = identities(row)
+                if row['available'] and row['artists'] and not seen.intersection(keys):
+                    seeds.append(row)
+                    seen.update(keys)
+    if not seeds:
+        raise Error(f'No playable seed tracks found for {artist_name} in the {country} catalog.')
+    progress(f'Found {len(seeds)} seed recordings for {artist_name}.')
+    return {'id': artist_id, 'name': artist_name}, seeds
+
+
 def discover(args):
     if getattr(args, 'bpm_min', None) is not None and getattr(args, 'bpm_max', None) is not None and args.bpm_min > args.bpm_max:
         raise Error('--bpm-min must not exceed --bpm-max.')
-    source = 'favorites' if getattr(args, 'from_favorites', False) else playlist_id(args.source, args.country)
-    seeds = favorite_tracks() if source == 'favorites' else playlist_tracks(source, args.country)
+    artist = None
+    if getattr(args, 'artist', None) is not None:
+        artist, seeds = artist_seeds(args.artist, args.country)
+        source = None
+    elif getattr(args, 'from_favorites', False):
+        source, seeds = 'favorites', favorite_tracks()
+    else:
+        source = playlist_id(args.source, args.country)
+        seeds = playlist_tracks(source, args.country)
     if not seeds:
         raise Error('Seed playlist is empty.')
     excluded = set().union(*(identities(r) for r in seeds))
@@ -841,8 +895,8 @@ def discover(args):
             continue
         selected.append(row)
         seen.update(keys)
-        for artist in names:
-            artist_counts[artist] = artist_counts.get(artist, 0) + 1
+        for artist_name in names:
+            artist_counts[artist_name] = artist_counts.get(artist_name, 0) + 1
         if len(selected) == args.count:
             break
     if len(selected) < args.count:
@@ -852,8 +906,13 @@ def discover(args):
     selected.sort(key=lambda r: (r['seed_position'], -r['score']))
     entries = [{'requested': {'artist': r['artist'], 'title': r['title']}, 'selected': r,
                 'seed_track_ids': r['seeds']} for r in selected]
-    plan = new_plan(args.name, entries, args.country, 'Discovery based on a seed playlist; excludes seed and previously recommended recordings.')
-    plan.update({'source_playlist': source, 'unavailable_seeds': unavailable})
+    description = f'Discovery based on tracks by {artist["name"]}.' if artist else 'Discovery based on a seed playlist.'
+    description += ' Excludes seed recordings.'
+    if not args.allow_previous:
+        description += ' Excludes previously recommended recordings.'
+    plan = new_plan(args.name, entries, args.country, description)
+    plan.update({'unavailable_seeds': unavailable})
+    plan.update({'source_artist': artist} if artist else {'source_playlist': source})
     path = plan_path(args.output, args.name)
     if path.exists():
         raise Error('Output already exists; choose another path.')
@@ -939,9 +998,11 @@ def parser():
     remove.add_argument('playlist', nargs='?')
     remove.add_argument('--resume', type=Path)
     remove.add_argument('--yes', action='store_true', help='Without this, preview only')
-    discovery = command('discover', discover, 'Generate a discovery plan from a playlist')
+    discovery = command('discover', discover, 'Generate a discovery plan from a playlist, artist, or favorites')
     discovery.add_argument('source', nargs='?', help='Exact owned name, ID, or TIDAL URL')
-    discovery.add_argument('--from-favorites', action='store_true', help='Use favorite tracks instead of a playlist')
+    seed_options = discovery.add_mutually_exclusive_group()
+    seed_options.add_argument('--from-favorites', action='store_true', help='Use favorite tracks as seeds')
+    seed_options.add_argument('--artist', help='Use catalog tracks by this exact artist name as seeds')
     discovery.add_argument('--exclude-favorites', action='store_true')
     discovery.add_argument('--bpm-min', type=positive_float)
     discovery.add_argument('--bpm-max', type=positive_float)
@@ -963,9 +1024,10 @@ def parser():
 
 def main():
     global JSON_OUTPUT
-    args = parser().parse_args()
-    if args.command == 'discover' and bool(args.source) == bool(args.from_favorites):
-        parser().error('discover requires either a source playlist or --from-favorites, not both.')
+    cli = parser()
+    args = cli.parse_args()
+    if args.command == 'discover' and sum((args.source is not None, args.from_favorites, args.artist is not None)) != 1:
+        cli.error('discover requires exactly one of a source playlist, --artist or --from-favorites.')
     JSON_OUTPUT = args.json
     try:
         with state_lock():

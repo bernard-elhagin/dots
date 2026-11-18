@@ -56,6 +56,35 @@ class Isolated(unittest.TestCase):
         return path
 
 
+class ArtistDiscovery(Isolated):
+    def test_artist_discovery_filters_credits_and_saves_local_plan(self):
+        artist = {'type': 'artists', 'id': 'artist-Can', 'attributes': {'name': 'Can'}}
+        tracks = document([
+            {'id': 'seed', 'isrc': 'seed-recording'},
+            {'id': 'duplicate', 'isrc': 'seed-recording'},
+            {'id': 'unplayable', 'availability': []},
+            {'id': 'other', 'artist': 'Other'},
+        ])
+        args = m.parser().parse_args(['discover', '--artist', 'can', '--name', 'Can discovery',
+                                      '--country', 'UK', '--count', '1', '--allow-previous'])
+        responses = [
+            {'data': {'id': 'search'}},
+            {'data': [{'type': 'artists', 'id': artist['id']}], 'included': [artist]},
+            {'data': [{'type': 'albums', 'id': 'album'}]},
+            tracks,
+            document([{'id': 'duplicate', 'isrc': 'seed-recording'}, {'id': 'pick', 'artist': 'New'}]),
+        ]
+        with patch.object(m, 'api', side_effect=responses) as api:
+            m.discover(args)
+        self.assertTrue(all(call.args[0] == 'GET' for call in api.call_args_list))
+        self.assertIn('/tracks/seed/relationships/similarTracks?', api.call_args.args[1])
+        result = self.output.call_args.args[0]
+        self.assertFalse(result['created'])
+        plan = m.load(result['plan'])
+        self.assertEqual(plan['source_artist'], {'id': 'artist-Can', 'name': 'Can'})
+        self.assertEqual(plan['entries'][0]['selected']['id'], 'pick')
+
+
 class Matching(Isolated):
     wanted = {'artist': 'Can', 'title': 'Moonshake'}
 
