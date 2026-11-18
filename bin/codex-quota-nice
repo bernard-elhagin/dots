@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+"""Send a desktop notification when a Codex usage window reaches 69% remaining."""
+
+import json
+import os
+from pathlib import Path
+import select
+import subprocess
+import tempfile
+import time
+
+
+WINDOWS = {300, 10080}
+THRESHOLD = 69
+
+
+def read_limits():
+    with subprocess.Popen(
+        ["codex", "app-server", "--listen", "stdio://"],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, bufsize=0,
+    ) as server:
+        pending = b""
+
+        def send(message):
+            server.stdin.write(json.dumps(message).encode() + b"\n")
+
+        def receive(request_id):
+            nonlocal pending
+            deadline = time.monotonic() + 12
+            while time.monotonic() < deadline:
+                if b"\n" in pending:
+                    line, pending = pending.split(b"\n", 1)
+                    message = json.loads(line)
+                    if message.get("id") == request_id:
+                        if "result" not in message:
+                            raise RuntimeError(f"Codex quota request {request_id} failed")
+                        return message["result"]
+                    continue
+                ready, _, _ = select.select([server.stdout], [], [], max(0, deadline - time.monotonic()))
+                if not ready:
+                    break
+                chunk = os.read(server.stdout.fileno(), 65536)
+                if not chunk:
+                    break
+                pending += chunk
+            raise RuntimeError(f"Codex quota request {request_id} did not return a result")
+
+        try:
+            send({"id": 1, "method": "initialize",
+                  "params": {"clientInfo": {"name": "codex_quota_nice", "version": "1.0"}}})
+            receive(1)
+            send({"method": "initialized"})
+            send({"id": 2, "method": "account/rateLimits/read"})
+            return receive(2)["rateLimits"]
+        finally:
+            if server.poll() is None:
+                server.terminate()
+                try:
+                    server.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    server.kill()
+
+
+def notification_state(limits, previous):
+    current = dict(previous)
+    notify = False
+    for window in (limits.get("primary"), limits.get("secondary")):
+        if not window or window.get("windowDurationMins") not in WINDOWS:
+            continue
+        reset = window.get("resetsAt")
+        used = window.get("usedPercent")
+        if not isinstance(reset, int) or not isinstance(used, (int, float)) or not 0 <= used <= 100:
+            continue
+        key = str(window["windowDurationMins"])
+        remaining = 100 - used
+        saved = previous.get(key, {})
+        same_window = saved.get("reset") == reset
+        sent = same_window and saved.get("sent", False)
+        crossed = same_window and saved.get("remaining", 0) > THRESHOLD >= remaining
+        if not sent and (remaining == THRESHOLD or crossed):
+            notify = sent = True
+        current[key] = {"reset": reset, "remaining": remaining, "sent": sent}
+    return notify, current
+
+
+def main():
+    state_root = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
+    path = state_root / "codex-quota-nice" / "windows.json"
+    try:
+        previous = json.loads(path.read_text())
+    except FileNotFoundError:
+        previous = {}
+    notify, current = notification_state(read_limits(), previous)
+    if notify:
+        subprocess.run(["notify-send", "--app-name=Codex", "Nice"], check=True, timeout=5)
+    if current == previous:
+        return
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode="w", dir=path.parent, delete=False) as output:
+        temporary = Path(output.name)
+        try:
+            json.dump(current, output)
+            output.close()
+            temporary.replace(path)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+
+if __name__ == "__main__":
+    main()

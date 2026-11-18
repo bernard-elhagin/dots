@@ -1,9 +1,9 @@
 # TIDAL playlist tool
 
-A Python standard-library CLI for importing suggested tracks, generating
-similar-track discovery plans, and managing TIDAL playlists. Core operations
-need no AI API key or third-party Python packages; optional local audio analysis
-uses NumPy and FFmpeg. The bundled
+A Perl CLI for importing suggested tracks, generating similar-track discovery
+plans, and managing TIDAL playlists. It requires Perl 5.36 or later and curl.
+Local audio analysis additionally requires FFmpeg and the Linux `timeout` command.
+The bundled
 `ghosts-in-the-rhythm.json` is an example suggestion list.
 
 ## Login
@@ -101,11 +101,12 @@ All collection reads follow pagination, failing if their safety limit is
 exceeded rather than treating an incomplete read as complete. Mixed playlists
 containing videos are rejected by track-management commands.
 
-## Discovery from an existing playlist
+## Discovery
 
 ```bash
 ./bin/tidal-playlist discover Cooked --name 'Cooked — Third Helping' --count 20 --exclude-playlist 'Ghosts in the Rhythm'
 ./bin/tidal-playlist discover --artist "Angine de Poitrine" --name "Angine de Poitrine discoveries"
+./bin/tidal-playlist discover --track "King Crimson - 21st Century Schizoid Man" --name "Schizoid discoveries" --count 10
 ```
 
 This creates a **local plan only**. Review it, then run `create PLAN.json --yes`.
@@ -120,7 +121,11 @@ not a complete listening history.
 Ambiguous matches are rejected. It gathers playable tracks credited to the matched
 TIDAL artist from up to 12 releases, deduplicates recordings, then uses the same
 discovery options and seed limit as playlist mode. Choose exactly one seed source:
-a playlist, `--artist`, or `--from-favorites`.
+a playlist, `--artist`, `--track`, `--covers`, or `--from-favorites`.
+
+`--track` accepts a numeric TIDAL track ID, a TIDAL track URL, or
+`"Artist - Track title"`. Use an ID or URL to pick a specific edition or
+when the text search cannot identify a single playable recording.
 
 Useful options:
 
@@ -143,6 +148,43 @@ key, or mood for sequencing. Requested audio-feature filters use catalog
 metadata or explicitly linked local analysis; missing values fail the filter.
 Planned suggestions count as previously recommended even if you
 haven't published them. To repeat them, use `--allow-previous`.
+
+### Covers of a song
+
+```bash
+./bin/tidal-playlist discover --covers 22717450 --name "Watchtower Covers" --count 12
+```
+
+`--covers` accepts the same input as `--track`. It uses the seed's ISRC to
+identify the composition in [MusicBrainz](https://musicbrainz.org/doc/How_to_Use_Works),
+then matches recordings marked as covers to playable TIDAL tracks by ISRC.
+It excludes the seed recording, karaoke, medleys, and partial performances.
+The plan records the MusicBrainz work and recording IDs.
+
+The result contains up to `--count` tracks and can be shorter when cover
+credits, recording IDs, or regional catalog availability are limited.
+`--pages` controls how many MusicBrainz recording pages to check, with up
+to 100 recordings per page. Discovery exclusions and audio filters also apply.
+
+## Ignoring artists
+
+```bash
+./bin/tidal-playlist --ignore "Artist One" --ignore "Artist Two"
+./bin/tidal-playlist ignore
+./bin/tidal-playlist discover Cooked --name "Cooked Discoveries" --ignore "Artist Three"
+```
+
+Repeat `--ignore` for each artist. You can save names separately or pass
+them to `discover`, `resolve`, or `create`. Names are matched against individual
+artist credits, including guest artists, with case and accent differences
+ignored. Discovery and cover plans can still use an ignored artist as a seed.
+When a saved plan includes a newly ignored artist, `create` flags the track
+before making a playlist write so you can review the plan.
+
+The list lives in `$XDG_STATE_HOME/tidal-playlist/ignored-artists.json`,
+defaulting to `~/.local/state/tidal-playlist/ignored-artists.json`. To remove a
+name, delete it from that JSON array while the tool is idle. Saved preferences
+apply to the Perl launcher.
 
 ## Favorites and audio features
 
@@ -168,16 +210,7 @@ there is no synonym translation or inference of emotions from the title.
 
 ### Actual local audio analysis
 
-The machine needs NumPy and FFmpeg. If NumPy is unavailable, use a virtual
-environment with `requirements-audio.txt` rather than changing system Python:
-
-```bash
-python3 -m venv /tmp/tidal-audio-venv
-/tmp/tidal-audio-venv/bin/pip install -r apps/tidal-playlist/requirements-audio.txt
-/tmp/tidal-audio-venv/bin/python apps/tidal-playlist/tidal_playlist.py analyze-audio /path/to/track.flac
-```
-
-With NumPy already installed for the launcher's Python:
+The audio analysis runs in Perl after FFmpeg decodes the input.
 
 ```bash
 ./bin/tidal-playlist analyze-audio /path/to/track.flac --seconds 120 --track-id 16025705
@@ -254,6 +287,20 @@ Import older temporary plans into durable history before removing them:
 operation and plan files private: they contain listening-related metadata,
 although no OAuth tokens are embedded. No automatic state cleanup is performed.
 
+The Perl launcher uses the same state directory, login tokens, plan files,
+recommendation history and linked audio metadata as the original Python CLI.
+The original Python entry point remains available for rollback and old recovery
+records. If an unchanged Python append or delete record fails fingerprint
+validation in Perl due to JSON number formatting, use the original command
+within the existing recovery window:
+
+```sh
+python3 apps/tidal-playlist/tidal_playlist.py append --resume OPERATION.json --yes
+python3 apps/tidal-playlist/tidal_playlist.py delete --resume OPERATION.json --yes
+```
+
+Use the Perl launcher for writes first attempted by Perl.
+
 ## Automation and checks
 
 Place `--json` before the subcommand for machine-readable results. Progress
@@ -262,15 +309,13 @@ is not a live API permission test.
 
 ```bash
 ./bin/tidal-playlist --json playlists
-python3 -m unittest discover -s apps/tidal-playlist/tests -v
+prove -v apps/tidal-playlist/t/port.t
 bash -n bin/tidal-playlist
 ```
 
-Tests use temporary state and mocked API/transport responses; they never modify
-a real TIDAL account. They cover matching/version rules, pagination, OAuth state,
-refresh, retries, chunked writes and recovery, append/delete, and discovery
-constraints. The installer links the launcher into `~/.local/bin/tidal-playlist`;
-it never logs in or changes playlists automatically.
+The Perl tests use temporary state, mocked API responses and synthetic audio.
+The original Python regression suite remains in `tests/` for the legacy CLI.
+The installer links the launcher into `~/.local/bin/tidal-playlist`.
 
 API contract: https://tidal-music.github.io/tidal-api-reference/
 Authorization: https://developer.tidal.com/documentation/api-sdk/api-sdk-authorization

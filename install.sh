@@ -112,7 +112,9 @@ install_desktop() {
     copy_repo_config config/haruna/haruna.conf .config/haruna/haruna.conf
     copy_repo_config config/haruna/shortcuts.conf .config/haruna/shortcuts.conf
     copy_repo_config config/flameshot/flameshot.ini .config/flameshot/flameshot.ini
-    link_repo_path config/systemd/user/arch-update.timer .config/systemd/user/arch-update.timer
+    for name in arch-update.timer codex-quota-nice.service codex-quota-nice.timer; do
+        link_repo_path "config/systemd/user/$name" ".config/systemd/user/$name"
+    done
     for name in launcher system networkmenu vpn; do
         link_repo_path "config/rofi/$name.rasi" ".config/rofi/$name.rasi"
     done

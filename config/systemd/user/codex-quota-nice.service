@@ -1,0 +1,7 @@
+[Unit]
+Description=Check Codex quotas for the Nice notification
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/bin/codex-quota-nice
+TimeoutStartSec=35s

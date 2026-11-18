@@ -335,39 +335,6 @@ ShellRoot {
                         color: "#53678C"
                     }
 
-                    RowLayout {
-                        spacing: 8
-
-                        Text {
-                            text: ""
-                            color: "#D8C7A6"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 19
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["firefox"]) }
-                        }
-                        Text {
-                            text: ""
-                            color: "#A4BBD8"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 19
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "yazi"]) }
-                        }
-                        Text {
-                            text: ""
-                            color: "#A6CECA"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 19
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal"]) }
-                        }
-                        Text {
-                            text: ""
-                            color: "#E7D39B"
-                            font.family: "JetBrains Mono"
-                            font.pixelSize: 19
-                            MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["xfce4-terminal", "-e", "nvim"]) }
-                        }
-                    }
-
                     Text {
                         Layout.maximumWidth: 170
                         Layout.minimumWidth: 40

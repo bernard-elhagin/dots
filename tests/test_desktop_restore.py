@@ -104,7 +104,8 @@ class DesktopRestoreTests(unittest.TestCase):
         args = commands[0].split()[3:]
         self.assertEqual(len(args), len(set(args)))
         self.assertIn('mako', args)
-        self.assertIn('python-numpy', args)
+        self.assertIn('perl', args)
+        self.assertIn('curl', args)
         self.assertIn('tidal-hifi-bin', commands[1])
 
     def test_keyboard_schedule_with_managed_profiles_and_mocked_hardware(self):

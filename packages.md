@@ -19,7 +19,7 @@ restore accounts, or install your dotfile links; use `install.sh` separately.
 - `development`: compiler/build tools, Java/Node dependencies, Codex, Arduino CLI
   and language server, debugger and ShellCheck; bootstrap Neovim language servers.
 - `gaming`: Steam.
-- `media`: Haruna, mpv, FFmpeg, yt-dlp, TIDAL Hi-Fi and NumPy for playlist audio analysis.
+- `media`: Haruna, mpv, FFmpeg, yt-dlp, TIDAL Hi-Fi, and Perl and curl for the playlist generator.
 
 Profiles can be combined; duplicate packages are removed. `all` is the default.
 Java/Node build dependencies and Neovim language-server setup now belong to the

@@ -356,7 +356,32 @@ noremap <c-m> m
 
 map <c-c> <cmd>e ~/dots/configs.md<CR>
 
-map gf <cmd>e <cfile><cr>
+function! s:EditFileUnderCursor()
+    " Braces break <cfile>; match the whole path spanning the cursor.
+    let column = col('.')
+    let pattern = '\C\%(^\|[[:space:]="''(]\)\zs\%<' . (column + 1) . 'c'
+        \ . '\${\(HOME\|XDG_CONFIG_HOME\)}\(/\f*\)\?\f\@!\%>' . column . 'c'
+    let parts = matchlist(getline('.'), pattern)
+    if !empty(parts)
+        let base = expand('~')
+        if parts[1] ==# 'XDG_CONFIG_HOME'
+            let base = $XDG_CONFIG_HOME =~# '^/' ? $XDG_CONFIG_HOME : base . '/.config'
+        endif
+        execute 'edit ' . fnameescape(base . parts[2])
+        return
+    endif
+
+    if &l:filetype ==# 'systemd'
+        let path = matchstr(expand('<cfile>'), '^\%([A-Za-z0-9]\+=\)\?\zs%h\%(/.*\)\?$')
+        if !empty(path)
+            execute 'edit ' . fnameescape(expand('~') . strpart(path, 2))
+            return
+        endif
+    endif
+    edit <cfile>
+endfunction
+
+map gf <cmd>call <SID>EditFileUnderCursor()<cr>
 
 vmap = ;s/=.*//<cr>
 vmap # ;s/ #.*//<cr>

@@ -39,3 +39,4 @@ hyprsession
 *.tmp
 apps/arduino*
 bin/arduino*
+*.log

@@ -97,7 +97,7 @@ declare -a DEVELOPMENT_PACKAGES=(
     'openai-codex' 'arduino-cli' 'arduino-language-server' 'gdb' 'shellcheck'
 )
 declare -a GAMING_PACKAGES=('steam')
-declare -a MEDIA_PACKAGES=('haruna' 'mpv' 'ffmpeg' 'yt-dlp' 'python-numpy')
+declare -a MEDIA_PACKAGES=('haruna' 'mpv' 'ffmpeg' 'yt-dlp' 'perl' 'curl')
 declare -a DESKTOP_AUR_PACKAGES=('bibata-cursor-theme-bin')
 declare -a MEDIA_AUR_PACKAGES=('tidal-hifi-bin')
 

@@ -2,4 +2,4 @@
 set -euo pipefail
 launcher="$(readlink -f -- "${BASH_SOURCE[0]}")"
 app_dir="$(cd -- "$(dirname -- "$launcher")/../apps/tidal-playlist" && pwd)"
-exec python3 "$app_dir/tidal_playlist.py" "$@"
+exec perl "$app_dir/tidal_playlist.pl" "$@"

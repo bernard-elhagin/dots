@@ -73,7 +73,31 @@ map({"x","s"}, ".", ";normal .<CR>", { remap = true, silent = false })
 map({"n","x","s","o"}, "<c-m>", "m", { remap = false, silent = false })
 map({"n","x","s","o"}, "<c-u>", "<C-]>", { remap = true, silent = false })
 map({"n","x","s","o"}, "<c-c>", "<cmd>e ~/dots/configs.md<CR>", { remap = true, silent = false })
-map({"n","x","s","o"}, "gf", "<cmd>e <cfile><cr>", { remap = true, silent = false })
+map({"n","x","s","o"}, "gf", function()
+    -- Braces break <cfile>; match the whole path spanning the cursor.
+    local column = vim.fn.col(".")
+    local pattern = [[\C\%(^\|[[:space:]="'(]\)\zs\%<]] .. (column + 1) .. "c"
+        .. [=[\${\(HOME\|XDG_CONFIG_HOME\)}\(/\f*\)\?\f\@!\%>]=] .. column .. "c"
+    local parts = vim.fn.matchlist(vim.api.nvim_get_current_line(), pattern)
+    if #parts > 0 then
+        local base = vim.fn.expand("~")
+        if parts[2] == "XDG_CONFIG_HOME" then
+            local config_home = vim.env.XDG_CONFIG_HOME or ""
+            base = config_home:sub(1, 1) == "/" and config_home or base .. "/.config"
+        end
+        vim.cmd("edit " .. vim.fn.fnameescape(base .. parts[3]))
+        return
+    end
+
+    if vim.bo.filetype == "systemd" then
+        local path = vim.fn.expand("<cfile>"):gsub("^%w+=", "")
+        if path == "%h" or path:sub(1, 3) == "%h/" then
+            vim.cmd("edit " .. vim.fn.fnameescape(vim.fn.expand("~") .. path:sub(3)))
+            return
+        end
+    end
+    vim.cmd("edit <cfile>")
+end, { remap = true, silent = false })
 map({"x","s"}, "=", ";s/=.*//<cr>", { remap = true, silent = false })
 map({"x","s"}, "#", ";s/ #.*//<cr>", { remap = true, silent = false })
 map({"n","x","s","o"}, "<c-i>", "va{Vy$%o<esc>p", { remap = true, silent = false })
