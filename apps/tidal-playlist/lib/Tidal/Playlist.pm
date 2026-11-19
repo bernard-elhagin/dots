@@ -7,7 +7,7 @@ use JSON::PP ();
 use POSIX qw(strftime);
 use Time::HiRes qw(time);
 use Tidal::Client qw(api pages data_list load save digest legacy_digest state_dir escape query uuid progress http_status);
-use Tidal::Catalog qw(normalize identities track_rows artist_seeds favorite_tracks playlist_id playlist_tracks
+use Tidal::Catalog qw(normalize identities track_rows artist_match artist_seeds favorite_tracks playlist_id playlist_tracks
     search matches_features track_seed track_details);
 use Tidal::Covers qw(cover_candidates);
 use Tidal::IgnoredArtists qw(ignored_track);
@@ -125,7 +125,7 @@ sub resolve($args) {
     return {plan => $path, review => $review // 0, skipped_ignored => $skipped // 0, created => JSON::PP::false};
 }
 
-sub similar_candidates($args, $seeds, $seen) {
+sub similar_candidates($args, $seeds, $seen, $artist_id = undef) {
     my $country = $args->{country};
     my $ignored = $args->{ignored_artists} // {};
     my $count = min($args->{'seed-limit'}, scalar @$seeds);
@@ -137,7 +137,7 @@ sub similar_candidates($args, $seeds, $seen) {
         my $rank = 0;
         my $ok = eval {
             pages($path, sub ($doc) {
-                for my $row (track_rows($doc)) {
+                for my $row (track_rows($doc, $artist_id)) {
                     ++$rank;
                     next if !$row->{available} || !@{$row->{artists}} || grep { $seen->{$_} } identities($row);
                     next if ignored_track($row, $ignored);
@@ -165,14 +165,19 @@ sub similar_candidates($args, $seeds, $seen) {
 sub discover($args) {
     my $country = $args->{country};
     my $ignored = $args->{ignored_artists} // {};
-    my ($source, $artist, $track, @seeds);
-    if (defined $args->{artist}) {
+    my ($source, $artist, $track, $output_artist, @seeds);
+    if (defined($args->{track}) || defined($args->{covers})) {
+        if (defined $args->{artist}) {
+            $output_artist = artist_match($args->{artist}, $country);
+            die "$output_artist->{name} is on your saved ignore list.\n"
+                if ignored_track({artist => $output_artist->{name}}, $ignored);
+        }
+        $track = track_seed($args->{track} // $args->{covers}, $country, $args->{pages});
+        @seeds = ($track);
+    } elsif (defined $args->{artist}) {
         my ($found, $tracks) = artist_seeds($args->{artist}, $country);
         $artist = $found;
         @seeds = @$tracks;
-    } elsif (defined($args->{track}) || defined($args->{covers})) {
-        $track = track_seed($args->{track} // $args->{covers}, $country, $args->{pages});
-        @seeds = ($track);
     } elsif ($args->{'from-favorites'}) {
         $source = 'favorites';
         @seeds = favorite_tracks();
@@ -203,8 +208,10 @@ sub discover($args) {
             $pool->{$row->{id}} = {%$row, score => 0, seeds => [$track->{id}], seed_position => 0};
         }
     } else {
-        ($pool, $unavailable) = similar_candidates($args, \@seeds, \%seen);
+        ($pool, $unavailable) = similar_candidates($args, \@seeds, \%seen,
+            $output_artist ? $output_artist->{id} : undef);
     }
+    my $max_per_artist = $args->{'max-per-artist'} // ($output_artist ? $args->{count} : 1);
     my (@selected, %artist_counts);
     for my $row (sort { $b->{score} <=> $a->{score} || $b->{popularity} <=> $a->{popularity}
                         || $a->{id} cmp $b->{id} } values %$pool) {
@@ -212,7 +219,7 @@ sub discover($args) {
         push @keys, 'musicbrainz:' . $row->{musicbrainz_recording_id} if $work;
         my @names = uniq map { normalize($_) } @{$row->{artists}};
         next if grep { $seen{$_} } @keys;
-        next if grep { ($artist_counts{$_} // 0) >= $args->{'max-per-artist'} } @names;
+        next if grep { ($artist_counts{$_} // 0) >= $max_per_artist } @names;
         push @selected, $row;
         $seen{$_} = 1 for @keys;
         ++$artist_counts{$_} for @names;
@@ -220,13 +227,16 @@ sub discover($args) {
     }
     die "No eligible covers found in the $country TIDAL catalog. Try more pages or relax the filters.\n"
         if $work && !@selected;
+    die "No eligible recommendations credited to $output_artist->{name}. Try more pages or a different seed track.\n"
+        if $output_artist && !@selected;
     die 'Only ' . scalar(@selected) . " candidates meet the constraints. Request fewer tracks or expand seeds/pages.\n"
-        if !$work && @selected < $args->{count};
+        if !$work && !$output_artist && @selected < $args->{count};
     @selected = sort { $a->{seed_position} <=> $b->{seed_position} || $b->{score} <=> $a->{score} } @selected
         unless $work;
     my @entries = map { {requested => {artist => $_->{artist}, title => $_->{title}},
         selected => $_, seed_track_ids => $_->{seeds}} } @selected;
     my $description = $artist ? "Discovery based on tracks by $artist->{name}."
+        : $output_artist ? "Track recommendations credited to $output_artist->{name}."
         : $work ? 'Cover recordings identified by MusicBrainz.'
         : $track ? 'Discovery based on a single track.'
         : 'Discovery based on a seed playlist.';
@@ -235,6 +245,7 @@ sub discover($args) {
     my $plan = new_plan($args, $args->{name}, \@entries, $description);
     $plan->{unavailable_seeds} = $unavailable;
     $plan->{musicbrainz_work} = {map { $_ => $work->{$_} } qw(id title)} if $work;
+    $plan->{output_artist} = $output_artist if $output_artist;
     if ($artist) {
         $plan->{source_artist} = $artist;
     } elsif ($track) {

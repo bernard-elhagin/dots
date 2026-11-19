@@ -7,7 +7,7 @@ use Scalar::Util qw(looks_like_number);
 use Unicode::Normalize qw(NFKD);
 use Tidal::Client qw(api pages data_list escape query state_dir load legacy_digest json http_status progress);
 
-our @EXPORT_OK = qw(normalize identities track_rows artist_seeds favorite_tracks playlist_id
+our @EXPORT_OK = qw(normalize identities track_rows artist_match artist_seeds favorite_tracks playlist_id
     playlist_tracks owned_playlists search effective_features matches_features catalog_features track_details track_seed);
 my $variants = qr/\b(live|remix(?:ed)?|mix|karaoke|tribute|instrumental|acoustic|edit|demo|radio|rerecord(?:ed|ing)?|re-record(?:ed|ing)?)\b/i;
 my $remaster = qr/\bremaster(?:ed)?\b/i;
@@ -237,7 +237,7 @@ sub track_seed($value, $country, $limit) {
     return $track;
 }
 
-sub artist_seeds($name, $country) {
+sub artist_match($name, $country) {
     my $wanted = normalize($name);
     die "Enter an artist name.\n" unless length $wanted;
     my $root = search_root($name =~ s/^\s+|\s+$//gr, $country);
@@ -253,9 +253,15 @@ sub artist_seeds($name, $country) {
         }, 3, 1);
     }
     die "No exact artist match for '$name' in the $country catalog search.\n" unless keys %matches;
-    die "Multiple TIDAL artists match '$name'. Use a seed playlist to select the intended artist.\n"
-        unless keys(%matches) == 1;
+    die "Multiple TIDAL artists match '$name'.\n" unless keys(%matches) == 1;
     my ($id) = keys %matches;
+
+    return {id => "$id", name => $matches{$id}};
+}
+
+sub artist_seeds($name, $country) {
+    my $artist = artist_match($name, $country);
+    my $id = $artist->{id};
     my (@albums, %albums_seen, @seeds, %seen);
     pages(catalog_relation('/artists/' . escape($id) . '/relationships/albums', $country), sub ($doc) {
         push @albums, map { "$_->{id}" } grep { $_->{type} eq 'albums' && !$albums_seen{$_->{id}}++ } data_list($doc);
@@ -271,10 +277,10 @@ sub artist_seeds($name, $country) {
             }
         }, 3, 1);
     }
-    die "No playable seed tracks found for $matches{$id} in the $country catalog.\n" unless @seeds;
-    progress('Found ' . scalar(@seeds) . " seed recordings for $matches{$id}.");
+    die "No playable seed tracks found for $artist->{name} in the $country catalog.\n" unless @seeds;
+    progress('Found ' . scalar(@seeds) . " seed recordings for $artist->{name}.");
 
-    return ({id => "$id", name => $matches{$id}}, \@seeds);
+    return ($artist, \@seeds);
 }
 
 1;

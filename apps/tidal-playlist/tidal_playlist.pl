@@ -49,6 +49,7 @@ sub usage($command = undef) {
     if ($command eq 'discover') {
         say 'Choose one seed source: SOURCE, --artist NAME, --track TRACK, --covers TRACK, or --from-favorites.';
         say 'TRACK is a TIDAL track ID, track URL, or "Artist - Track title".';
+        say 'Combine --track TRACK with --artist NAME to return only recommendations credited to that artist.';
         say '--covers finds covers of the seed composition, up to --count tracks.';
     }
     say 'Repeat --ignore ARTIST to save multiple artists.' if grep { $_ eq 'ignore=s@' } @options;
@@ -58,7 +59,7 @@ sub options($command, @argv) {
     my (undef, $positionals, @flags) = @{$commands{$command}};
     my %args = (country => 'GB');
     if ($command eq 'discover') {
-        %args = (%args, count => 20, pages => 2, 'seed-limit' => 12, 'max-per-artist' => 1,
+        %args = (%args, count => 20, pages => 2, 'seed-limit' => 12,
             mood => [], 'exclude-playlist' => []);
     }
     $args{pages} = 3 if $command eq 'resolve';
@@ -88,6 +89,7 @@ sub options($command, @argv) {
             $args{$flag} = $args{$flag}[0];
         }
         my $sources = grep { defined $args{$_} } qw(source artist track covers);
+        $sources-- if defined($args{track}) && defined($args{artist});
         $sources++ if $args{'from-favorites'};
         die "discover requires one of a source playlist, --artist, --track, --covers, or --from-favorites.\n"
             if $sources != 1;

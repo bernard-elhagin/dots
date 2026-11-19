@@ -127,11 +127,20 @@ a playlist, `--artist`, `--track`, `--covers`, or `--from-favorites`.
 `"Artist - Track title"`. Use an ID or URL to pick a specific edition or
 when the text search cannot identify a single playable recording.
 
+Combine `--track` and `--artist` to use the track as the seed and keep only
+recommendations that credit the specified TIDAL artist. Collaborations can
+qualify. This mode returns up to `--count` tracks, and an explicit
+`--max-per-artist` still applies.
+
+```bash
+./bin/tidal-playlist discover --track 68714378 --artist "Talking Heads" --name "Similar Talking Heads"
+```
+
 Useful options:
 
 - `--seed-limit N`: maximum representative seed tracks.
 - `--pages N`: recommendation pages per seed (default 2).
-- `--max-per-artist N`: cap per artist, including credited collaborators (default 1).
+- `--max-per-artist N`: cap per artist, including credited collaborators (default 1, or `--count` with `--track` plus `--artist`).
 - `--exclude-playlist NAME_OR_ID`: repeat for multiple playlists.
 - `--allow-previous`: permit earlier recommendations, keeping other exclusions.
 - `--country GB` and `--output PATH`: override catalog or plan location.
@@ -141,8 +150,8 @@ Useful options:
 - `--mood TAG`: match any supplied mood tag (repeat for alternatives).
 
 Unavailable seeds (404/410) are reported and skipped. Other API failures stop
-the operation. Insufficient eligible candidates cause an explicit error rather
-than silently relaxing your constraints. Sequencing follows the source's broad
+the operation. Similar-track discovery without an artist filter requires the
+requested count. Sequencing follows the source's broad
 seed order and relevance within each region; it does not analyze BPM, musical
 key, or mood for sequencing. Requested audio-feature filters use catalog
 metadata or explicitly linked local analysis; missing values fail the filter.

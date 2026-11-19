@@ -176,6 +176,36 @@ subtest 'track discovery uses exactly one seed and excludes its recording' => su
     is(track_seed('Can - Song - Part Two', 'GB', 2)->{id}, '123');
 };
 
+subtest 'track and artist use the track seed and filter candidates by credited artist ID' => sub {
+    local *Tidal::Playlist::track_seed = sub ($value, $country, $limit) {
+        is($value, '123');
+        return (track_rows(catalog_doc(['123', 'Seed Act', 'Seed Song', 'source'])))[0];
+    };
+    local *Tidal::Playlist::artist_match = sub ($name, $country) {
+        is($name, 'Target Act');
+        return {id => 'Target Act', name => 'Target Act'};
+    };
+    local *Tidal::Client::api = sub ($method, $endpoint) {
+        is($method, 'GET');
+        like($endpoint, qr{\A/tracks/123/relationships/similarTracks\?});
+        my $doc = catalog_doc(['1', 'Namesake', 'Unrelated', 'wrong'],
+            ['2', 'Target Act', 'First', 'first'], ['3', 'Target Act', 'Second', 'second']);
+        for my $item (@{$doc->{included}}) {
+            $item->{attributes}{name} = 'Target Act' if $item->{id} eq 'Namesake';
+        }
+        return $doc;
+    };
+
+    my $path = "$ENV{XDG_STATE_HOME}/artist-track-discovery.json";
+    my $result = discover({track => '123', artist => 'Target Act', country => 'GB', name => 'Target',
+        count => 20, 'seed-limit' => 12, pages => 2, mood => [], 'exclude-playlist' => [],
+        'allow-previous' => 1, output => $path});
+    is_deeply([map { $_->{id} } @{$result->{tracks}}], ['2', '3']);
+    my $plan = load($path);
+    is($plan->{source_track}{id}, '123');
+    is($plan->{output_artist}{id}, 'Target Act');
+};
+
 subtest 'covers require a marked performance of the seed composition and an exact ISRC match' => sub {
     my $song = {id => 'work-id', title => 'Song'};
     my $performance = sub ($work, @attributes) {
