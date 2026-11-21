@@ -90,6 +90,9 @@ alias vss='(){ sudo vim /usr/lib/systemd/system/$1.service;}'
 
 alias media='cd /run/media/bertold/Media'
 
+alias gw2='"$HOME/Games/Emulation/tools/launchers/xenia.sh" "Z:$HOME/Games/Emulation/roms/xbox360/roms/xbla/Geometry Wars Retro Evolved 2" --license_mask=1 --vsync=true'
+alias mk8='"$HOME/Games/Emulation/tools/launchers/ryujinx.sh" "$HOME/Games/Emulation/roms/switch/Mario Kart 8 Deluxe.nsp"'
+
 alias df=duf
 
 alias hyp='vim -c "norm gg" ~/.config/hypr/hyprland.lua'
