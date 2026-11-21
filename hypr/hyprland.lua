@@ -364,6 +364,7 @@ hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%a
 
 hl.workspace_rule({ workspace = "3", monitor = "DP-1" })
 hl.workspace_rule({ workspace = "5", layout = "master" })
+hl.workspace_rule({ workspace = "6", monitor = "DP-2" })
 
 -- Example window rules that are useful
 
