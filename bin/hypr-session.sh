@@ -5,6 +5,7 @@ set -euo pipefail
 # Requires Python 3 and hyprctl. State defaults to ~/.config/hypr/session.json.
 exec python3 - "$@" <<'PY'
 import argparse
+from collections import Counter
 import json
 import os
 import pathlib
@@ -319,7 +320,7 @@ def launch_argv(saved):
     return saved.get("argv") or []
 
 
-def match_existing(saved, claimed):
+def match_existing(saved, claimed, unique_class=False):
     current = clients_now()
     if saved.get("startup"):
         same_live_window = [c for c in current if c.get("address") not in claimed
@@ -340,7 +341,13 @@ def match_existing(saved, claimed):
                    workspace_selector(saved.get("workspace") or {}))
     same_ws = [c for c in candidates if workspace_selector(c.get("workspace") or {}) ==
                workspace_selector(saved.get("workspace") or {})]
-    return same_ws[0] if same_ws else None
+    if same_ws:
+        return same_ws[0]
+    # If there is only one saved window of this class, a changed title and
+    # workspace need not trigger a second launch of an already running app.
+    if unique_class and len(candidates) == 1:
+        return candidates[0]
+    return None
 
 
 def clients_now():
@@ -362,14 +369,14 @@ def window_matches(saved, client):
     return True
 
 
-def restore_window(saved, claimed):
+def restore_window(saved, claimed, unique_class=False):
     ws = saved.get("workspace") or {}
     selector = workspace_selector(ws)
     wanted_class = app_class(saved)
     if not wanted_class:
         print("Skipping window with no application class", file=sys.stderr)
         return
-    opened = match_existing(saved, claimed)
+    opened = match_existing(saved, claimed, unique_class)
     if opened is not None:
         return place_window(saved, opened, claimed)
 
@@ -506,6 +513,32 @@ def restore_master_layouts(state, restored):
                 dispatch("swap", "address:" + occupant)
 
 
+def split_axis(windows):
+    first, second = windows
+    for axis in (0, 1):
+        cross = 1 - axis
+        if (first["at"][axis] != second["at"][axis]
+                and abs(first["at"][cross] - second["at"][cross]) <= 1
+                and abs(first["size"][cross] - second["size"][cross]) <= 1):
+            return axis
+    return None
+
+
+def wait_for_split(selector, wanted, condition):
+    deadline = time.monotonic() + 1.0
+    while True:
+        pair = [c for c in clients_now() if c.get("mapped", True)
+                and workspace_selector(c.get("workspace") or {}) == selector
+                and not c.get("floating") and not c.get("fullscreen")]
+        if len(pair) != 2 or {c.get("address") for c in pair} != wanted:
+            return None
+        if condition(pair):
+            return pair
+        if time.monotonic() >= deadline:
+            return None
+        time.sleep(0.05)
+
+
 def restore_dwindle_pairs(state, restored):
     """Restore a two-leaf split; do not guess at larger dwindle trees."""
     addresses = {saved.get("savedAddress"): address for saved, address in restored}
@@ -522,11 +555,9 @@ def restore_dwindle_pairs(state, restored):
                  and not w.get("floating") and not w.get("fullscreen")]
         if len(saved) != 2 or any(not w.get("at") or not w.get("size") for w in saved):
             continue
-        wanted = [addresses.get(w.get("savedAddress")) for w in saved]
-        live = [c for c in clients_now()
-                if workspace_selector(c.get("workspace") or {}) == selector
-                and not c.get("floating")]
-        if not all(wanted) or {c.get("address") for c in live} != set(wanted):
+        wanted = {addresses.get(w.get("savedAddress")) for w in saved}
+        live = wait_for_split(selector, wanted, lambda pair: True) if None not in wanted else None
+        if live is None:
             print(f"Skipping dwindle pair on {selector}: window set changed")
             continue
         old_monitor = next((m for m in state.get("monitors", [])
@@ -537,26 +568,43 @@ def restore_dwindle_pairs(state, restored):
             print(f"Skipping dwindle pair on {selector}: monitor geometry changed")
             continue
         # Both leaves must form one horizontal or vertical split.
-        if saved[0]["at"][1] == saved[1]["at"][1] and saved[0]["size"][1] == saved[1]["size"][1]:
-            axis = 0
-        elif saved[0]["at"][0] == saved[1]["at"][0] and saved[0]["size"][0] == saved[1]["size"][0]:
-            axis = 1
-        else:
+        axis = split_axis(saved)
+        if axis is None:
             continue
-        first = min(saved, key=lambda w: w["at"][axis])
-        address = addresses[first["savedAddress"]]
-        dispatch("workspace", selector)
-        dispatch("focuswindow", "address:" + address)
-        live_axis = 0 if live[0]["at"][0] != live[1]["at"][0] else 1
-        if live_axis != axis:
-            dispatch("layout", "togglesplit")
-            time.sleep(0.1)
-        live = [c for c in clients_now() if c.get("address") in wanted]
-        occupant = min(live, key=lambda c: c["at"][axis])["address"]
-        if occupant != address:
-            dispatch("swap", "address:" + occupant)
-        width, height = first["size"]
-        dispatch("resize", f"address:{address} {int(width)} {int(height)}")
+        first, second = sorted(saved, key=lambda w: w["at"][axis])
+        address, other = (addresses[w["savedAddress"]] for w in (first, second))
+
+        def ordered_pair(pair):
+            return (split_axis(pair) == axis
+                    and min(pair, key=lambda c: c["at"][axis])["address"] == address)
+
+        if not dispatch("workspace", selector) or not dispatch("focuswindow", "address:" + address):
+            print(f"Could not focus dwindle pair on workspace {selector}", file=sys.stderr)
+            continue
+        if split_axis(live) != axis:
+            live = (wait_for_split(selector, wanted, lambda pair: split_axis(pair) == axis)
+                    if dispatch("layout", "togglesplit") else None)
+            if live is None:
+                print(f"Could not restore dwindle split direction on workspace {selector}", file=sys.stderr)
+                continue
+        if not ordered_pair(live):
+            live = (wait_for_split(selector, wanted, ordered_pair)
+                    if dispatch("swap", "address:" + other) else None)
+            if live is None:
+                print(f"Could not restore dwindle window order on workspace {selector}", file=sys.stderr)
+                continue
+        def sized_pair(pair):
+            if not ordered_pair(pair):
+                return False
+            current_first = min(pair, key=lambda c: c["at"][axis])
+            return abs(current_first["size"][axis] - first["size"][axis]) <= 2
+
+        if not sized_pair(live):
+            width, height = first["size"]
+            if (not dispatch("resize", f"address:{address} {int(width)} {int(height)}")
+                    or wait_for_split(selector, wanted, sized_pair) is None):
+                print(f"Could not restore dwindle split size on workspace {selector}", file=sys.stderr)
+                continue
         print(f"Restored two-window dwindle geometry on workspace {selector}")
 
 
@@ -590,9 +638,11 @@ def restore_session(path):
 
     claimed = set()
     windows = state.get("windows", [])
+    class_counts = Counter(startup_options(w).get("class", app_class(w)) for w in windows)
     restored = []
     for saved in windows:
-        address = restore_window(saved, claimed)
+        wanted_class = startup_options(saved).get("class", app_class(saved))
+        address = restore_window(saved, claimed, unique_class=class_counts[wanted_class] == 1)
         if address:
             restored.append((saved, address))
     restore_master_layouts(state, restored)

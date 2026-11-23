@@ -47,6 +47,8 @@ trusted: restore runs the commands it contains with your user permissions.
 Restore matches existing windows by application class and title, preferring the
 saved workspace. If no exact title exists, it can reuse an unclaimed same-class
 window on the target workspace. Each live window can be matched only once.
+When the snapshot and the live desktop each have a single matching window of
+that class, restore can reuse it even if both its title and workspace changed.
 Missing windows are launched sequentially and polled for up to 15 seconds.
 Steam gets up to 180 seconds and must match the saved window title, so startup
 and dialog windows do not end the wait early. Its launcher may hand off to an
@@ -60,6 +62,7 @@ Workspace focus at launch time is only a hint, not the placement mechanism.
 Floating position/size and fullscreen state are restored. Two-window dwindle
 workspaces also restore the split direction, window order and saved pixel size
 when monitor geometry is unchanged and exactly those two tiled windows are present.
+Restore checks that Hyprland applied each change before reporting success.
 Single-master layouts
 also save the master and stack order, orientation and an approximate split ratio
 inferred from geometry. Master reconstruction requires all saved tiled windows,

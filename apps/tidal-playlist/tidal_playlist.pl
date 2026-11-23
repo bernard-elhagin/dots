@@ -90,10 +90,10 @@ sub options( $command, @argv ) {
     if ( $command eq 'discover' ) {
         %args = (
             %args,
-            count              => 20,
-            pages              => 2,
+            'count'            => 20,
+            'pages'            => 2,
             'seed-limit'       => 12,
-            mood               => [],
+            'mood'             => [],
             'exclude-playlist' => []
         );
     }
@@ -112,8 +112,10 @@ sub options( $command, @argv ) {
 
     for my $positional (@$positionals) {
         my $name = $positional =~ s/\?\z//r;
+
         die "Missing $name. Run tidal-playlist $command --help.\n"
             unless @argv || $positional ne $name;
+
         $args{$name} = shift @argv if @argv;
     }
 
@@ -133,7 +135,9 @@ sub options( $command, @argv ) {
     if ( $command eq 'discover' ) {
         for my $flag (qw(track covers)) {
             next unless defined $args{$flag};
+
             die "Supply --$flag only once.\n" if @{ $args{$flag} } != 1;
+
             $args{$flag} = $args{$flag}[0];
         }
 

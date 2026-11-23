@@ -55,6 +55,7 @@ sub digest($value) { sha256_hex( json()->ascii->encode($value) ) }
 sub legacy_digest($value) {
     my $bytes = json()->ascii->encode($value);
     $bytes =~ s/("(?:[^"\\]|\\.)*")|([,:])/defined($1) ? $1 : "$2 "/ge;
+
     return sha256_hex($bytes);
 }
 
@@ -78,12 +79,14 @@ sub uuid() {
     my @bytes = unpack 'C*', random_bytes(16);
     $bytes[6] = ( $bytes[6] & 15 ) | 64;
     $bytes[8] = ( $bytes[8] & 63 ) | 128;
+
     return join '-', unpack 'H8 H4 H4 H4 H12', pack 'C*', @bytes;
 }
 
 sub escape($value) {
     my $bytes = encode( 'UTF-8', $value );
     $bytes =~ s/([^A-Za-z0-9._~-])/sprintf('%%%02X', ord($1))/ge;
+
     return $bytes;
 }
 
@@ -96,6 +99,7 @@ sub api_path($path) {
     $path =~ s{\A/v2(?=/)}{};
     die "Refusing invalid or off-origin TIDAL API path.\n"
         unless $path =~ m{\A/(?!/)[^\x00-\x20#\\]*\z} && $path !~ m{/\.\.};
+
     return $path;
 }
 
@@ -103,6 +107,7 @@ sub curl_option($value) {
     $value =~ s/([\\"])/\\$1/g;
     $value =~ s/\n/\\n/g;
     $value =~ s/\r/\\r/g;
+
     return qq{"$value"};
 }
 
@@ -124,14 +129,17 @@ sub transport( $method, $url, $headers, $body ) {
     my $header   = read_bytes("$dir/headers");
     my @statuses = $header =~ /^HTTP\/\S+\s+(\d{3})/mg;
     my @delays   = $header =~ /^Retry-After:[ \t]*([^\r\n]+)/img;
+
     return ( $statuses[-1] // 0, read_bytes("$dir/body"), $delays[-1] );
 }
 
 sub retry_delay( $value, $attempt ) {
     return 2**$attempt unless defined $value;
+
     if ( $value =~ /\A\d+(?:\.\d+)?\z/ && isfinite( 0 + $value ) ) {
         return 0 + $value;
     }
+
     if ( $value =~ /\A\w{3}, (\d\d) (\w{3}) (\d{4}) (\d\d):(\d\d):(\d\d) GMT\z/ ) {
         my ( $day, $month, $year, $hour, $minute, $second ) = ( $1, $2, $3, $4, $5, $6 );
         my %month_index;
@@ -159,6 +167,7 @@ sub request( $method, $url, $payload = undef, %options ) {
     for my $attempt ( 0 .. 2 ) {
         die "Write recovery deadline reached. Inspect the saved operation before retrying.\n"
             if defined($deadline) && time + 30 >= $deadline;
+
         my ( $status, $raw, $retry_after ) = transport( $method, $url, \%headers, $body );
         if ( $status && $status >= 200 && $status < 300 ) {
             return {} unless length $raw;
@@ -167,6 +176,7 @@ sub request( $method, $url, $payload = undef, %options ) {
 
             return $result;
         }
+
         if (   $retry
             && $attempt < 2
             && ( !$status || grep { $status == $_ } qw(429 500 502 503 504) ) ) {
@@ -175,37 +185,49 @@ sub request( $method, $url, $payload = undef, %options ) {
             sleep($delay);
             next;
         }
+
         die "Network request failed. Saved write keys are retained.\n" unless $status;
         die "TIDAL HTTP $status: OAuth failed. Check scopes/callback or run login again.\n"
             if $form;
+
         my $detail = eval {
             join ' / ',
                 map { $_->{detail} // $_->{title} // $_->{code} // '' }
                 ( json()->decode($raw)->{errors} // [] )->@*;
         } // '';
+
         $detail =~ s/\Q$token\E/[redacted]/g if $token;
         $detail =~ s/[\x00-\x1f\x7f]/ /g;
+
         die "TIDAL HTTP $status: " . ( substr( $detail, 0, 700 ) || 'Request failed' ) . "\n";
     }
 }
 
 sub store_tokens( $response, $client, $previous = {} ) {
     die "OAuth response did not contain an access token.\n" unless $response->{access_token};
+
     $response->{refresh_token} //= $previous->{refresh_token};
     $response->{scope}         //= $previous->{scope} // '';
     $response->{client_id}  = $client;
     $response->{expires_at} = time + ( $response->{expires_in} // 3600 );
+
     save( state_dir() . '/tokens.json', $response );
+
     return $response->{access_token};
 }
 
 sub access_token( $force = 0 ) {
     my $path = state_dir() . '/tokens.json';
     die "Run tidal-playlist login first.\n" unless -f $path;
+
     my $tokens = load($path);
+
     return $tokens->{access_token} if !$force && ( $tokens->{expires_at} // 0 ) >= time + 60;
+
     die "Login expired. Run tidal-playlist login again.\n" unless $tokens->{refresh_token};
+
     my $client = $tokens->{client_id};
+
     return store_tokens(
         request(
             'POST',
@@ -225,8 +247,10 @@ sub api( $method, $path, $payload = undef, %options ) {
     my $url    = API . api_path($path);
     my $result = eval { request( $method, $url, $payload, %options, token => access_token() ) };
     my $error  = $@;
+
     return $result unless $error;
-    die $error     unless http_status($error) == 401;
+
+    die $error unless http_status($error) == 401;
 
     return request( $method, $url, $payload, %options, token => access_token(1) );
 }
@@ -235,25 +259,33 @@ sub pages( $path, $visit, $limit = 100, $bounded = 0 ) {
     my %seen;
     for ( 1 .. $limit ) {
         $path = api_path($path);
+
         die "TIDAL returned a repeated pagination link.\n" if $seen{$path}++;
+
         my $doc = api( 'GET', $path );
         $visit->($doc);
+
         my $next = ( $doc->{links} // {} )->{next};
         $next = $next->{href} if ref($next) eq 'HASH';
+
         return unless $next;
+
         $path = $next;
     }
+
     die "Pagination exceeded $limit pages. Refusing an incomplete result.\n" unless $bounded;
 }
 
 sub data_list($doc) {
     my $data = $doc->{data};
+
     return ref($data) eq 'HASH' ? ($data) : ref($data) eq 'ARRAY' ? @$data : ();
 }
 
 sub callback_params( $target, $state ) {
     my ( $path, $query ) = split /\?/, $target, 2;
     return unless $path eq '/callback' && defined $query;
+
     my %params;
     for my $pair ( split /&/, $query ) {
         my ( $key, $value ) = split /=/, $pair, 2;
@@ -263,6 +295,7 @@ sub callback_params( $target, $state ) {
         return if exists $params{$key};
         $params{$key} = $value;
     }
+
     return unless sha256( $params{state} // '' ) eq sha256($state);
     return \%params if $params{code} || $params{error};
 

@@ -28,9 +28,13 @@ class SessionTests(unittest.TestCase):
         state = dict(windows=[left, right], monitors=[monitor], workspaces=[workspace])
         # Current windows have the opposite order and a different split size.
         live = [window('right', ws=2, x=0), window('left', ws=2, x=1008)]
+        vertical = [window('right', ws=2, x=0, y=0), window('left', ws=2, x=0, y=1008)]
         responses = dict(workspaces=[workspace], monitors=[monitor])
-        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live), patch.object(mod, 'dispatch', return_value=True) as dispatch:
+        reordered = [window('left', ws=2, x=0), window('right', ws=2, x=1008)]
+        resized = [window('left', ws=2, x=0, width=1872), window('right', ws=2, x=1880, width=672)]
+        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', side_effect=[vertical, live, reordered, resized]), patch.object(mod, 'dispatch', return_value=True) as dispatch:
             mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
+            dispatch.assert_any_call('layout', 'togglesplit')
             dispatch.assert_any_call('swap', 'address:right')
             dispatch.assert_any_call('resize', 'address:left 1872 1000')
         # Extra tiled windows must prevent changing the split.
@@ -42,6 +46,21 @@ class SessionTests(unittest.TestCase):
         with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live), patch.object(mod, 'dispatch') as dispatch:
             mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
             dispatch.assert_not_called()
+
+    def test_dwindle_verifies_swap_before_resizing(self):
+        left = window('old-left', ws=2, x=2564, y=52, width=1665, height=1384)
+        right = window('old-right', ws=2, x=4237, y=52, width=879, height=1384)
+        monitor = dict(name='DP-2', width=2560, height=1440, scale=1, x=2560, y=0)
+        workspace = dict(id=2, name='2', monitor='DP-2', layout='dwindle')
+        state = dict(windows=[left, right], monitors=[monitor], workspaces=[workspace])
+        live = [window('right', ws=2, x=2564, y=52, height=1384),
+                window('left', ws=2, x=3844, y=52, height=1384)]
+        responses = dict(workspaces=[workspace], monitors=[monitor])
+        with patch.object(mod, 'hypr_json', side_effect=responses.__getitem__), patch.object(mod, 'clients_now', return_value=live), patch.object(mod, 'dispatch', return_value=True) as dispatch, patch.object(mod.time, 'monotonic', side_effect=[0, 0, 2]), patch('sys.stderr') as errors:
+            mod.restore_dwindle_pairs(state, [(left, 'left'), (right, 'right')])
+            dispatch.assert_any_call('swap', 'address:right')
+            self.assertNotIn('resize', [call.args[0] for call in dispatch.call_args_list])
+            errors.write.assert_any_call('Could not restore dwindle window order on workspace 2')
 
     def test_startup_command_and_directory_used_for_launch(self):
         saved = window('old')
@@ -168,6 +187,15 @@ class SessionTests(unittest.TestCase):
     def test_exact_title_matches_even_on_wrong_workspace(self):
         with patch.object(mod, 'clients_now', return_value=[window('a', ws=2), window('b', title='other')]):
             self.assertEqual(mod.match_existing(window('old'), set())['address'], 'a')
+
+    def test_unique_saved_window_is_reused_after_title_and_workspace_change(self):
+        saved = dict(window('old', title='previous', ws=2), initialClass='discord')
+        live = dict(window('new', title='current', ws=5), initialClass='discord')
+        with patch.object(mod, 'clients_now', return_value=[live]), patch.object(mod, 'dispatch', return_value=True) as dispatch, patch.object(mod.subprocess, 'Popen') as launch:
+            self.assertIsNone(mod.match_existing(saved, set()))
+            self.assertEqual(mod.restore_window(saved, set(), unique_class=True), 'new')
+            launch.assert_not_called()
+            dispatch.assert_any_call('movetoworkspace', 'address:new', '2')
 
     def test_explicit_workspace_and_floating_geometry(self):
         saved = window('old'); saved['floating'] = True
