@@ -74,10 +74,11 @@ sub usage( $command = undef ) {
 
     if ( $command eq 'discover' ) {
         say
-            'Choose one seed source: SOURCE, --artist NAME, --track TRACK, --covers TRACK, or --from-favorites.';
+            'Choose one seed source: SOURCE, --artist ARTIST, --track TRACK, --covers TRACK, or --from-favorites.';
+        say 'ARTIST is an exact artist name, TIDAL artist ID, or TIDAL artist URL.';
         say 'TRACK is a TIDAL track ID, track URL, or "Artist - Track title".';
         say
-            'Combine --track TRACK with --artist NAME to return only recommendations credited to that artist.';
+            'Combine --track TRACK with --artist ARTIST to return only recommendations credited to that artist.';
         say '--covers finds covers of the seed composition, up to --count tracks.';
     }
 

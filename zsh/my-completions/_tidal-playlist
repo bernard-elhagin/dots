@@ -1,0 +1,95 @@
+#compdef tidal-playlist
+
+local -a words=( "${words[@]}" )
+local CURRENT=$CURRENT
+local -a subcommands global_options specs
+global_options=( '--help:Show help' '-h:Show help' '--ignore:Save ignored artists' )
+
+if (( CURRENT > 2 )) && [[ $words[2] == --json ]]; then
+    shift words
+    (( --CURRENT ))
+else
+    global_options+=( '--json:Use compact machine-readable output' )
+fi
+
+if (( CURRENT == 2 )); then
+    if [[ $PREFIX == -* ]]; then
+        _describe -t options 'option' global_options
+        return
+    fi
+    subcommands=(
+        'analyze-audio:Estimate tempo, key and mood from local audio'
+        'append:Append tracks from another playlist'
+        'append-current:Append the track playing in TIDAL Hi-Fi'
+        'create:Create an unlisted playlist from a plan'
+        'delete:Delete a playlist and save a local backup'
+        'discover:Generate a discovery plan'
+        'favorites:Read favorite tracks'
+        'features:Read BPM, key and mood'
+        'ignore:List or save ignored artists'
+        'import-plan:Preserve a legacy plan and its history'
+        'login:Authorize access to TIDAL'
+        'playlists:List owned playlists'
+        'resolve:Match song suggestions and save a plan'
+        'tracks:Read the tracks in a playlist'
+    )
+    _describe -t commands 'command' subcommands
+    return
+fi
+
+local ignore='*--ignore=[Save an ignored artist]:artist name:'
+if [[ $words[2] == --ignore || $words[2] == --ignore=* ]]; then
+    _arguments -S '(-h --help)'{-h,--help}'[Show help]' "$ignore"
+    return
+fi
+
+local subcommand=$words[2]
+shift words
+(( --CURRENT ))
+specs=( '(-h --help)'{-h,--help}'[Show help]' )
+case $subcommand in
+    analyze-audio|create|favorites|ignore|import-plan|login) ;;
+    append|append-current|delete|discover|features|playlists|resolve|tracks)
+        specs+=( '--country=[Select catalog country]:country code:(GB UK US)' ) ;;
+    *) return 1 ;;
+esac
+
+local output='--output=[Save results to this path]:output file:_files'
+local pages='--pages=[Limit pages searched]:page count:'
+local yes='--yes[Apply the playlist change]'
+local resume='--resume=[Resume a saved operation]:operation file:_files -g "*.json"'
+case $subcommand in
+    analyze-audio)
+        specs+=( '--seconds=[Limit audio duration]:seconds:' '--track-id=[Link results to a TIDAL track]:track ID:'
+            "$output" '1:audio file:_files' ) ;;
+    append) specs+=( "$yes" "$resume" '1:source playlist:' '2:destination playlist:' ) ;;
+    append-current) specs+=( "$yes" '--notify[Show a desktop notification]' '1:destination playlist:' ) ;;
+    create) specs+=( "$yes" "$ignore" '1:plan file:_files -g "*.json"' ) ;;
+    delete) specs+=( "$yes" "$resume" '1:playlist:' ) ;;
+    discover)
+        specs+=(
+            '--artist=[Use an artist seed or filter recommendations by artist]:artist name, ID or URL:'
+            '--track=[Use a single track as the seed]:track ID, URL or artist - title:'
+            '--covers=[Discover covers of a track]:track ID, URL or artist - title:'
+            '--from-favorites[Use favorite tracks as the seed]'
+            '--exclude-favorites[Omit favorite tracks]'
+            '--bpm-min=[Set minimum tempo]:BPM:' '--bpm-max=[Set maximum tempo]:BPM:'
+            '--key=[Filter by musical key]:key:(C CSharp D Eb E F FSharp G Ab A Bb B)'
+            '--scale=[Filter by musical scale]:scale:(MAJOR MINOR AEOLIAN BLUES DORIAN LOCRIAN LYDIAN MIXOLYDIAN PENTATONIC_MAJOR PENTATONIC_MINOR HARMONIC_MINOR MELODIC_MINOR)'
+            '*--mood=[Accept a mood tag]:mood:' '--name=[Name the new playlist]:playlist name:'
+            '--count=[Set the number of recommendations]:track count:'
+            '--seed-limit=[Limit representative seed tracks]:seed count:'
+            '--max-per-artist=[Limit tracks per artist]:track count:'
+            '*--exclude-playlist=[Exclude tracks in a playlist]:playlist:'
+            '--allow-previous[Permit earlier recommendations]'
+            "$ignore" "$output" "$pages" '1:seed playlist:'
+        ) ;;
+    features) specs+=( '--playlist[Read features for a whole playlist]' '1:track ID or playlist:' ) ;;
+    ignore) specs+=( "$ignore" ) ;;
+    import-plan) specs+=( '1:plan file:_files -g "*.json"' ) ;;
+    login) specs+=( '--client-id=[Use this TIDAL application ID]:client ID:' ) ;;
+    resolve) specs+=( "$output" "$pages" "$ignore" '1:suggestion file:_files -g "*.json"' ) ;;
+    tracks) specs+=( '1:playlist:' ) ;;
+esac
+
+_arguments -S "${specs[@]}"

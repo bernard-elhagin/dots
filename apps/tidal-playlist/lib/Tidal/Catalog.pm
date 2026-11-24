@@ -313,9 +313,25 @@ sub track_seed( $value, $country, $limit ) {
 }
 
 sub artist_match( $name, $country ) {
+    $name =~ s/^\s+|\s+$//g;
+    my $id;
+    if ( $name =~ m{\Ahttps?://}i ) {
+        ($id) = $name =~ m{\Ahttps?://(?:www\.|listen\.)?tidal\.com/(?:browse/)?artist/([0-9]+)/?(?:[?#].*)?\z}i;
+        die "Not a TIDAL artist URL. Use a link to an artist page.\n" unless defined $id;
+    } elsif ( $name =~ /\A[0-9]+\z/ ) {
+        $id = $name;
+    }
+    if ( defined $id ) {
+        my ($artist) = data_list( api( 'GET', catalog_relation( '/artists/' . escape($id), $country ) ) );
+        die "Artist $id is unavailable in the $country catalog.\n"
+            unless $artist && ($artist->{type} // '') eq 'artists' && $artist->{attributes}{name};
+
+        return { id => "$artist->{id}", name => $artist->{attributes}{name} };
+    }
+
     my $wanted = normalize($name);
-    die "Enter an artist name.\n" unless length $wanted;
-    my $root = search_root( $name =~ s/^\s+|\s+$//gr, $country );
+    die "Enter a TIDAL artist name, ID, or URL.\n" unless length $wanted;
+    my $root = search_root( $name, $country );
     my %matches;
     if ($root) {
         pages(
@@ -334,8 +350,11 @@ sub artist_match( $name, $country ) {
         );
     }
     die "No exact artist match for '$name' in the $country catalog search.\n" unless keys %matches;
-    die "Multiple TIDAL artists match '$name'.\n" unless keys(%matches) == 1;
-    my ($id) = keys %matches;
+    if ( keys(%matches) > 1 ) {
+        my $choices = join '', map { "  $_  https://tidal.com/artist/$_\n" } sort keys %matches;
+        die "Multiple TIDAL artists match '$name'. Pass the intended artist ID or URL to --artist.\n$choices";
+    }
+    ($id) = keys %matches;
 
     return { id => "$id", name => $matches{$id} };
 }

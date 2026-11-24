@@ -7,7 +7,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 use Time::HiRes           qw(time);
 use Tidal::Client         qw(save load legacy_digest state_dir uuid);
-use Tidal::Catalog        qw(track_rows track_seed search);
+use Tidal::Catalog        qw(artist_match track_rows track_seed search);
 use Tidal::IgnoredArtists qw(ignored_artists);
 use Tidal::Playlist       qw(create append delete_playlist discover resolve);
 use Tidal::Audio          ();
@@ -188,6 +188,28 @@ subtest 'append recovery reconciles against the live destination before writing'
             }
         };
     }
+};
+
+subtest 'artist lookup reports duplicate names and accepts an explicit ID or URL' => sub {
+    my @paths;
+    local *Tidal::Catalog::api = sub ( $method, $path ) {
+        push @paths, $path;
+        return { data => { id => 'result' } } if $path =~ m{\A/searchResults\?};
+        return { data => { id => '11949', type => 'artists', attributes => { name => 'Joy Division' } } };
+    };
+    local *Tidal::Catalog::pages = sub ( $path, $visit, @rest ) {
+        $visit->({ data => [ map {
+            { id => $_, type => 'artists', attributes => { name => 'Joy Division' } }
+        } qw(58781034 11949) ] });
+    };
+    eval { artist_match( 'Joy Division', 'GB' ) };
+    like( $@, qr/Multiple TIDAL artists.*11949.*58781034/s );
+    for my $selector ( '11949', 'https://tidal.com/browse/artist/11949?foo=bar' ) {
+        is_deeply( artist_match( $selector, 'GB' ), { id => '11949', name => 'Joy Division' } );
+        is( $paths[-1], '/artists/11949?countryCode=GB', 'explicit selectors skip name search' );
+    }
+    eval { artist_match( 'https://example.com/artist/11949', 'GB' ) };
+    like( $@, qr/Not a TIDAL artist URL/ );
 };
 
 subtest 'artist discovery saves a local plan with exclusions' => sub {

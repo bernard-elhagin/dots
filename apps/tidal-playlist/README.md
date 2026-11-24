@@ -125,8 +125,9 @@ playlists, and previously recommended recordings by ID, ISRC, and normalized
 artist/title. Favorites can optionally be excluded or used as seeds; they are
 not a complete listening history.
 
-`--artist` accepts a single exact artist name (case and accents are ignored).
-Ambiguous matches are rejected. It gathers playable tracks credited to the matched
+`--artist` accepts an exact artist name (ignoring case and accents), a numeric
+TIDAL artist ID, or a TIDAL artist URL. If a name matches multiple artists, the
+tool lists their IDs and links so you can choose. It gathers playable tracks credited to the matched
 TIDAL artist from up to 12 releases, deduplicates recordings, then uses the same
 discovery options and seed limit as playlist mode. Choose exactly one seed source:
 a playlist, `--artist`, `--track`, `--covers`, or `--from-favorites`.
