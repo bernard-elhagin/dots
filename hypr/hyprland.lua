@@ -353,6 +353,8 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"
 hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any next"),       { locked = true })
 hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any previous"),   { locked = true })
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("playerctl --player=tidal-hifi,%any play-pause"), { locked = true })
+hl.bind(mainMod .. " + SHIFT + T",
+    hl.dsp.exec_cmd([["$HOME/bin/tidal-playlist" append-current ugotocooked --yes --notify]]))
 
 
 --------------------------------

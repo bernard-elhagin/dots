@@ -87,6 +87,7 @@ sub recommended_keys() {
         opendir( my $dir, $path ) or die "Cannot read $path: $!\n";
         for my $file ( grep { /\.json\z/ } readdir($dir) ) {
             my $doc  = load("$path/$file");
+            next if ( $doc->{kind} // '' ) eq 'delete';
             my @rows = map { $_->{selected} // () } @{ $doc->{entries} // [] };
             push @rows, @{ $doc->{tracks} // [] };
             for my $row (@rows) {
@@ -97,6 +98,30 @@ sub recommended_keys() {
     }
 
     return %keys;
+}
+
+sub artist_credit_status( $row, $ignored, $country, $lookup ) {
+    return 'allowed' unless keys %$ignored;
+    return 'ignored' if ignored_track( $row, $ignored );
+    return 'allowed' if $row->{artist_credits_complete};
+
+    my $id = $row->{id};
+    unless ( exists $lookup->{$id} ) {
+        my ($credited) = eval { track_details( $id, $country ) };
+        my $error = $@;
+        die $error if $error && http_status($error) !~ /\A(?:404|410)\z/;
+        $lookup->{$id} = $credited;
+    }
+    my $credited = $lookup->{$id};
+    return 'unknown' unless $credited;
+    return 'ignored' if ignored_track( $credited, $ignored );
+    return 'unknown' unless $credited->{artist_credits_complete};
+    my %ids = map { $_ => 1 } @{ $credited->{artist_ids} };
+    return 'unknown' if grep { !$ids{$_} } @{ $row->{artist_ids} // [] };
+
+    my @fields = qw(artist artists artist_ids artist_credits_complete);
+    @{$row}{@fields} = @{$credited}{@fields};
+    return 'allowed';
 }
 
 sub resolve($args) {
@@ -115,29 +140,37 @@ sub resolve($args) {
     $plan->{resolution_complete} = JSON::PP::false;
     my $path = plan_path( $args, $plan->{name} );
     die "Output already exists. Choose another path.\n" if -e $path || -l $path;
-    my ( %seen, $review, $skipped );
+    my ( %seen, %credit_lookup, $review, $skipped );
     my $ignored = $args->{ignored_artists} // {};
+    my $country = $args->{country};
 
     for my $track (@$tracks) {
         if ( ignored_track( $track, $ignored ) ) {
             ++$skipped;
             next;
         }
-        my ( $selected, $candidates ) = search( $track, $args->{country}, $args->{pages} );
-        if ( $selected && ignored_track( $selected, $ignored ) ) {
+        my ( $selected, $candidates ) = search( $track, $country, $args->{pages} );
+        my $status = $selected
+            ? artist_credit_status( $selected, $ignored, $country, \%credit_lookup )
+            : 'unknown';
+        if ( $status eq 'ignored' ) {
             ++$skipped;
             next;
         }
-        @$candidates = grep                       { !ignored_track( $_, $ignored ) } @$candidates;
-        $selected    = undef if $selected && grep { $seen{$_} } identities($selected);
+        $selected = undef if $status eq 'unknown' || grep { $seen{$_} } identities($selected);
+        my @review_candidates;
+        for my $candidate (@$candidates) {
+            next unless artist_credit_status( $candidate, $ignored, $country, \%credit_lookup ) eq 'allowed';
+            push @review_candidates, $candidate;
+            last if @review_candidates == 20;
+        }
         if ($selected) {
             $seen{$_} = 1 for identities($selected);
         } else {
             ++$review;
         }
-        splice @$candidates, 20 if @$candidates > 20;
         push @{ $plan->{entries} },
-            { requested => $track, selected => $selected, candidates => $candidates };
+            { requested => $track, selected => $selected, candidates => \@review_candidates };
         save( $path, $plan );
         progress( ( $selected ? 'OK ' : 'REVIEW ' ) . "$track->{artist} — $track->{title}" );
     }
@@ -155,38 +188,38 @@ sub resolve($args) {
     };
 }
 
-sub similar_candidates( $args, $seeds, $seen, $artist_id = undef ) {
+sub similar_candidates( $args, $seeds, $seen, $credit_lookup, $artist_id = undef ) {
     my $country = $args->{country};
     my $ignored = $args->{ignored_artists} // {};
-    my $count   = min( $args->{'seed-limit'}, scalar @$seeds );
     my ( %pool, @unavailable );
-    for my $index ( 0 .. $count - 1 ) {
-        my $seed = $seeds->[ int( $index * @$seeds / $count ) ];
+    my @eligible;
+    for my $seed (@$seeds) {
+        if ( defined( $seed->{available} ) && !$seed->{available} ) {
+            push @unavailable, $seed->{id};
+            progress("Skipping unavailable seed: $seed->{id}");
+        } else {
+            push @eligible, $seed;
+        }
+    }
+    my $count = min( $args->{'seed-limit'}, scalar @eligible );
+    # Try the evenly spaced sample first and use remaining seeds for failed slots.
+    my @positions = map { int( $_ * @eligible / $count ) } 0 .. $count - 1;
+    my %sampled   = map { $_ => 1 } @positions;
+    push @positions, grep { !$sampled{$_} } 0 .. $#eligible;
+    my $successful = 0;
+    for my $index (@positions) {
+        last if $successful == $count;
+        my $seed = $eligible[$index];
         my $path =
               '/tracks/'
             . escape( $seed->{id} )
             . '/relationships/similarTracks?'
             . query( countryCode => $country, include => 'similarTracks.artists' );
-        my $rank = 0;
-        my $ok   = eval {
+        my @rows;
+        my $ok = eval {
             pages(
                 $path,
-                sub ($doc) {
-                    for my $row ( track_rows( $doc, $artist_id ) ) {
-                        ++$rank;
-                        next
-                            if !$row->{available}
-                            || !@{ $row->{artists} }
-                            || grep { $seen->{$_} } identities($row);
-                        next if ignored_track( $row, $ignored );
-                        next unless matches_features( $row, $args );
-                        my $item = $pool{ $row->{id} } //=
-                            { %$row, score => 0, seeds => [], seed_position => $index };
-                        $item->{score} += 1 / ( $rank + 2 );
-                        push @{ $item->{seeds} }, $seed->{id}
-                            unless grep { $_ eq $seed->{id} } @{ $item->{seeds} };
-                    }
-                },
+                sub ($doc) { push @rows, track_rows( $doc, $artist_id ) },
                 $args->{pages},
                 1
             );
@@ -198,8 +231,22 @@ sub similar_candidates( $args, $seeds, $seen, $artist_id = undef ) {
             die $error unless $status == 404 || $status == 410;
             push @unavailable, $seed->{id};
             progress("Skipping unavailable seed: $seed->{id}");
+            next;
         }
-        progress( 'Discovery seed ' . ( $index + 1 ) . "/$count" );
+        my $rank = 0;
+        for my $row (@rows) {
+            ++$rank;
+            next if !$row->{available} || grep { $seen->{$_} } identities($row);
+            next unless artist_credit_status( $row, $ignored, $country, $credit_lookup ) eq 'allowed';
+            next unless @{ $row->{artists} } && matches_features( $row, $args );
+            my $item = $pool{ $row->{id} } //=
+                { %$row, score => 0, seeds => [], seed_position => $index };
+            $item->{seed_position} = min( $item->{seed_position}, $index );
+            $item->{score} += 1 / ( $rank + 2 );
+            push @{ $item->{seeds} }, $seed->{id}
+                unless grep { $_ eq $seed->{id} } @{ $item->{seeds} };
+        }
+        progress( 'Discovery seed ' . ++$successful . "/$count" );
     }
 
     return ( \%pool, \@unavailable );
@@ -239,24 +286,21 @@ sub discover($args) {
     for my $row (@excluded) {
         $seen{$_} = 1 for identities($row);
     }
-    my ( $work, $pool, $unavailable );
+    my ( $work, $pool, $unavailable, %credit_lookup );
     if ( defined $args->{covers} ) {
         my ( $composition, $rows ) = cover_candidates( $track, $country, $args->{pages} );
         $work        = $composition;
         $unavailable = [];
         $pool        = {};
         for my $row (@$rows) {
-            next
-                if !$row->{available}
-                || !@{ $row->{artists} }
-                || grep { $seen{$_} } identities($row);
-            next if ignored_track( $row, $ignored );
-            next unless matches_features( $row, $args );
+            next if !$row->{available} || grep { $seen{$_} } identities($row);
+            next unless artist_credit_status( $row, $ignored, $country, \%credit_lookup ) eq 'allowed';
+            next unless @{ $row->{artists} } && matches_features( $row, $args );
             $pool->{ $row->{id} } =
                 { %$row, score => 0, seeds => [ $track->{id} ], seed_position => 0 };
         }
     } else {
-        ( $pool, $unavailable ) = similar_candidates( $args, \@seeds, \%seen,
+        ( $pool, $unavailable ) = similar_candidates( $args, \@seeds, \%seen, \%credit_lookup,
             $output_artist ? $output_artist->{id} : undef );
     }
     my $max_per_artist = $args->{'max-per-artist'} // ( $output_artist ? $args->{count} : 1 );
@@ -379,18 +423,35 @@ sub guard_write( $write, $payload ) {
     $write->{fingerprint} = $expected;
 }
 
+sub same_order( $actual, $expected ) {
+    return @$actual == @$expected && !grep { $actual->[$_] ne $expected->[$_] } 0 .. $#$actual;
+}
+
 sub verify_order( $id, $expected, $country ) {
     my @actual = map { $_->{id} } playlist_tracks( $id, $country );
     die "Saved playlist differs from the expected order. Inspect before retrying.\n"
-        if @actual != @$expected || grep { $actual[$_] ne $expected->[$_] } 0 .. $#actual;
+        unless same_order( \@actual, $expected );
 }
 
-sub add_batches( $id, $rows, $write, $path, $document ) {
+sub add_batches( $id, $rows, $write, $path, $document, $expected = undef ) {
     $write->{batches} //= {};
     for ( my $offset = $write->{added} // 0 ; $offset < @$rows ; $offset += 50 ) {
+        my @ids = map { "$_->{id}" } @$rows[ $offset .. min( $offset + 49, $#$rows ) ];
+        if ($expected) {
+            my $prefix_length = @$expected - @$rows + $offset;
+            my @prefix = @$expected[ 0 .. $prefix_length - 1 ];
+            my @actual = map { $_->{id} } playlist_tracks( $id, $document->{country} );
+            # A saved key and the exact next prefix also cover a lost acknowledgement.
+            if ( $write->{batches}{$offset} && same_order( \@actual, [ @prefix, @ids ] ) ) {
+                $write->{added} = $offset + @ids;
+                checkpoint( $path, $document );
+                next;
+            }
+            die "Destination playlist changed since the append was saved. Inspect before retrying.\n"
+                unless same_order( \@actual, \@prefix );
+        }
         $write->{batches}{$offset} //= $offset == 0 ? ( $write->{add_key} // uuid() ) : uuid();
         checkpoint( $path, $document );
-        my @ids    = map { "$_->{id}" } @$rows[ $offset .. min( $offset + 49, $#$rows ) ];
         my $result = api(
             'POST', '/playlists/' . escape($id) . '/relationships/items',
             { data => [ map { { type => 'tracks', id => $_ } } @ids ] },
@@ -429,14 +490,11 @@ sub create($args) {
     unless ( $write->{complete} ) {
         my $ignored = $args->{ignored_artists} // {};
         if ( keys %$ignored ) {
+            my %lookup;
             for my $row (@rows) {
-                my $credited = $row;
-                unless ( @{ $row->{artists} // [] } || ignored_track( $row, $ignored ) ) {
-                    ($credited) = track_details( $row->{id}, $plan->{country} // 'GB' );
-                    die "Cannot verify artist credits for track $row->{id}.\n"
-                        unless $credited && @{ $credited->{artists} // [] };
-                }
-                next unless ignored_track( $credited, $ignored );
+                my $status = artist_credit_status( $row, $ignored, $plan->{country} // 'GB', \%lookup );
+                next if $status eq 'allowed';
+                die "Cannot verify all artist credits for track $row->{id}.\n" if $status eq 'unknown';
                 my $action =
                     $write->{attempted_at}
                     ? 'Inspect the incomplete playlist and its saved operation.'
@@ -496,15 +554,17 @@ sub append($args) {
         die "Not an append operation record.\n" unless ( $operation->{kind} // '' ) eq 'append';
     } else {
         die "Specify source and destination, or --resume OPERATION.json.\n"
-            unless $args->{source} && $args->{destination};
-        my $source      = playlist_id( $args->{source},      $country );
+            unless ( $args->{source} || $args->{track} ) && $args->{destination};
+        my $track = $args->{track};
+        my $source = $track ? "track:$track->{id}" : playlist_id( $args->{source}, $country );
         my $destination = playlist_id( $args->{destination}, $country );
         my @before      = playlist_tracks( $destination, $country );
+        my @source_tracks = $track ? ($track) : playlist_tracks( $source, $country );
         my ( %seen, @additions );
         for my $row (@before) {
             $seen{$_} = 1 for identities($row);
         }
-        for my $row ( playlist_tracks( $source, $country ) ) {
+        for my $row (@source_tracks) {
             my @keys = identities($row);
             next if grep { $seen{$_} } @keys;
             push @additions, $row;
@@ -512,6 +572,7 @@ sub append($args) {
         }
         return { destination => $destination, append => \@additions, write => JSON::PP::false }
             unless $args->{yes};
+        return { playlist => $destination, appended => 0 } if $track && !@additions;
         $operation = {
             kind        => 'append',
             source      => $source,
@@ -530,12 +591,9 @@ sub append($args) {
         guard_write( $write, \%payload );
         save( $path, $operation );
         progress("Append recovery record: $path");
-        add_batches( $operation->{destination}, $operation->{tracks}, $write, $path, $operation );
-        verify_order(
-            $operation->{destination},
-            [ @{ $operation->{before} }, map { "$_->{id}" } @{ $operation->{tracks} } ],
-            $operation->{country}
-        );
+        my @expected = ( @{ $operation->{before} }, map { "$_->{id}" } @{ $operation->{tracks} } );
+        add_batches( $operation->{destination}, $operation->{tracks}, $write, $path, $operation, \@expected );
+        verify_order( $operation->{destination}, \@expected, $operation->{country} );
         $write->{complete} = JSON::PP::true;
         save( $path, $operation );
     }

@@ -6,8 +6,8 @@ use File::Spec;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
 use Time::HiRes           qw(time);
-use Tidal::Client         qw(save load legacy_digest uuid);
-use Tidal::Catalog        qw(track_rows track_seed);
+use Tidal::Client         qw(save load legacy_digest state_dir uuid);
+use Tidal::Catalog        qw(track_rows track_seed search);
 use Tidal::IgnoredArtists qw(ignored_artists);
 use Tidal::Playlist       qw(create append delete_playlist discover resolve);
 use Tidal::Audio          ();
@@ -117,6 +117,79 @@ subtest 'append deduplication and delete preview' => sub {
     is( delete_playlist( { playlist => 'dest', country => 'GB' } )->{tracks}, 1 );
 };
 
+subtest 'a single current track can be previewed and appended once' => sub {
+    local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+    my ($track) = track_rows( catalog_doc( [ 'current', 'Artist', 'Current Track', 'current-isrc' ] ) );
+    my @destination = ({ id => 'existing' });
+    local *Tidal::Playlist::playlist_id = sub ( $name, $country ) {
+        is( $name, 'ugotocooked', 'only the destination is resolved by name' );
+        return 'dest';
+    };
+    local *Tidal::Playlist::playlist_tracks = sub ( $id, $country ) {
+        is( $id, 'dest', 'only the destination playlist is read' );
+        return @destination;
+    };
+    my $posts = 0;
+    local *Tidal::Playlist::api = sub ( $method, $endpoint, $payload, %options ) {
+        ++$posts;
+        is( $method, 'POST' );
+        is( $endpoint, '/playlists/dest/relationships/items' );
+        is_deeply( $payload->{data}, [{ id => 'current', type => 'tracks' }] );
+        push @destination, $track;
+        return { data => $payload->{data} };
+    };
+    my $args = { track => $track, destination => 'ugotocooked', country => 'GB' };
+    is_deeply( append($args)->{append}, [$track] );
+    is( $posts, 0, 'preview does not write' );
+    $args->{yes} = 1;
+    is( append($args)->{appended}, 1 );
+    is( append($args)->{appended}, 0 );
+    is( $posts, 1, 'repeat invokes no second write' );
+    is_deeply( [ map { $_->{id} } @destination ], [qw(existing current)] );
+};
+
+subtest 'append recovery reconciles against the live destination before writing' => sub {
+    for my $outcome (qw(applied unchanged conflict)) {
+        subtest $outcome => sub {
+            local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+            my @destination = ('old');
+            my @keys;
+            my $path = state_dir() . '/operations/append.json';
+            save($path, {
+                kind => 'append', source => 'source', destination => 'dest', country => 'GB',
+                before => ['old'], tracks => [ { id => 'new' }, { id => 'next' } ],
+                write => { create_key => uuid(), add_key => uuid() }
+            });
+            local *Tidal::Playlist::playlist_tracks = sub { map { { id => $_ } } @destination };
+            local *Tidal::Playlist::api = sub ( $method, $endpoint, $payload, %options ) {
+                push @keys, $options{key};
+                my @ids = map { $_->{id} } @{ $payload->{data} };
+                push @destination, @ids if @keys > 1 || $outcome eq 'applied';
+                die "Lost response\n" if @keys == 1;
+                return { data => $payload->{data} };
+            };
+            my $args = { resume => $path, yes => 1 };
+            eval { append($args) };
+            like( $@, qr/Lost response/ );
+            is( load($path)->{write}{batches}{0}, $keys[0], 'batch key was saved' );
+            push @destination, 'new' if $outcome eq 'conflict';
+            my $result = eval { append($args) };
+            if ( $outcome eq 'conflict' ) {
+                like( $@, qr/Destination playlist changed/ );
+                is( scalar @keys, 1, 'no second POST on partial or conflicting edits' );
+                is_deeply( \@destination, [qw(old new)] );
+                ok( !load($path)->{write}{complete} );
+            } else {
+                is( $result->{appended}, 2 );
+                is_deeply( \@destination, [qw(old new next)] );
+                my @expected_keys = $outcome eq 'applied' ? ($keys[0]) : ($keys[0], $keys[0]);
+                is_deeply( \@keys, \@expected_keys, 'replay only when the batch is missing' );
+                ok( load($path)->{write}{complete} );
+            }
+        };
+    }
+};
+
 subtest 'artist discovery saves a local plan with exclusions' => sub {
     my @seeds = track_rows( catalog_doc( [ 'seed', 'Can', 'Song', 'same' ] ) );
     local *Tidal::Playlist::artist_seeds =
@@ -173,7 +246,7 @@ subtest 'saved ignored artists exclude collaborators and guard older plans befor
     );
     my $blocked =
         { id => '1', artist => 'Guest, Ignored Act', artists => [ 'Guest', 'Ignored Act' ] };
-    my $allowed = { id => '2', artist => 'Allowed', artists => ['Allowed'] };
+    my ($allowed) = track_rows( catalog_doc( [ '2', 'Allowed', 'Keep', 'allowed' ] ) );
     local *Tidal::Playlist::progress = sub { };
     local *Tidal::Playlist::search   = sub ( $wanted, $country, $pages ) {
         isnt( $wanted->{artist}, 'IGNORED ACT', 'directly excluded suggestion never hits search' );
@@ -201,6 +274,93 @@ subtest 'saved ignored artists exclude collaborators and guard older plans befor
     eval { create( { plan => $output, yes => 1, ignored_artists => $ignored } ) };
     like( $@, qr/Track 1 credits an ignored artist/ );
     ok( !load($output)->{write}{attempted_at} );
+};
+
+subtest 'partially expanded and legacy credits are verified before creation' => sub {
+    local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+    my $doc = catalog_doc( [ '8', 'Lead', 'Single', 'song' ] );
+    push @{ $doc->{included}[0]{relationships}{artists}{data} }, { type => 'artists', id => 'guest' };
+    my ($partial) = track_rows($doc);
+    is_deeply( $partial->{artist_ids}, ['Lead', 'guest'] );
+    ok( !$partial->{artist_credits_complete} );
+    my ($lead_only) = track_rows( catalog_doc( [ '8', 'Lead', 'Single', 'song' ] ) );
+    push @{ $doc->{included} }, { type => 'artists', id => 'guest', attributes => { name => 'Ignored Guest' } };
+    my ($complete) = track_rows($doc);
+    ok( $complete->{artist_credits_complete} );
+
+    my $path = "$ENV{XDG_STATE_HOME}/credits-plan.json";
+    my $plan = { name => 'Credits', entries => [{ selected => $partial }], write => { create_key => uuid() } };
+    my $args = { plan => $path, yes => 1, ignored_artists => { ignoredguest => 'Ignored Guest' } };
+    local *Tidal::Playlist::api = sub { fail('unverified track must never be written'); die "Unexpected write\n" };
+    my $lookup = $lead_only;
+    local *Tidal::Playlist::track_details = sub ( $id, $country ) { return $lookup };
+    save( $path, $plan );
+    eval { create($args) };
+    like( $@, qr/Cannot verify all artist credits/, 'a lookup that loses a known ID remains incomplete' );
+    $lookup = $complete;
+    eval { create($args) };
+    like( $@, qr/credits an ignored artist/, 'a lookup that finds the guest blocks the write' );
+    $plan->{entries}[0]{selected} = { id => '8', artist => 'Lead', artists => ['Lead'] };
+    save( $path, $plan );
+    eval { create($args) };
+    like( $@, qr/credits an ignored artist/, 'a populated legacy artist list also gets checked' );
+    ok( !load($path)->{write}{attempted_at} );
+
+    my $recommendations = catalog_doc( [ '8', 'Lead', 'Single', 'song' ], [ '9', 'Allowed', 'Other', 'other' ] );
+    push @{ $recommendations->{included}[0]{relationships}{artists}{data} }, { type => 'artists', id => 'guest' };
+    local *Tidal::Playlist::track_seed = sub { return { id => 'seed' } };
+    local *Tidal::Playlist::pages = sub ( $path, $visit, @rest ) { $visit->($recommendations) };
+    my $result = discover({
+        track => 'seed', country => 'GB', name => 'Verified discovery', count => 1,
+        'seed-limit' => 1, pages => 1, mood => [], 'exclude-playlist' => [],
+        ignored_artists => $args->{ignored_artists}
+    });
+    is( $result->{tracks}[0]{id}, '9', 'the recommendation with a hidden ignored artist is excluded' );
+};
+
+subtest 'track search checks fallback terms before accepting a remaster' => sub {
+    my $remaster = catalog_doc( [ '1', 'Artist', 'Song', 'master' ] );
+    $remaster->{included}[0]{attributes}{version} = '2020 Remaster';
+    my $original = catalog_doc( [ '2', 'Artist', 'Song', 'original' ] );
+    my ( $with_original, @queries );
+    local *Tidal::Catalog::api = sub ( $method, $path ) {
+        push @queries, $path;
+        return { data => { id => scalar @queries } };
+    };
+    local *Tidal::Catalog::pages = sub ( $path, $visit, @rest ) {
+        if ( $path =~ m{/1/} ) { $visit->($remaster) }
+        elsif ($with_original) { $visit->($original) }
+    };
+    my ($selected) = search( { artist => 'Artist', title => 'Song' }, 'GB', 1 );
+    is( $selected->{id}, '1', 'the sole remaster still works' );
+    is( scalar @queries, 3 );
+    @queries = ();
+    $with_original = 1;
+    ($selected) = search( { artist => 'Artist', title => 'Song' }, 'GB', 1 );
+    is( $selected->{id}, '2', 'an original from the fallback wins' );
+    is( scalar @queries, 2 );
+};
+
+subtest 'unavailable favorites do not consume successful seed slots' => sub {
+    local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+    local *Tidal::Playlist::favorite_tracks = sub {
+        return ({ id => 'known-unavailable', available => 0 }, { id => 'missing' }, { id => 'playable' });
+    };
+    my @requested;
+    local *Tidal::Playlist::pages = sub ( $path, $visit, @rest ) {
+        my ($id) = $path =~ m{\A/tracks/([^/]+)/};
+        push @requested, $id;
+        die "TIDAL HTTP 410: unavailable\n" if $id eq 'missing';
+        $visit->(catalog_doc( [ 'known-unavailable', 'Unavailable', 'Old', '' ], [ 'pick', 'New', 'Other', '' ] ));
+    };
+    my $result = discover({
+        'from-favorites' => 1, country => 'GB', name => 'Favorites', count => 1,
+        'seed-limit' => 1, pages => 1, mood => [], 'exclude-playlist' => []
+    });
+    is_deeply( \@requested, [qw(missing playable)] );
+    is_deeply( $result->{unavailable_seeds}, [qw(known-unavailable missing)] );
+    is( $result->{tracks}[0]{id}, 'pick', 'unavailable favorite IDs still exclude matching candidates' );
+    is_deeply( $result->{tracks}[0]{seeds}, ['playable'] );
 };
 
 subtest 'track discovery uses exactly one seed and excludes its recording' => sub {
@@ -435,6 +595,33 @@ subtest 'delete sends its saved key and verifies absence' => sub {
     is( delete_playlist( { resume => $path, yes => 1 } )->{deleted}, 'example' );
     is_deeply( \@methods, [ 'DELETE', 'GET' ] );
     ok( load($path)->{write}{complete} );
+};
+
+subtest 'deletion backups are preserved but do not add to recommendation history' => sub {
+    local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+    my $key  = uuid();
+    my $path = "$ENV{XDG_STATE_HOME}/delete.json";
+    save($path, {
+        kind => 'delete', playlist_id => 'manual', name => 'Manual',
+        tracks => [ { id => 'removed' } ], write => { create_key => $key }
+    });
+    save( state_dir() . '/records/create.json', { kind => 'create', tracks => [{ id => 'history' }] } );
+    local *Tidal::Playlist::api = sub ( $method, $endpoint, $payload = undef, %options ) {
+        die "TIDAL HTTP 404: Missing\n" if $method eq 'GET';
+        return {};
+    };
+    my $result = delete_playlist({ resume => $path, yes => 1 });
+    is( load($result->{backup})->{tracks}[0]{id}, 'removed' );
+    is( load(state_dir() . "/records/$key.json")->{kind}, 'delete' );
+    local *Tidal::Playlist::track_seed = sub { return { id => 'seed' } };
+    local *Tidal::Playlist::pages = sub ( $path, $visit, @rest ) {
+        $visit->(catalog_doc( [ 'history', 'Heard', 'Song', '' ], [ 'removed', 'Fresh', 'Song', '' ] ));
+    };
+    my $discovery = discover({
+        track => 'seed', country => 'GB', name => 'History', count => 1,
+        'seed-limit' => 1, pages => 1, mood => [], 'exclude-playlist' => []
+    });
+    is( $discovery->{tracks}[0]{id}, 'removed', 'the created track stays excluded and the deleted track can be picked' );
 };
 
 subtest 'audio measurements preserve silence and detect rhythmic attacks' => sub {

@@ -3,12 +3,12 @@ use v5.36;
 use utf8;
 use FindBin qw($RealBin);
 use lib "$RealBin/lib";
-use Encode        qw(decode FB_CROAK);
+use Encode        qw(decode encode FB_CROAK);
 use Getopt::Long  qw(GetOptionsFromArray);
 use POSIX         qw(isfinite);
 use Tidal::Client qw(json state_dir lock_state login legacy_digest save progress);
 use Tidal::Catalog
-    qw(owned_playlists favorite_tracks playlist_id playlist_tracks track_details effective_features);
+    qw(owned_playlists favorite_tracks playlist_id playlist_tracks track_details effective_features track_seed);
 use Tidal::IgnoredArtists qw(ignored_artists);
 use Tidal::Playlist       qw(resolve discover create append delete_playlist import_plan);
 
@@ -32,6 +32,7 @@ my %commands = (
         'Append a playlist without duplicate recordings', [ 'source?', 'destination?' ],
         'resume=s',                                       'yes'
     ],
+    'append-current' => [ 'Append the track playing in TIDAL Hi-Fi', ['destination'], 'yes', 'notify' ],
     delete   => [ 'Delete a playlist and save a local backup', ['playlist?'], 'resume=s', 'yes' ],
     discover => [
         'Generate a local discovery plan', ['source?'],
@@ -172,6 +173,27 @@ sub options( $command, @argv ) {
     return \%args;
 }
 
+sub current_track($country) {
+    open my $player, '-|', 'playerctl', '--player=tidal-hifi', 'metadata', '--format', "{{status}}\t{{xesam:url}}"
+        or die "Cannot run playerctl: $!\n";
+    my $metadata = readline($player) // '';
+    close($player) or die "TIDAL Hi-Fi is not available.\n";
+    chomp $metadata;
+    my ( $status, $url ) = split /\t/, $metadata, 2;
+    die "No track is playing in TIDAL Hi-Fi.\n" unless ( $status // '' ) eq 'Playing';
+    die "TIDAL Hi-Fi did not supply a track URL.\n" unless ( $url // '' ) =~ m{\Ahttps?://}i;
+
+    return track_seed( $url, $country, 1 );
+}
+
+sub notify( $title, @lines ) {
+    my $detail = join "\n", map { s/\R.*//sr } grep { length } @lines;
+    $detail =~ s/&/&amp;/g;
+    $detail =~ s/</&lt;/g;
+    $detail =~ s/>/&gt;/g;
+    system 'notify-send', '--app-name=TIDAL', '--', encode( 'UTF-8', $title ), encode( 'UTF-8', $detail );
+}
+
 sub command( $name, $args ) {
     if ( $name =~ /\A(?:discover|resolve|create|ignore)\z/ ) {
         $args->{ignored_artists} = ignored_artists( @{ $args->{ignore} // [] } );
@@ -189,6 +211,11 @@ sub command( $name, $args ) {
     return import_plan($args)                                  if $name eq 'import-plan';
     return [ owned_playlists( $args->{country} ) ]             if $name eq 'playlists';
     return { tracks => [ favorite_tracks() ] }                 if $name eq 'favorites';
+
+    if ( $name eq 'append-current' ) {
+        $args->{current_track} = current_track( $args->{country} );
+        return append( { %$args, track => $args->{current_track} } );
+    }
 
     if ( $name eq 'tracks' ) {
         my $id = playlist_id( $args->{playlist}, $args->{country} );
@@ -269,9 +296,13 @@ sub main(@argv) {
         my $lock = lock_state();
         command( $name, $args );
     };
+    my $error = $@;
+    my $track = $args->{current_track} // {};
+    my $track_label = join ' — ', grep { defined && length } @{$track}{qw(title artist)};
 
-    if ($@) {
-        my $error = $@ =~ s/\s+\z//r;
+    if ($error) {
+        $error =~ s/\s+\z//;
+        notify( 'Could not add TIDAL track', $track_label, $error ) if $args->{notify} && $args->{yes};
 
         if ($machine) {
             binmode STDERR, ':raw';
@@ -281,6 +312,12 @@ sub main(@argv) {
         }
 
         return 1;
+    }
+
+    if ( $args->{notify} && $args->{yes} ) {
+        my $destination = $args->{destination};
+        my $title = $result->{appended} ? "Added to $destination" : "Already in $destination";
+        notify( $title, $track_label );
     }
 
     say json()->pretty( !$machine )->encode($result) =~ s/\n\z//r;

@@ -64,24 +64,29 @@ sub track_rows( $doc, $artist_id = undef ) {
         my $track      = $included{ 'tracks:' . $ref->{id} } // $ref;
         my $attributes = $track->{attributes}                // {};
         next unless $attributes->{title};
-        my @credits = @{ ( ( $track->{relationships} // {} )->{artists} // {} )->{data} // [] };
-        next if defined($artist_id) && !grep { "$_->{id}" eq $artist_id } @credits;
+        my $credits    = ( $track->{relationships} // {} )->{artists} // {};
+        my @credit_ids = map { "$_->{id}" } @{ $credits->{data} // [] };
+        next if defined($artist_id) && !grep { $_ eq $artist_id } @credit_ids;
         my @names = grep { length } map {
-            ( ( $included{ 'artists:' . $_->{id} } // {} )->{attributes} // {} )->{name} // ''
-        } @credits;
+            ( ( $included{"artists:$_"} // {} )->{attributes} // {} )->{name} // ''
+        } @credit_ids;
+        my $complete_credits = @names && @names == @credit_ids
+            && !( $credits->{links} // {} )->{next};
         my $available = !defined( $attributes->{availability} )
             || grep { $_ eq 'STREAM' } @{ $attributes->{availability} };
         push @rows,
             {
-            id             => "$track->{id}",
-            artist         => join( ', ', @names ),
-            artists        => \@names,
-            title          => $attributes->{title},
-            version        => $attributes->{version} // '',
-            isrc           => $attributes->{isrc},
-            popularity     => $attributes->{popularity} // 0,
-            audio_features => catalog_features($attributes),
-            available      => $available ? JSON::PP::true : JSON::PP::false,
+            id                      => "$track->{id}",
+            artist                  => join( ', ', @names ),
+            artists                 => \@names,
+            artist_ids              => \@credit_ids,
+            artist_credits_complete => $complete_credits ? JSON::PP::true : JSON::PP::false,
+            title                   => $attributes->{title},
+            version                 => $attributes->{version} // '',
+            isrc                    => $attributes->{isrc},
+            popularity              => $attributes->{popularity} // 0,
+            audio_features          => catalog_features($attributes),
+            available               => $available ? JSON::PP::true : JSON::PP::false,
             };
     }
 
@@ -229,6 +234,7 @@ sub rank_rows(@rows) {
 
 sub search( $wanted, $country, $limit ) {
     my ( %rows, %terms );
+    my ( $selected, @ranked );
     for my $term ( "$wanted->{artist} $wanted->{title}", $wanted->{title}, $wanted->{artist} ) {
         next if $terms{$term}++;
         my $root = search_root( $term, $country );
@@ -260,19 +266,23 @@ sub search( $wanted, $country, $limit ) {
                         && $artist_ok
                         && $row->{available} ? JSON::PP::true : JSON::PP::false;
                     $row->{edition_rank} = $label =~ $remaster ? 1 : 0;
+                    my $previous = $rows{ $row->{id} };
+                    next if $previous && !$row->{artist_credits_complete}
+                        && ( $previous->{artist_credits_complete} || ( $previous->{safe} && !$row->{safe} ) );
                     $rows{ $row->{id} } = $row;
                 }
             },
             $limit,
             1
         );
-        my @ranked = rank_rows( values %rows );
-        my @good   = grep { $_->{safe} && $_->{edition_rank} == $ranked[0]{edition_rank} } @ranked;
+        @ranked = rank_rows( values %rows );
+        my @good = grep { $_->{safe} && $_->{edition_rank} == $ranked[0]{edition_rank} } @ranked;
         my %recordings = map { ( $_->{isrc} || "id:$_->{id}" ) => 1 } @good;
-        return ( $good[0], \@ranked ) if keys(%recordings) == 1;
+        $selected = keys(%recordings) == 1 ? $good[0] : undef;
+        last if $selected && ( !$selected->{edition_rank} || length( $wanted->{version} // '' ) );
     }
 
-    return ( undef, [ rank_rows( values %rows ) ] );
+    return ( $selected, \@ranked );
 }
 
 sub track_seed( $value, $country, $limit ) {

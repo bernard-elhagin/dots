@@ -56,8 +56,8 @@ and `title`. Supply an optional `version` to request a particular mix:
 Matching searches artist+title, then title alone and artist alone if needed.
 It reads up to three pages per query (`--pages N` changes the bound). Exact
 artist identity is still required; loose search results cannot silently become
-cover versions. It prefers original editions to labelled remasters, allows a
-remaster when no original is found, and rejects unrequested live, mix, remix,
+cover versions. Before accepting a remaster it checks the fallback queries for
+an original. It rejects unrequested live, mix, remix,
 edit, acoustic, instrumental, demo, karaoke, and tribute versions. Unknown
 version labels are reviewed rather than assumed to be originals. Several
 editions sharing one ISRC may resolve automatically; ambiguous distinct
@@ -100,6 +100,14 @@ snapshot, not a restoration of the original playlist ID or sharing settings.
 All collection reads follow pagination, failing if their safety limit is
 exceeded rather than treating an incomplete read as complete. Mixed playlists
 containing videos are rejected by track-management commands.
+
+`append-current` reads the playing track URL from TIDAL Hi-Fi using `playerctl`
+and applies the same duplicate checks. It previews by default. Use `--yes`
+to append, and `--notify` to show the outcome with the track title and artist.
+
+```bash
+./bin/tidal-playlist append-current ugotocooked --yes --notify
+```
 
 ## Discovery
 
@@ -149,14 +157,17 @@ Useful options:
 - `--bpm-min N`, `--bpm-max N`, `--key C`, `--scale MAJOR`: require audio features.
 - `--mood TAG`: match any supplied mood tag (repeat for alternatives).
 
-Unavailable seeds (404/410) are reported and skipped. Other API failures stop
+Unavailable seeds are reported and skipped, including seeds whose recommendation
+requests return 404/410. The tool tries other seeds to fill the available slots
+and keeps unavailable track IDs in the exclusion list. Other API failures stop
 the operation. Similar-track discovery without an artist filter requires the
 requested count. Sequencing follows the source's broad
 seed order and relevance within each region; it does not analyze BPM, musical
 key, or mood for sequencing. Requested audio-feature filters use catalog
 metadata or explicitly linked local analysis; missing values fail the filter.
 Planned suggestions count as previously recommended even if you
-haven't published them. To repeat them, use `--allow-previous`.
+haven't published them. Deletion backups are separate from recommendation history.
+To repeat past suggestions, use `--allow-previous`.
 
 ### Covers of a song
 
@@ -187,8 +198,9 @@ Repeat `--ignore` for each artist. You can save names separately or pass
 them to `discover`, `resolve`, or `create`. Names are matched against individual
 artist credits, including guest artists, with case and accent differences
 ignored. Discovery and cover plans can still use an ignored artist as a seed.
-When a saved plan includes a newly ignored artist, `create` flags the track
-before making a playlist write so you can review the plan.
+With an ignore list, the tool rechecks missing artist credits against the catalog.
+`create` stops before issuing playlist writes if any track credits an ignored
+artist or its full credits cannot be verified.
 
 The list lives in `$XDG_STATE_HOME/tidal-playlist/ignored-artists.json`,
 defaulting to `~/.local/state/tidal-playlist/ignored-artists.json`. To remove a
@@ -271,13 +283,15 @@ Append/delete have explicit recovery commands:
 ./bin/tidal-playlist delete --resume ~/.local/state/tidal-playlist/operations/delete-KEY.json --yes
 ```
 
-Stable idempotency keys are saved **before** each write. Completed batches are
-not repeated; interrupted batches replay with their original key. After roughly
+Stable idempotency keys are saved **before** each write. If an interrupted batch
+needs to be replayed, it uses its original key. After roughly
 58 minutes, unfinished operations stop for manual reconciliation because TIDAL
 only retains idempotency responses for one hour. Do not change in-progress
-operation files or reuse keys for other requests. Remote concurrent edits are
-not locked; final order verification catches conflicts, and never overwrites
-them automatically. Avoid running another playlist editor during a mutation.
+operation files or reuse keys for other requests. Before each append batch the
+tool checks the destination against the checkpoint. On resume it accepts an
+already visible pending batch in the expected order and stops on conflicting
+edits. Other TIDAL clients can still edit during a request, so final order
+verification still runs. Avoid running another playlist editor during a mutation.
 
 429 and transient server/network failures have at most two retries, retaining
 write keys. `Retry-After` is respected; a delay over 30 seconds is reported to
