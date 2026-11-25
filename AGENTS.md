@@ -34,3 +34,15 @@ Recent commits use short, informal imperative summaries, sometimes with a compon
 ## Security & Configuration Tips
 
 Do not commit credentials, private keys, host-specific secrets, or generated application state. Inspect install and package scripts before running them because they change files under `$HOME` and may invoke `sudo` or clone external repositories.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in GitHub Issues for `bernard-elhagin/dots`.
+See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+This repo uses a single root glossary and ADR directory.
+See `docs/agents/domain.md`.
