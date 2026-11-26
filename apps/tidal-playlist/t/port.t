@@ -7,7 +7,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 use Time::HiRes           qw(time);
 use Tidal::Client         qw(save load legacy_digest state_dir uuid);
-use Tidal::Catalog        qw(artist_match track_rows track_seed search);
+use Tidal::Catalog        qw(album_seeds artist_match track_rows track_seed search);
 use Tidal::IgnoredArtists qw(ignored_artists);
 use Tidal::Playlist       qw(create append delete_playlist discover resolve);
 use Tidal::Audio          ();
@@ -245,6 +245,74 @@ subtest 'artist discovery saves a local plan with exclusions' => sub {
     ok( !$result->{created} );
     is( load($path)->{source_artist}{name}, 'Can' );
     is( $result->{tracks}[0]{id},           'pick' );
+};
+
+subtest 'album discovery resolves the release and excludes unsampled album tracks' => sub {
+    local $ENV{XDG_STATE_HOME} = tempdir( CLEANUP => 1 );
+    my $album_resource = sub ( $id, $artist, $title = 'Album' ) {
+        return { type => 'albums', id => $id, attributes => { title => $title, releaseDate => '1979-06-15' },
+            relationships => { artists => { data => [{ type => 'artists', id => $artist }] } } };
+    };
+    my @albums = ($album_resource->('12', 'band'), $album_resource->('14', 'namesake'),
+        $album_resource->('15', 'band', 'Second Album (Deluxe Edition)'));
+    my @artists = (
+        { type => 'artists', id => 'band', attributes => { name => 'The Band' } },
+        { type => 'artists', id => 'namesake', attributes => { name => 'Another Band' } }
+    );
+    my @seed_requests;
+    my $api = sub ( $method, $path ) {
+        die "Unexpected write: $method\n" unless $method eq 'GET';
+        return { data => { id => 'results' } } if $path =~ m{\A/searchResults\?};
+        return { data => [ map { { type => 'albums', id => $_->{id} } } @albums ], included => [ @albums, @artists ] }
+            if $path =~ m{\A/searchResults/results/relationships/albums\?};
+        return { data => $albums[0], included => \@artists } if $path =~ m{\A/albums/12\?};
+        if ( $path eq '/albums/12/relationships/items?page=two' ) {
+            my $last = catalog_doc( [ '2', 'The Band', 'Last', 'last' ] );
+            push @{ $last->{data} }, { type => 'tracks', id => '3' };
+            return $last;
+        }
+        if ( $path =~ m{\A/albums/12/relationships/items\?} ) {
+            my $first = catalog_doc( [ '1', 'The Band', 'First', 'first' ] );
+            $first->{links}{next} = '/albums/12/relationships/items?page=two';
+            return $first;
+        }
+        if ( $path =~ m{\A/tracks/([^/]+)/relationships/similarTracks\?} ) {
+            push @seed_requests, $1;
+            return catalog_doc(
+                [ '2', 'The Band', 'Last', 'last' ],
+                [ '4', 'The Band', 'Last (Remastered)', 'last' ],
+                [ '3', 'The Band', 'Missing from album metadata', 'missing' ],
+                [ '5', 'New Artist', 'New Song', 'new' ]
+            );
+        }
+        die "Unexpected request: $path\n";
+    };
+    local *Tidal::Catalog::api = $api;
+    local *Tidal::Client::api  = $api;
+    local *Tidal::Playlist::progress = sub { };
+
+    eval { album_seeds( 'Album', 'GB' ) };
+    like( $@, qr/Multiple TIDAL albums.*\/album\/12.*\/album\/14/s );
+    eval { album_seeds( 'The Band - Second Album', 'GB' ) };
+    like( $@, qr/No exact album match.*Second Album \(Deluxe Edition\).*\/album\/15/s );
+    eval { album_seeds( 'https://example.com/album/12', 'GB' ) };
+    like( $@, qr/Not a TIDAL album URL/ );
+    for my $selector ('12', 'https://tidal.com/browse/album/12?u') {
+        my ( $album, $tracks ) = album_seeds( $selector, 'GB' );
+        is( $album->{id}, '12' );
+        is_deeply( [ map { $_->{id} } @$tracks ], [qw(1 2 3)], 'reads the full album in order' );
+    }
+
+    my $result = discover({
+        album => 'The Band - Album', country => 'GB', name => 'Album discovery', count => 1,
+        'seed-limit' => 1, pages => 1, mood => [], 'exclude-playlist' => []
+    });
+    is_deeply( \@seed_requests, ['1'] );
+    is_deeply( $result->{unavailable_seeds}, ['3'] );
+    is( $result->{tracks}[0]{id}, '5', 'album tracks and their alternate editions are excluded' );
+    is_deeply( load($result->{plan})->{source_album}, {
+        id => '12', title => 'Album', artists => ['The Band'], release_date => '1979-06-15'
+    } );
 };
 
 subtest 'saved ignored artists exclude collaborators and guard older plans before writes' => sub {

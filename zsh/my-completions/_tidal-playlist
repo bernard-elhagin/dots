@@ -69,6 +69,7 @@ case $subcommand in
     discover)
         specs+=(
             '--artist=[Use an artist seed or filter recommendations by artist]:artist name, ID or URL:'
+            '--album=[Use tracks from one album as seeds]:album title, artist - title, ID or URL:'
             '--track=[Use a single track as the seed]:track ID, URL or artist - title:'
             '--covers=[Discover covers of a track]:track ID, URL or artist - title:'
             '--from-favorites[Use favorite tracks as the seed]'

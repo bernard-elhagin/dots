@@ -114,11 +114,12 @@ to append, and `--notify` to show the outcome with the track title and artist.
 ```bash
 ./bin/tidal-playlist discover Cooked --name 'Cooked — Third Helping' --count 20 --exclude-playlist 'Ghosts in the Rhythm'
 ./bin/tidal-playlist discover --artist "Angine de Poitrine" --name "Angine de Poitrine discoveries"
+./bin/tidal-playlist discover --album 1653024 --name "Unknown Pleasures discoveries"
 ./bin/tidal-playlist discover --track "King Crimson - 21st Century Schizoid Man" --name "Schizoid discoveries" --count 10
 ```
 
 This creates a **local plan only**. Review it, then run `create PLAN.json --yes`.
-Discovery samples evenly across the source playlist (12 seeds by default),
+Discovery samples evenly across the source tracks (12 seeds by default),
 queries TIDAL's similar-track recommendations, scores repeated recommendations,
 and limits artist repetition. It excludes seed tracks, explicit excluded
 playlists, and previously recommended recordings by ID, ISRC, and normalized
@@ -130,7 +131,14 @@ TIDAL artist ID, or a TIDAL artist URL. If a name matches multiple artists, the
 tool lists their IDs and links so you can choose. It gathers playable tracks credited to the matched
 TIDAL artist from up to 12 releases, deduplicates recordings, then uses the same
 discovery options and seed limit as playlist mode. Choose exactly one seed source:
-a playlist, `--artist`, `--track`, `--covers`, or `--from-favorites`.
+a playlist, `--artist`, `--album`, `--track`, `--covers`, or `--from-favorites`.
+
+`--album` accepts an exact title, `"Artist - Album title"`, a numeric TIDAL
+album ID, or a TIDAL album URL. When several releases match or a title only
+matches a labelled edition, the tool prints links so you can pick the release.
+This mode samples the
+album's playable tracks in album order, excludes every track on that release
+from the recommendations, and records the album in the plan's `source_album`.
 
 `--track` accepts a numeric TIDAL track ID, a TIDAL track URL, or
 `"Artist - Track title"`. Use an ID or URL to pick a specific edition or

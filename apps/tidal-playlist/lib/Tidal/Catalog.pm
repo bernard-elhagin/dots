@@ -9,7 +9,7 @@ use Tidal::Client
     qw(api pages data_list escape query state_dir load legacy_digest json http_status progress);
 
 our @EXPORT_OK =
-    qw(normalize identities track_rows artist_match artist_seeds favorite_tracks playlist_id
+    qw(normalize identities track_rows album_seeds artist_match artist_seeds favorite_tracks playlist_id
     playlist_tracks owned_playlists search effective_features matches_features catalog_features track_details track_seed);
 my $variants =
     qr/\b(live|remix(?:ed)?|mix|karaoke|tribute|instrumental|acoustic|edit|demo|radio|rerecord(?:ed|ing)?|re-record(?:ed|ing)?)\b/i;
@@ -310,6 +310,99 @@ sub track_seed( $value, $country, $limit ) {
     die "Track $id is unavailable in the $country catalog.\n" unless $track && $track->{available};
 
     return $track;
+}
+
+sub album_row( $album, $included ) {
+    my $attributes = $album->{attributes} // {};
+    return unless ( $album->{type} // '' ) eq 'albums' && $attributes->{title};
+    my @artists = map { $included->{ 'artists:' . $_->{id} }{attributes}{name} // () }
+        @{ ( ( $album->{relationships} // {} )->{artists} // {} )->{data} // [] };
+
+    return {
+        id           => "$album->{id}",
+        title        => $attributes->{title},
+        artists      => \@artists,
+        release_date => $attributes->{releaseDate},
+    };
+}
+
+sub album_match( $value, $country ) {
+    $value =~ s/^\s+|\s+$//g;
+    my $id;
+    if ( $value =~ /\A[0-9]+\z/ ) {
+        $id = $value;
+    } elsif ( $value =~ m{\Ahttps?://}i ) {
+        ($id) = $value =~ m{\Ahttps?://(?:www\.|listen\.)?tidal\.com/(?:browse/)?album/([0-9]+)/?(?:[?#].*)?\z}i;
+        die "Not a TIDAL album URL. Use a link to an album page.\n" unless defined $id;
+    }
+    if ( defined $id ) {
+        my $doc = api( 'GET', catalog_relation( '/albums/' . escape($id), $country, 'artists' ) );
+        my ($album) = data_list($doc);
+        my %included = map { ( $_->{type} . ':' . $_->{id} ) => $_ } @{ $doc->{included} // [] };
+        my $row = $album && album_row( $album, \%included );
+        die "Album $id is unavailable in the $country catalog.\n" unless $row;
+
+        return $row;
+    }
+
+    my $exact_title = normalize($value);
+    die "Enter an album title, TIDAL album ID, or TIDAL album URL.\n" unless length $exact_title;
+    my ( $artist_name, $album_title ) = split /\s+[-–—]\s+/, $value, 2;
+    my $wanted_artist = normalize($artist_name);
+    my $wanted_title  = normalize($album_title);
+    my $term = length($wanted_title) ? "$artist_name $album_title" : $value;
+    my $root = search_root( $term, $country );
+    my ( %matches, %editions );
+    if ($root) {
+        pages(
+            catalog_relation( $root . 'albums', $country, 'albums.artists' ),
+            sub ($doc) {
+                my %included = map { ( $_->{type} . ':' . $_->{id} ) => $_ } @{ $doc->{included} // [] };
+                for my $ref ( data_list($doc) ) {
+                    my $row = album_row( $included{ 'albums:' . $ref->{id} } // $ref, \%included );
+                    next unless $row;
+                    my $title = normalize( $row->{title} );
+                    my $artist_matches = grep { normalize($_) eq $wanted_artist } @{ $row->{artists} };
+                    if ( $title eq $exact_title || ( $title eq $wanted_title && $artist_matches ) ) {
+                        $matches{ $row->{id} } = $row;
+                    } else {
+                        my $edition_title = normalize( $row->{title} =~ s/\s*(?:\([^()]*\)|\[[^\[\]]*\])\s*\z//r );
+                        $editions{ $row->{id} } = $row
+                            if $edition_title eq $exact_title || ( $edition_title eq $wanted_title && $artist_matches );
+                    }
+                }
+            },
+            3,
+            1
+        );
+    }
+    my @exact = values %matches;
+    return $exact[0] if @exact == 1;
+
+    my $choices = @exact ? \%matches : \%editions;
+    my @lines;
+    for my $match ( map { $choices->{$_} } sort keys %$choices ) {
+        my $label = join ' — ', grep { length } (
+            join( ', ', @{ $match->{artists} } ), $match->{title}, $match->{release_date} // ''
+        );
+        push @lines, "  $label  https://tidal.com/album/$match->{id}\n";
+    }
+    my $problem = @exact ? "Multiple TIDAL albums match '$value'."
+        : "No exact album match for '$value' in the $country catalog.";
+    die "$problem Pass the intended ID or URL to --album.\n" . join '', @lines;
+}
+
+sub album_seeds( $value, $country ) {
+    my $album = album_match( $value, $country );
+    my @tracks = collection_rows(
+        catalog_relation( '/albums/' . escape( $album->{id} ) . '/relationships/items', $country, 'items.artists' ), 1
+    );
+    # Keep IDs of missing or unavailable recordings for the album exclusion set.
+    $_->{available} //= JSON::PP::false for @tracks;
+    die "No playable tracks found on $album->{title} in the $country catalog.\n"
+        unless grep { $_->{available} } @tracks;
+
+    return ( $album, \@tracks );
 }
 
 sub artist_match( $name, $country ) {

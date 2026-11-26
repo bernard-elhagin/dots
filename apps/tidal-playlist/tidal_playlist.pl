@@ -37,6 +37,7 @@ my %commands = (
     discover => [
         'Generate a local discovery plan', ['source?'],
         'from-favorites',                  'artist=s',
+        'album=s@',
         'track=s@',                        'covers=s@',
         'exclude-favorites',               'bpm-min=f',
         'bpm-max=f',                       'key=s',
@@ -74,8 +75,9 @@ sub usage( $command = undef ) {
 
     if ( $command eq 'discover' ) {
         say
-            'Choose one seed source: SOURCE, --artist ARTIST, --track TRACK, --covers TRACK, or --from-favorites.';
+            'Choose one seed source: SOURCE, --artist ARTIST, --album ALBUM, --track TRACK, --covers TRACK, or --from-favorites.';
         say 'ARTIST is an exact artist name, TIDAL artist ID, or TIDAL artist URL.';
+        say 'ALBUM is an exact title, "Artist - Album title", TIDAL album ID, or TIDAL album URL.';
         say 'TRACK is a TIDAL track ID, track URL, or "Artist - Track title".';
         say
             'Combine --track TRACK with --artist ARTIST to return only recommendations credited to that artist.';
@@ -135,7 +137,7 @@ sub options( $command, @argv ) {
     }
 
     if ( $command eq 'discover' ) {
-        for my $flag (qw(track covers)) {
+        for my $flag (qw(track covers album)) {
             next unless defined $args{$flag};
 
             die "Supply --$flag only once.\n" if @{ $args{$flag} } != 1;
@@ -143,13 +145,13 @@ sub options( $command, @argv ) {
             $args{$flag} = $args{$flag}[0];
         }
 
-        my $sources = grep { defined $args{$_} } qw(source artist track covers);
+        my $sources = grep { defined $args{$_} } qw(source artist album track covers);
 
         $sources-- if defined( $args{track} ) && defined( $args{artist} );
         $sources++ if $args{'from-favorites'};
 
         die
-            "discover requires one of a source playlist, --artist, --track, --covers, or --from-favorites.\n"
+            "discover requires one of a source playlist, --artist, --album, --track, --covers, or --from-favorites.\n"
             if $sources != 1;
 
         die "Playlist name is required. Use --name.\n" unless defined $args{name};

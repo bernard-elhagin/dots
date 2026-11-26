@@ -9,7 +9,7 @@ use Time::HiRes qw(time);
 use Tidal::Client
     qw(api pages data_list load save digest legacy_digest state_dir escape query uuid progress http_status);
 use Tidal::Catalog
-    qw(normalize identities track_rows artist_match artist_seeds favorite_tracks playlist_id playlist_tracks
+    qw(normalize identities track_rows album_seeds artist_match artist_seeds favorite_tracks playlist_id playlist_tracks
     search matches_features track_seed track_details);
 use Tidal::Covers         qw(cover_candidates);
 use Tidal::IgnoredArtists qw(ignored_track);
@@ -255,7 +255,7 @@ sub similar_candidates( $args, $seeds, $seen, $credit_lookup, $artist_id = undef
 sub discover($args) {
     my $country = $args->{country};
     my $ignored = $args->{ignored_artists} // {};
-    my ( $source, $artist, $track, $output_artist, @seeds );
+    my ( $source, $album, $artist, $track, $output_artist, @seeds );
     if ( defined( $args->{track} ) || defined( $args->{covers} ) ) {
         if ( defined $args->{artist} ) {
             $output_artist = artist_match( $args->{artist}, $country );
@@ -268,6 +268,10 @@ sub discover($args) {
         my ( $found, $tracks ) = artist_seeds( $args->{artist}, $country );
         $artist = $found;
         @seeds  = @$tracks;
+    } elsif ( defined $args->{album} ) {
+        my $tracks;
+        ( $album, $tracks ) = album_seeds( $args->{album}, $country );
+        @seeds = @$tracks;
     } elsif ( $args->{'from-favorites'} ) {
         $source = 'favorites';
         @seeds  = favorite_tracks();
@@ -344,7 +348,8 @@ sub discover($args) {
         }
     } @selected;
     my $description =
-          $artist        ? "Discovery based on tracks by $artist->{name}."
+          $album         ? "Discovery based on $album->{title}."
+        : $artist        ? "Discovery based on tracks by $artist->{name}."
         : $output_artist ? "Track recommendations credited to $output_artist->{name}."
         : $work          ? 'Cover recordings identified by MusicBrainz.'
         : $track         ? 'Discovery based on a single track.'
@@ -356,7 +361,9 @@ sub discover($args) {
     $plan->{musicbrainz_work}  = { map { $_ => $work->{$_} } qw(id title) } if $work;
     $plan->{output_artist}     = $output_artist                             if $output_artist;
 
-    if ($artist) {
+    if ($album) {
+        $plan->{source_album} = $album;
+    } elsif ($artist) {
         $plan->{source_artist} = $artist;
     } elsif ($track) {
         $plan->{source_track} = { map { $_ => $track->{$_} } qw(id artist title version) };
