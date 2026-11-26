@@ -42,6 +42,11 @@ Do not commit credentials, private keys, host-specific secrets, or generated app
 Issues and specs live in GitHub Issues for `bernard-elhagin/dots`.
 See `docs/agents/issue-tracker.md`.
 
+### Triage labels
+
+When triaging an issue, map each state to its GitHub label using
+`docs/agents/triage-labels.md`.
+
 ### Domain docs
 
 This repo uses a single root glossary and ADR directory.

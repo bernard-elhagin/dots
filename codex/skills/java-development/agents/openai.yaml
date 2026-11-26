@@ -1,0 +1,4 @@
+interface:
+  display_name: "Java Development Agent"
+  short_description: "Framework-neutral Java, API design, Maven/Gradle, Spring Boot, JUnit 5/Mockito/Testcontainers tests, security review, and JVM troubleshooting"
+  default_prompt: "Use $java-development for Java or JVM work: writing or refactoring Java, Maven/Gradle builds, Spring Boot development and migrations, JUnit 5/Mockito/Testcontainers tests, code or security review, Java upgrades, or JVM troubleshooting (OOM, high CPU, GC tuning, thread dumps). Preserve the existing project stack unless I ask to change it."

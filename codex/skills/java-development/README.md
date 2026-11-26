@@ -1,0 +1,268 @@
+# Java Development Agent Skill
+
+[![Java](https://img.shields.io/badge/Java-8%2B-blue.svg)](https://dev.java/)
+[![Rules](https://img.shields.io/badge/rules-34-success.svg)](#rule-index)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+**Language:** English | [English translation](README_zh.md)
+
+<!-- TOTAL_RULES: 34 -->
+<!-- CORE_RULES: 4 -->
+<!-- BUILD_RULES: 2 -->
+<!-- SPRING_BOOT_RULES: 10 -->
+<!-- CODE_REVIEW_RULES: 7 -->
+<!-- TESTING_RULES: 6 -->
+<!-- JVM_RULES: 5 -->
+
+A framework-neutral Java/JVM skill for AI coding agents.
+
+It helps an agent work safely on real Java projects: plain Java, libraries, CLI tools, Maven/Gradle builds, Spring Boot services, tests, code review, security review, migrations, and JVM production incidents. The core principle is simple: **understand the existing project first, then make the smallest verifiable change**.
+
+## Why this skill exists
+
+Java projects are not all Spring Boot projects, and Spring Boot projects are not all the same. A useful Java agent must avoid hidden assumptions about build tools, Java versions, persistence frameworks, test stacks, logging, deployment constraints, and business behavior.
+
+This skill turns those constraints into a router plus focused rule files so the agent can load only the guidance needed for the current task.
+
+## What this skill optimizes for
+
+1. **Existing project first** — preserve the current Java version, build tool, framework, logging, persistence, tests, and style unless the user asks to change them.
+2. **General Java before frameworks** — classify the project before applying Spring Boot, MyBatis-Plus, JPA, Lombok, or Testcontainers guidance.
+3. **Small, verifiable changes** — prefer the smallest safe edit and report the exact compile/test/diagnostic command used.
+4. **On-demand context** — `SKILL.md` routes to the smallest useful rule set instead of loading all rules.
+5. **Production-safe defaults** — no hidden stack conversion, broad refactor, dependency upgrade, Java-version bump, or business-rule invention.
+
+## Best-fit tasks
+
+Use this skill for:
+
+- Java feature work and bug fixes in existing repositories.
+- Maven or Gradle dependency, plugin, BOM, wrapper, and toolchain edits.
+- API design, DTO/contracts, exception handling, compatibility, and modernization.
+- Spring Boot development and Spring Boot 2→3 / 3→4 migration planning.
+- JUnit 5, Mockito, AssertJ, Spring test slices, and Testcontainers strategy.
+- Java code review for concurrency, null safety, resource leaks, streams, equality, and security.
+- JVM incident triage: OOM, heap dumps, high CPU, thread dumps, deadlocks, GC tuning, and GC logs.
+
+## Install
+
+The skill uses the portable [Agent Skills specification](https://agentskills.io/specification): one `SKILL.md`, relative resource paths, and no platform-specific frontmatter. Run these commands from the skill root with Bash on macOS, Linux, Git Bash, or WSL:
+
+```bash
+./install.sh
+```
+
+The default installs to `~/.agents/skills/java-development`, a shared location discovered by Codex, Cursor, Gemini CLI, OpenCode, and GitHub Copilot, plus native directories for tools already installed on the machine.
+
+Copy installs (`--copy`) are whitelist-based: only `SKILL.md`, `metadata.json`, `agents/`, `assets/`, and the six rule directories are installed — repository files like `README*`, `scripts/`, `examples/`, and images never land in your skill directory.
+
+| Tool | Additional native directory |
+|---|---|
+| Claude Code | `~/.claude/skills` |
+| Codex compatibility | `~/.codex/skills` |
+| Cursor | `~/.cursor/skills` |
+| Gemini CLI | `~/.gemini/skills` |
+| GitHub Copilot CLI | `~/.copilot/skills` |
+| Kimi Code | `~/.kimi-code/skills` |
+| OpenCode | `~/.config/opencode/skills` |
+| ZCode | `~/.zcode/skills` |
+
+Useful variants:
+
+```bash
+./install.sh --all                                      # every known directory
+./install.sh --copy                                     # copy instead of symlink
+./install.sh --copy --target "/path/to/project/.agents/skills"
+./install.sh --uninstall                               # remove detected installs
+./install.sh --uninstall --target "/path/to/project/.agents/skills"
+```
+
+For another Agent Skills-compatible tool, copy the whole `java-development` directory into that tool's skills root or use `--target`. Keep the directory name unchanged so it matches the frontmatter `name`. Symlinks are preferred for development because `git pull` updates them automatically; use `--copy` for independent copies or environments without symlink support.
+
+## Agent contract
+
+When this skill is active, the agent should:
+
+- Inspect only task-relevant files: build descriptor, source layout, affected code, nearby tests, and framework configuration.
+- Preserve Maven/Gradle/other build tools; never add another build system just because a rule exists.
+- Use Lombok only when the project already uses Lombok.
+- Treat Spring Boot as an optional domain, not the default for all Java work.
+- Preserve existing persistence choices: MyBatis, MyBatis-Plus, JPA/Hibernate, JDBC, jOOQ, or other project-specific stacks.
+- Modify only the affected module in multi-module or mixed-framework repositories unless a cross-cutting change is requested.
+- Avoid editing generated output unless explicitly requested; change the template, schema, annotation-processor input, or generator configuration instead.
+- For non-trivial work, report change reason, impact scope, verified items, unverified items, and how to verify.
+
+## What this skill is not
+
+- Not a starter-project generator.
+- Not limited to one framework, build tool, persistence layer, or Java version.
+- Not a style enforcer that rewrites build tools, persistence layers, Java versions, or frameworks.
+- Not a replacement for repository-specific `AGENTS.md`, architecture docs, CI rules, or business requirements.
+
+## How routing works
+
+`SKILL.md` is intentionally small. It classifies the task, then points the agent to the narrowest useful rule file:
+
+```text
+unknown/general Java task  -> core/java-general-development.md
+public API change          -> core/java-api-design.md
+Maven edit                 -> build-tools/build-maven-dependencies.md
+Gradle edit                -> build-tools/build-gradle-dependencies.md
+Spring Boot-specific task  -> spring-boot/<matching-rule>.md
+test work                  -> testing/test-layering.md + matching test rule
+review/security scan       -> code-review/<matching-risk>.md
+JVM incident               -> jvm/<matching-symptom>.md
+```
+
+This keeps the agent precise: broad enough for all Java developers, but not noisy for a single task.
+
+## Code style baseline
+
+These are defaults, not forced migrations:
+
+| Area | Baseline |
+|---|---|
+| Project stack | Existing project conventions win |
+| Java level | Preserve current target; use newer syntax only when supported/requested |
+| Build tool | Preserve Maven, Gradle, Bazel, Ant, or repo-specific build setup |
+| API design | Preserve public source/binary/serialization compatibility unless a breaking change is requested |
+| DI | Constructor injection in DI frameworks; explicit constructors outside Lombok projects |
+| Logging | Use the existing logging facade; prefer SLF4J-compatible logging; avoid production `System.out.println` |
+| DTO/value objects | Prefer `record` only when Java version and frameworks support it |
+| Exceptions | Preserve causes, respect interrupts, and map failures at system boundaries |
+| Security | Avoid injected queries, leaked secrets, unsafe deserialization, weak crypto, SSRF, and client-only authorization |
+| Spring Boot | Optional framework domain; preserve the existing Boot line; for new/unknown examples verify the current supported line and requirements first |
+| Persistence | Preserve existing choice; choose MyBatis-Plus/JPA/JDBC/jOOQ/etc. only from project context, team preference, and query/data constraints |
+
+## Repository layout
+
+```text
+java-development/
+├── SKILL.md                  # Router and runtime instructions
+├── core/                     # General Java workflow, API, exceptions, modernization
+├── build-tools/              # Maven and Gradle build hygiene
+├── spring-boot/              # Optional Spring Boot-specific rules
+├── code-review/              # Java review and security checks
+├── testing/                  # Unit, slice, integration, Mockito, Testcontainers
+├── jvm/                      # OOM, CPU, thread dump, GC tuning/log analysis
+├── assets/                   # Optional templates
+├── examples/                 # Prompt examples
+├── scripts/validate-skill.py # Repository-local validator
+├── agents/openai.yaml        # OpenAI/Codex UI metadata
+└── metadata.json             # Skill metadata
+```
+
+## Rule index
+
+### Core Java (4)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `core/java-general-development.md` | HIGH | Classify any Java project and choose framework-neutral defaults |
+| `core/java-api-design.md` | HIGH | Public API design, compatibility, DTOs, generics, library contracts |
+| `core/java-exception-handling.md` | HIGH | Exceptions, retries, interrupts, logging boundaries, failure mapping |
+| `core/java-version-modernization.md` | HIGH | Java 8/11/17/21/25 upgrades, syntax modernization, toolchains, runtime checks |
+
+### Build tools (2)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `build-tools/build-maven-dependencies.md` | HIGH | Maven `pom.xml`, BOMs, dependency management, scopes, plugins, Java release |
+| `build-tools/build-gradle-dependencies.md` | HIGH | Gradle DSL, wrapper, version catalogs, platforms, toolchains, dependency insight |
+
+### Spring Boot (10)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `spring-boot/sb-dependency-injection.md` | HIGH | Beans, DI, constructor injection, Lombok strategy |
+| `spring-boot/sb-project-structure.md` | HIGH | Package layout and controller/service/repository boundaries |
+| `spring-boot/sb-config-profiles.md` | MEDIUM | Config, profiles, secrets, config import |
+| `spring-boot/sb-mybatis-plus.md` | HIGH | MyBatis/MyBatis-Plus mapper/service/query patterns |
+| `spring-boot/sb-jpa-repository.md` | HIGH | JPA/Hibernate repositories, N+1, lazy loading, entity identity |
+| `spring-boot/sb-exception-handling.md` | HIGH | REST errors, validation errors, `ProblemDetail` |
+| `spring-boot/sb-rest-client.md` | MEDIUM | `RestClient`, `WebClient`, `RestTemplate` selection |
+| `spring-boot/sb-actuator-health.md` | MEDIUM | Actuator, health checks, probes, metrics |
+| `spring-boot/sb-migration-2-to-3.md` | HIGH | Spring Boot 2.x to 3.x migration |
+| `spring-boot/sb-migration-3-to-4.md` | HIGH | Spring Boot 3.x to 4.x migration planning |
+
+### Code review (7)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `code-review/cr-anti-patterns.md` | MEDIUM | General Java smell scan: magic values, swallowed exceptions, log abuse, mutable statics |
+| `code-review/cr-concurrency.md` | HIGH | Thread safety, locks, `ThreadLocal`, transaction proxy risks |
+| `code-review/cr-resource-leak.md` | HIGH | Closeables, JDBC, locks, thread pools, leak risks |
+| `code-review/cr-null-safety.md` | HIGH | NPE prevention, nullable contracts, `Optional` pitfalls |
+| `code-review/cr-equals-hashcode.md` | MEDIUM | Equality, hashing, entity identity, collection behavior |
+| `code-review/cr-stream-pitfalls.md` | MEDIUM | Stream API, parallel stream, lambda side effects |
+| `code-review/cr-security.md` | HIGH | Injection, secrets, crypto, unsafe deserialization, SSRF, authorization gaps |
+
+### Testing (6)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `testing/test-layering.md` | HIGH | Unit, slice, integration test strategy |
+| `testing/test-junit5.md` | HIGH | JUnit 5 lifecycle, parameterized tests, deterministic tests |
+| `testing/test-mockito.md` | HIGH | Mockito mocks, spies, static mocks, verification boundaries |
+| `testing/test-testcontainers.md` | HIGH | Real DB/Redis/Kafka tests with Testcontainers |
+| `testing/test-spring-boot-test.md` | HIGH | Spring Boot test slices and `@SpringBootTest` |
+| `testing/test-coverage-assertj.md` | MEDIUM | AssertJ style and JaCoCo coverage policy |
+
+### JVM troubleshooting (5)
+
+| File | Impact | Purpose |
+|---|---|---|
+| `jvm/jvm-oom-analysis.md` | HIGH | OOM classification, heap dumps, leak analysis |
+| `jvm/jvm-cpu-high.md` | HIGH | High CPU diagnosis, hot threads, profiling |
+| `jvm/jvm-thread-dump.md` | HIGH | Deadlocks, hangs, thread leaks, pool starvation |
+| `jvm/jvm-gc-tuning.md` | HIGH | GC pauses, heap sizing, collector selection |
+| `jvm/jvm-gc-logs.md` | MEDIUM | GC log interpretation and evidence collection |
+
+## Usage examples
+
+```text
+Use the java-development skill to review this Java module for null-safety and resource leaks.
+```
+
+```text
+Use the java-development skill to upgrade this service from Spring Boot 2.x to 3.x with the smallest safe migration plan.
+```
+
+```text
+Use the java-development skill to diagnose a JVM high CPU incident from thread dumps and profiler evidence.
+```
+
+See more examples in `examples/usage-examples.md` and `examples/usage-examples.zh.md`.
+
+## Validation
+
+Run before publishing changes:
+
+```bash
+python scripts/validate-skill.py
+python -m unittest scripts/test-validate-skill.py -v
+bash scripts/test-install.sh
+git diff --check
+
+# Optional open-standard validation when skills-ref is installed:
+skills-ref validate .
+```
+
+The repository-local validator checks rule counts, router references, README index consistency, impact values, stale wording, file hygiene, machine-readable metadata, and official skill frontmatter compatibility.
+
+## Assets
+
+- `assets/pom-spring-boot-3.xml`: opt-in Spring Boot 3.x + MyBatis-Plus Maven example.
+- `assets/pom-spring-boot-2.xml`: opt-in legacy Spring Boot 2.7 + MyBatis-Plus maintenance example.
+- `assets/controller-service-test.java`: opt-in Controller + service + test skeleton for Spring Boot 3.x/MyBatis-Plus.
+- `assets/application.yml.template`: opt-in multi-environment Spring Boot + MyBatis-Plus config template.
+
+## Compatibility notes
+
+- Java 8+ projects are supported as existing targets; the agent should not modernize syntax without evidence or user request.
+- Spring Boot examples must preserve the existing line; when no line exists, verify the current supported Spring Boot line and Java/Jakarta requirements before writing code.
+- Maven and Gradle are first-class supported build tools; other build systems should be preserved when already present.
+
+## License
+
+MIT.

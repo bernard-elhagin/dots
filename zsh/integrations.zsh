@@ -6,6 +6,6 @@
 (( $+commands[fasd] )) && eval "$(fasd --init auto)"
 (( $+commands[starship] )) && eval "$(starship init zsh)"
 
-[[ -r "$HOME/.zsh/codex_completion.zsh" ]] && source "$HOME/.zsh/codex_completion.zsh"
+[[ -r "$HOME/.zsh/my-completions/codex_completion.zsh" ]] && source "$HOME/.zsh/my-completions/codex_completion.zsh"
 
 eval "$(perl -I"$HOME/perl5/lib/perl5" -Mlocal::lib="$HOME/perl5")"

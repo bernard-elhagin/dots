@@ -1,0 +1,191 @@
+---
+title: Spring Boot Test Slices
+impact: HIGH
+impactDescription: Slices give fast focused tests; @SpringBootTest is overkill for most controller/mapper verification
+tags: springboottest, webmvctest, datajpatest, mockitobean, mockbean, slice
+description: Choose Spring test slices by responsibility, use version-appropriate bean overrides, and reserve @SpringBootTest for full wiring
+---
+
+## Spring Boot Test Slices
+
+Spring Boot's slice annotations start only the relevant context. Use them by default; reach for full `@SpringBootTest` only when you need the whole stack.
+
+### Why it matters
+
+- **Speed**: a slice loads in ~1 second; `@SpringBootTest` can take 10+ seconds. Over a suite of hundreds of tests, that's minutes vs hours.
+- **Focus**: a slice test fails for a slice-specific reason (controller mapping wrong, query wrong), not because some unrelated bean failed to wire.
+- **Cache granularity**: Spring caches test contexts by configuration. Distinct profiles, properties, imports, or bean overrides can create additional contexts and slow the suite.
+
+### Correct — narrowest slice that answers the question
+
+```java
+// Bad (Avoid) — full context to check one controller mapping
+@SpringBootTest
+class OrderControllerTest { ... }              // boots everything; fails for unrelated wiring reasons
+
+// Good (Preferred) — the web slice
+@WebMvcTest(OrderController.class)
+class OrderControllerTest { ... }              // loads only MVC wiring; milliseconds-to-seconds
+```
+
+### @WebMvcTest — controllers
+
+```java
+@WebMvcTest(OrderController.class)
+class OrderControllerTest {
+    @Autowired MockMvc mockMvc;
+    @MockitoBean OrderService orderService;             // Spring Framework 6.2+ / Boot 3.4+
+
+    @Test
+    void returns404WhenOrderMissing() throws Exception {
+        when(orderService.getOrder(99L)).thenThrow(new OrderNotFoundException(99L));
+
+        mockMvc.perform(get("/api/orders/99"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.title").value("Order Not Found"));
+    }
+
+    @Test
+    void rejectsBlankUserId() throws Exception {
+        var body = "{\"items\":[],\"amount\":10}";
+        mockMvc.perform(post("/api/orders").contentType(APPLICATION_JSON).content(body))
+            .andExpect(status().isBadRequest());        // @Valid fires
+    }
+}
+```
+
+This verifies: routing, JSON (de)serialization, validation, exception handling via `@RestControllerAdvice`. It does NOT verify: the service logic, the DB. Pair it with a unit test of the service.
+
+### @DataJpaTest — JPA repositories
+
+```java
+@DataJpaTest                                           // default: H2 in-memory, rolls back per test
+@Testcontainers                                        // (combine with Testcontainers to use real DB)
+class OrderRepositoryTest {
+    @Autowired OrderRepository repo;
+    @Autowired TestEntityManager em;
+
+    @Test
+    void findByStatusReturnsOnlyMatching() {
+        em.persist(new Order(Status.PAID));
+        em.persist(new Order(Status.CREATED));
+
+        List<Order> paid = repo.findByStatus(Status.PAID);
+
+        assertThat(paid).hasSize(1);
+    }
+}
+```
+
+`@DataJpaTest` uses an available embedded database by default and rolls back each test transaction. H2 behavior is not equivalent to every production dialect. To use real MySQL/PG, combine with Testcontainers and `@AutoConfigureTestDatabase(replace = NONE)`:
+
+```java
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
+class OrderRepositoryTest {
+    @Container @ServiceConnection static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8");
+    // ...
+}
+```
+
+### MyBatis-Plus mapper tests
+
+MyBatis-Plus provides `@MybatisPlusTest` through its test starter; plain MyBatis provides `@MybatisTest`. If the project has neither test slice configured, a focused `@SpringBootTest` is a simple fallback:
+
+```java
+@SpringBootTest                                          // simplest: full context but with H2/containers
+@ActiveProfiles("test")
+class OrderMapperTest {
+    @Autowired OrderMapper orderMapper;
+
+    @Test
+    void insertsAndSelects() {
+        Order o = new Order(); o.setUserId("u1"); o.setStatus("CREATED");
+        orderMapper.insert(o);
+        Order found = orderMapper.selectById(o.getId());
+        assertThat(found.getUserId()).isEqualTo("u1");
+    }
+}
+```
+
+For a focused slice, use `@MybatisPlusTest` from the MyBatis-Plus test starter matching the project's Spring Boot line. Verify the artifact/version in current MyBatis-Plus documentation; do not mix Boot 2/3/4 starters.
+
+### @SpringBootTest — full integration
+
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class OrderE2ETest {
+    @LocalServerPort int port;
+    @Autowired TestRestTemplate http;
+
+    @Test
+    void placeOrderRoundTrip() {
+        ResponseEntity<Void> r = http.postForEntity("/api/orders", request, Void.class);
+        assertThat(r.getStatusCode()).isEqualTo(CREATED);
+    }
+}
+```
+
+Use `@SpringBootTest` when:
+- You need the full filter chain (security, exception advice) in the test path.
+- You're verifying wiring across slices (service + mapper + DB).
+- A bug only reproduces with the real context.
+
+### Bean overrides — version boundary and context cost
+
+```java
+@MockitoBean OrderService orderService;                 // Spring Framework 6.2+ / Boot 3.4+
+```
+
+Spring Boot 3.4 deprecated `@MockBean` for removal in Boot 4 in favor of Spring Framework's `@MockitoBean`. Preserve `@MockBean` in Boot 2 and Boot 3.0-3.3 projects; use `@MockitoBean` in Boot 3.4+ and Boot 4. Do not mix them casually during a partial migration.
+
+Each distinct bean-override configuration can produce a different Spring context cache key. Keep mock declarations and field qualifiers consistent across test classes to maximize context reuse.
+
+**For unit tests**, prefer plain `@Mock` plus explicit constructor creation (or `@InjectMocks` when appropriate) with no Spring context. Reserve context-level bean overrides for slice/integration tests.
+
+### @Import for custom config in slices
+
+A slice doesn't load every bean. If your controller needs a specific config (ObjectMapper bean, converter), import it:
+
+```java
+@WebMvcTest(OrderController.class)
+@Import({JacksonConfig.class, OrderDtoConverter.class})
+class OrderControllerTest { }
+```
+
+### Test profile
+
+Use `application-test.yml` + `@ActiveProfiles("test")` for test-only config:
+
+```yaml
+# application-test.yml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    org.hibernate.SQL: debug
+```
+
+### When NOT to use
+
+- Do not add Spring slices to a non-Spring project — plain JUnit + Mockito covers it.
+- Do not use `@SpringBootTest` to verify a single mapper or controller; the narrow slice exists for that.
+- On Spring Boot < 3.4 / Framework < 6.2, `@MockitoBean` does not exist — use the project's `@MockBean`; do not mass-migrate annotations until the line supports it.
+
+### Review checklist
+
+- [ ] `@SpringBootTest` used where `@WebMvcTest`/`@DataJpaTest` would suffice?
+- [ ] Version-appropriate `@MockitoBean`/`@MockBean`, with consistent qualifiers for context reuse?
+- [ ] Slice test missing `@Import` for a required config bean?
+- [ ] H2 used for what should be a real-DB test (different dialect)?
+- [ ] `@Transactional` rollback used appropriately for DB tests?
+- [ ] `@ActiveProfiles("test")` for test-only config?
+
+### Context
+
+- **Context caching**: Spring caches test application contexts by their configuration signature. Keep the signature stable across tests to maximize cache hits.
+- **`@DirtiesContext`**: forces context teardown after the test class. Use sparingly — it's expensive. Prefer cleanup via `@Transactional` rollback.
+- **Cross-ref**: layering rationale in `testing/test-layering.md`; Testcontainers in `testing/test-testcontainers.md`; Mockito in `testing/test-mockito.md`.

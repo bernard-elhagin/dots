@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "organization": "personal",
+  "date": "October 2026",
+  "abstract": "Framework-neutral Java/JVM development agent skill covering plain Java, libraries, CLI tools, API design, exception handling, Java version modernization, Maven and Gradle build hygiene, optional Spring Boot development and migrations, Java code/security review, testing with JUnit/Mockito/Testcontainers, and JVM troubleshooting. Defaults are project-aware: preserve existing stack, build tool, Java version, logging, persistence, and Lombok usage unless the user asks to change them.",
+  "ruleCounts": {
+    "total": 34,
+    "core": 4,
+    "build-tools": 2,
+    "spring-boot": 10,
+    "code-review": 7,
+    "testing": 6,
+    "jvm": 5
+  },
+  "codeStyle": {
+    "projectStack": "preserve existing project conventions first",
+    "di": "constructor injection in DI frameworks; use @RequiredArgsConstructor only when Lombok is already present",
+    "logging": "use the existing logging facade; SLF4J-compatible logging preferred",
+    "dataClasses": "prefer record for compatible Java DTOs; otherwise use immutable/final classes when practical",
+    "javaBaseline": "preserve existing target; use newer syntax only when the project toolchain supports it or the user requests modernization",
+    "springBootDefault": "optional framework domain; preserve existing Spring Boot line; verify current supported line and Java/Jakarta requirements for new or unknown examples",
+    "buildTool": "preserve existing build tool; Maven and Gradle are both supported",
+    "persistence": "preserve existing persistence choice; select MyBatis-Plus, JPA/Hibernate, JDBC, jOOQ, or another stack from project context, team preference, and data/query constraints",
+    "apiCompatibility": "preserve public API/source/binary/serialization compatibility unless a breaking change is requested",
+    "exceptions": "preserve causes, respect interrupts, map failures at system boundaries"
+  },
+  "references": [
+    "https://agentskills.io/specification",
+    "https://dev.java/",
+    "https://docs.oracle.com/en/java/javase/",
+    "https://maven.apache.org/guides/",
+    "https://docs.gradle.org/current/userguide/userguide.html",
+    "https://docs.spring.io/spring-boot/",
+    "https://docs.spring.io/spring-framework/reference/",
+    "https://baomidou.com/en/getting-started/install/",
+    "https://junit.org/junit5/docs/current/user-guide/",
+    "https://www.testcontainers.org/"
+  ]
+}

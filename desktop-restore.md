@@ -79,6 +79,11 @@ current window placement should replace the saved layout.
 
 ## What is managed
 
+- The installer links the YouTube stylesheet into Firefox's registered default
+  profile. If Firefox has yet to create a profile, start Firefox once and rerun
+  `./install.sh --desktop-only`. In that profile, set
+  `toolkit.legacyUserProfileCustomizations.stylesheets` to `true` in `about:config`
+  and restart Firefox to load `userContent.css`.
 - Haruna and Flameshot preferences are copied from sanitized templates, not
   symlinked: those apps write recent paths/history back into their settings.
   Re-running install.sh backs up differing files and reapplies these defaults;

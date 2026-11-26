@@ -265,6 +265,9 @@ hl.device({
 
 local mainMod = "SUPER"
 
+-- Open the MAELLE menu when left Super is pressed on its own.
+hl.bind("Super_L", hl.dsp.exec_cmd([[bash "$HOME/.config/waybar/scripts/system.sh"]]), { release = true })
+
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + U", hl.dsp.exec_cmd(terminal))
 

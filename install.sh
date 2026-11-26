@@ -6,14 +6,21 @@ DOTS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 backup_path() {
     local destination="$1"
+    local backup_base="$destination"
     local timestamp backup suffix
 
+    if [[ "$destination" == "$HOME/.codex/skills/"* ]]; then
+        # Keep a backup from being discovered as a second copy of the skill.
+        backup_base="$HOME/.codex/skill-backups/${destination##*/}"
+        mkdir -p -- "$(dirname -- "$backup_base")"
+    fi
+
     timestamp="$(date +%Y%m%d-%H%M%S)"
-    backup="${destination}.backup-${timestamp}"
+    backup="${backup_base}.backup-${timestamp}"
     suffix=1
 
     while [[ -e "$backup" || -L "$backup" ]]; do
-        backup="${destination}.backup-${timestamp}-${suffix}"
+        backup="${backup_base}.backup-${timestamp}-${suffix}"
         ((suffix += 1))
     done
 
@@ -89,6 +96,35 @@ install_tmux() {
     for name in tmux.conf clipboard-copy.sh tmuxp; do
         link_repo_path "tmux/$name" ".tmux/$name"
     done
+    link_repo_path tmux/tmuxp .tmuxp
+}
+
+install_firefox_stylesheet() {
+    local root profile
+    for root in "${XDG_CONFIG_HOME:-$HOME/.config}/mozilla/firefox" "$HOME/.mozilla/firefox"; do
+        [[ -r "$root/profiles.ini" ]] || continue
+        while IFS= read -r profile; do
+            [[ "$profile" == /* ]] || profile="$root/$profile"
+            [[ -d "$profile" ]] || continue
+            link_path "$DOTS_DIR/config/firefox/userContent.css" "$profile/chrome/userContent.css"
+        done < <(awk '
+            function save_profile() {
+                if (section ~ /^\[Profile[0-9]+\]$/ && selected && path != "")
+                    fallback = path
+            }
+            { sub(/\r$/, "") }
+            /^\[/ { save_profile(); section = $0; path = ""; selected = 0; next }
+            section ~ /^\[Install[^]]+\]$/ && /^Default=./ { installs[substr($0, 9)] = 1 }
+            /^Path=/ { path = substr($0, 6) }
+            /^Default=1$/ { selected = 1 }
+            END {
+                save_profile()
+                if (length(installs)) {
+                    for (profile in installs) print profile
+                } else if (fallback != "") print fallback
+            }
+        ' "$root/profiles.ini")
+    done
 }
 
 install_desktop() {
@@ -121,6 +157,7 @@ install_desktop() {
     for name in system networkmenu vpnmenu checkupdates; do
         link_repo_path "config/waybar/scripts/$name.sh" ".config/waybar/scripts/$name.sh"
     done
+    install_firefox_stylesheet
 }
 
 case "${1:-}" in
@@ -141,6 +178,7 @@ esac
 
 # Directory configurations
 link_repo_path vim .vim
+# This directory link also installs zsh/my-completions/codex_completion.zsh.
 link_repo_path zsh .zsh
 link_repo_path bin bin
 install_tmux
@@ -151,10 +189,15 @@ link_repo_path codex/skills/desktop-troubleshooting .codex/skills/desktop-troubl
 link_repo_path codex/skills/shell-scripting .codex/skills/shell-scripting
 link_repo_path codex/skills/systemd-troubleshooting .codex/skills/systemd-troubleshooting
 link_repo_path codex/skills/dotfile-management .codex/skills/dotfile-management
+link_repo_path codex/skills/perl-patterns .codex/skills/perl-patterns
 link_repo_path codex/skills/purchase-recommendations .codex/skills/purchase-recommendations
+link_repo_path codex/skills/skill-shopping .codex/skills/skill-shopping
+link_repo_path codex/skills/java-development .codex/skills/java-development
+link_repo_path codex/skills/ak .codex/skills/ak
 link_repo_path i3/config .config/i3/config
 link_repo_path config/doublecmd .config/doublecmd
 link_repo_path config/nvim .config/nvim
+link_repo_path config/ranger/rc.conf .config/ranger/rc.conf
 install_desktop
 
 # Individual dotfiles
@@ -166,6 +209,8 @@ declare -a FILES_TO_SYMLINK=(
     'zprezto/runcoms/zshenv:.zshenv'
     'zprezto/runcoms/zshrc:.zshrc'
     'fzf.sh:.fzf.sh'
+    'fzf/completion.zsh:.fzf/completion.zsh'
+    'fzf/key-bindings.zsh:.fzf/key-bindings.zsh'
     'vimrc:.vimrc'
     'tmux/tmux.conf:.tmux.conf'
     'git/gitconfig:.gitconfig'
@@ -179,7 +224,3 @@ for entry in "${FILES_TO_SYMLINK[@]}"; do
     home_path="${entry#*:}"
     link_repo_path "$repository_path" "$home_path"
 done
-
-# fzf's shell integrations are copied into its generated setup directory.
-mkdir -p -- "$HOME/.fzf"
-cp -- "$DOTS_DIR"/fzf/*.zsh "$HOME/.fzf/"

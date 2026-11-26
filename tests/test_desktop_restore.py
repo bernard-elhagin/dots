@@ -43,14 +43,36 @@ class DesktopRestoreTests(unittest.TestCase):
         conflict = self.home / '.config/haruna/haruna.conf'
         conflict.parent.mkdir(parents=True)
         conflict.write_text('previous settings')
+        skill = self.home / '.codex/skills/perl-patterns'
+        skill.mkdir(parents=True)
+        (skill / 'SKILL.md').write_text('previous skill')
         self.run_command('bash', 'install.sh')
         backups = list(self.home.rglob('*.backup-*'))
         self.assertTrue(any(p.read_text() == 'previous settings' for p in backups if p.is_file()))
+        skill_backup, = (self.home / '.codex/skill-backups').glob('perl-patterns.backup-*')
+        self.assertEqual((skill_backup / 'SKILL.md').read_text(), 'previous skill')
+        self.assertFalse(list(skill.parent.glob('*.backup-*')))
         self.run_command('bash', 'install.sh')
         self.assertEqual(backups, list(self.home.rglob('*.backup-*')))
         self.assertEqual((plugins / 'keep').read_text(), 'existing plugin')
         self.assertEqual((self.home / '.config/openrgb/profiles').resolve(), self.repo / 'config/openrgb/profiles')
         self.assertEqual((self.home / '.local/bin/desktop-session-startup').resolve(), self.repo / 'bin/desktop-session-startup')
+        for destination, source in {
+            '.tmuxp': 'tmux/tmuxp',
+            '.config/ranger/rc.conf': 'config/ranger/rc.conf',
+            '.codex/skills/perl-patterns': 'codex/skills/perl-patterns',
+            '.codex/skills/skill-shopping': 'codex/skills/skill-shopping',
+            '.codex/skills/java-development': 'codex/skills/java-development',
+            '.codex/skills/ak': 'codex/skills/ak',
+            '.fzf/completion.zsh': 'fzf/completion.zsh',
+            '.fzf/key-bindings.zsh': 'fzf/key-bindings.zsh',
+        }.items():
+            link = self.home / destination
+            self.assertTrue(link.is_symlink())
+            self.assertEqual(link.resolve(), self.repo / source)
+        completion = self.home / '.zsh/my-completions/codex_completion.zsh'
+        self.assertTrue(completion.is_file())
+        self.assertEqual(completion.resolve(), self.repo / 'zsh/my-completions/codex_completion.zsh')
         self.assertFalse(conflict.is_symlink())
         self.assertNotIn('LastPlayedFile', conflict.read_text())
         self.assertEqual(conflict.stat().st_mode & 0o777, 0o600)
@@ -63,6 +85,30 @@ class DesktopRestoreTests(unittest.TestCase):
         self.assertTrue((self.home / '.config/flameshot/flameshot.ini').is_file())
         self.assertTrue((self.home / '.config/haruna/shortcuts.conf').is_file())
         self.assertFalse((self.home / '.zshrc').exists())
+
+    def test_firefox_stylesheet_uses_default_profiles_and_preserves_local_css(self):
+        modern = self.home / '.config/mozilla/firefox'
+        legacy = self.home / '.mozilla/firefox'
+        chosen = modern / 'active/chrome/userContent.css'
+        chosen.parent.mkdir(parents=True)
+        chosen.write_text('local stylesheet')
+        inactive = modern / 'other'
+        inactive.mkdir()
+        (modern / 'profiles.ini').write_text(
+            '[Install123]\nDefault=active\n[Profile0]\nPath=other\nDefault=1\n'
+        )
+        absolute = self.home / 'profile with spaces'
+        absolute.mkdir()
+        legacy.mkdir(parents=True)
+        (legacy / 'profiles.ini').write_text(f'[Profile0]\nIsRelative=0\nPath={absolute}\nDefault=1\n')
+
+        for _ in range(2):
+            self.run_command('bash', 'install.sh', '--desktop-only')
+        for link in (chosen, absolute / 'chrome/userContent.css'):
+            self.assertTrue(link.is_symlink())
+            self.assertEqual(link.resolve(), self.repo / 'config/firefox/userContent.css')
+        self.assertFalse((inactive / 'chrome/userContent.css').exists())
+        self.assertEqual([path.read_text() for path in chosen.parent.glob('*.backup-*')], ['local stylesheet'])
 
     def test_private_backup_restore_and_reject_unexpected_archive(self):
         session = self.home / '.config/hypr/session.json'

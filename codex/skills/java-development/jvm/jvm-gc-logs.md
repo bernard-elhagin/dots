@@ -1,0 +1,151 @@
+---
+title: GC Log Interpretation
+impact: MEDIUM
+impactDescription: GC logs tell you pause frequency, GC cause, and whether tuning helps — the diagnostic for memory pressure
+tags: gc-logs, xlog, gceasy, pauses, memory-pressure
+description: Capture bounded GC logs, correlate pauses and occupancy with workload metrics, and use approved local or external analysis tools without leaking operational data
+---
+
+## GC Log Interpretation
+
+GC logs are primary evidence for memory behavior: how often the JVM pauses, how long, and why. Enable bounded, rotated logging when operational policy and disk budget allow it, then correlate with application latency, allocation, traffic, and container metrics.
+
+### Why it matters
+
+- **Pauses can explain latency spikes** — compare timestamps before attributing p99 latency to GC; network, locks, downstreams, CPU throttling, and safepoints can look similar.
+- **Trends reveal leaks** — old-gen occupancy climbing over hours/days is the early warning of an OOM.
+- **Cause codes** tell you why the GC ran — `Allocation Failure`, `System.gc()`, `Metadata GC Threshold`, etc.
+
+### Correct — enable bounded unified logging (Java 9+)
+
+```
+-Xlog:gc*:file=/var/log/app/gc.log:time,uptime,level,tags:filecount=10,filesize=50M
+```
+
+- `gc*` — all GC-related tags (`gc`, `gc+heap`, `gc+task`, etc.).
+- `:time,uptime,level,tags` — what each line shows.
+- `filecount=10,filesize=50M` — rotate, keep 10 files of 50MB.
+
+Java 8 used `-XX:+PrintGCDetails` (different syntax) — for SB3 / Java 17+, always use `-Xlog:gc*`.
+
+### Sample G1 log lines
+
+```
+[2026-07-03T10:15:32.100+0000][uptime:12345s][info][gc,start] GC(42) Pause Young (Normal) (G1 Evacuation Pause)
+[2026-07-03T10:15:32.135+0000][uptime:12345s][info][gc] GC(42) Pause Young (Normal) (G1 Evacuation Pause) 256M->64M(512M) 35.123ms
+[2026-07-03T10:15:32.135+0000][info][gc,cpu] GC(42) User=0.05s Sys=0.01s Real=0.04s
+```
+
+What each part means:
+- `GC(42)` — sequence number (42nd GC).
+- `Pause Young (Normal) (G1 Evacuation Pause)` — type: young-gen collection, normal trigger, evacuating survivors.
+- `256M->64M(512M)` — heap before → after (total). 256MB used dropped to 64MB, total heap 512MB.
+- `35.123ms` — pause duration. This is the SLA-relevant number.
+- `User=0.05s Sys=0.01s Real=0.04s` — CPU time (User+Sys across all GC threads) vs wall-clock. User+Sys >> Real = parallel (good); User+Sys ≈ Real = single-threaded GC.
+
+### What to look for
+
+**1. Pause frequency and duration**
+- How often does a pause happen? Once per second under load? Once per minute?
+- Compare pause duration and frequency to the service's actual latency/throughput SLO; there is no universal healthy threshold.
+- Trends: increasing pause duration over time = heap filling or fragmentation.
+
+**2. Heap occupancy before/after GC**
+- After young GC, young-gen should be mostly empty.
+- If post-GC old-generation occupancy trends upward across comparable load windows, investigate retained data, cache growth, workload shifts, and leaks (see `jvm/jvm-oom-analysis.md`).
+
+**3. GC cause**
+- `Allocation Failure` — normal young-gen trigger.
+- `System.gc()` — code or a library requested collection; identify the caller and reason before changing behavior.
+- `Metadata GC Threshold` — metaspace filling; class-loading leak.
+- `Last ditch collection` — a full GC after a failed young GC; serious memory pressure.
+- `Heap Inspection Initiated GC` — a diagnostic operation may have requested collection; correlate it with operator/tool activity.
+
+**4. Concurrent cycle timing (G1)**:
+- `[gc] GC(50) Concurrent Cycle` — the concurrent mark cycle. These don't pause (mostly) but indicate old-gen is filling.
+- Frequent concurrent cycles indicate sustained old-generation pressure or allocation; compare post-cycle occupancy and allocation rate before concluding capacity is insufficient.
+
+### Common patterns and their meaning
+
+**Frequent young GCs, short pauses, heap returns low** → healthy. Memory pressure is fine; this is normal allocation churn.
+
+**Young GCs with growing pauses** → inspect allocation rate, survivor promotion, remembered-set work, CPU availability, and heap-region behavior. Do not apply `G1NewSizePercent` or other experimental flags without before/after evidence.
+
+**Full GC** (`Pause Full (G1 Compaction Pause)`) → serious. G1 should avoid full GCs. Causes:
+- Old-gen filled before concurrent cycle could keep up (heap too small).
+- Humongous allocations (objects >50% of region size in G1).
+- Memory leak.
+
+**`System.gc()` pauses** → locate the caller and determine whether it is accidental or required by a library/operational workflow:
+```bash
+grep -r "System.gc()\|Runtime.getRuntime().gc()" src/
+```
+
+Do not add `-XX:+DisableExplicitGC` blindly; it changes JVM/library behavior and can delay cleanup patterns that depend on explicit collection.
+
+### Tools to interpret
+
+**GCEasy** (gceasy.io) — external hosted analysis. Upload only when organizational policy allows it and the log has been reviewed for hostnames, paths, tenant identifiers, or other operational data.
+
+**GCViewer** — desktop tool, similar visualizations.
+
+**JDK Mission Control** — for JFR recordings (related, more than GC).
+
+**Manual** — `grep "Pause" gc.log | awk ...` for quick stats. The log is plain text; any scripting works.
+
+### Reading a memory-pressure timeline
+
+A healthy service:
+```
+... 10:00 young 200M->40M, 30ms
+... 10:01 young 220M->42M, 32ms
+... 10:02 young 240M->45M, 35ms
+... 10:03 concurrent cycle starts (old-gen rising but reclaimed)
+... 10:04 young 250M->40M, 30ms       ← back to normal
+```
+
+A leaking service:
+```
+... 10:00 young 200M->180M, 30ms      ← after-GC occupancy rising!
+... 10:30 young 250M->230M, 45ms
+... 11:00 young 280M->260M, 60ms      ← pauses growing
+... 11:30 full GC 300M->290M, 800ms   ← full GC, barely any reclaim
+... 11:45 OOM
+```
+
+The rising "after GC" number is the leak signal — long before OOM.
+
+### Sample production JVM args (full)
+
+```
+-Xms4g -Xmx4g
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/var/log/app/
+-Xlog:gc*:file=/var/log/app/gc.log:time,uptime,level,tags:filecount=10,filesize=50M
+```
+
+### When NOT to use
+
+- Do not upload GC logs to hosted analyzers (gceasy.io) when the log may contain hostnames, paths, or tenant identifiers — check policy first; GCViewer and manual grep are safe defaults.
+- Do not enable `gc*` verbose logging without rotation (`filecount`/`filesize`) on a disk-constrained container.
+- Do not use Java 8 flags (`-XX:+PrintGCDetails`) on Java 9+ runtimes — they are ignored; use `-Xlog:gc*`.
+- GC logs answer "when/why did we pause"; they cannot attribute non-GC latency (locks, throttling, downstreams) — route those to `jvm/jvm-thread-dump.md` or `jvm/jvm-cpu-high.md`.
+
+### Review checklist
+
+When analyzing GC logs:
+- [ ] GC logging enabled in prod (`-Xlog:gc*`)?
+- [ ] Pause duration within SLA?
+- [ ] After-GC heap occupancy stable (not climbing = leak)?
+- [ ] GC cause checked — any `System.gc()`?
+- [ ] No full GCs (or understood why they happen)?
+- [ ] Log analyzed with an approved local or external tool, with data-handling policy respected?
+
+### Context
+
+- **Java 9+ unified logging** replaced the Java 8 `-XX:+PrintGCDetails` flags entirely. Don't use the old syntax on Java 17+.
+- **Log volume**: depends on event selection and workload. Measure it and keep rotation bounded (`filecount`/`filesize`) so diagnostics cannot exhaust disk.
+- **GC logs + Micrometer**: `jvm.gc.pause`, `jvm.gc.live.data.size` metrics expose the same info as time-series for dashboards. Pairs well with logs for forensics.
+- **Cross-ref**: tuning in response to log findings in `jvm/jvm-gc-tuning.md`; OOM investigation in `jvm/jvm-oom-analysis.md`; container memory sizing in `spring-boot/sb-config-profiles.md`.
