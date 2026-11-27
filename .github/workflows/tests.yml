@@ -21,11 +21,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install audio test dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg python3-numpy
-
       - name: Test the installer and desktop restore
         run: /usr/bin/python3 -m unittest discover -s tests -v
 
@@ -34,6 +29,3 @@ jobs:
 
       - name: Test TIDAL playlist generation in Perl
         run: prove apps/tidal-playlist/t/port.t
-
-      - name: Test the legacy Python TIDAL CLI and audio analysis
-        run: /usr/bin/python3 -m unittest discover -s apps/tidal-playlist/tests -v

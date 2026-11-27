@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import shlex
 import shutil
 import subprocess
 import tarfile
@@ -226,6 +227,12 @@ class DesktopRestoreTests(unittest.TestCase):
         tools = self.base / 'tools'
         tools.mkdir()
         log = self.base / 'service-commands'
+        setup = self.repo / 'bin/desktop-setup'
+        rules = self.base / '60-openrgb.rules'
+        system_rules = '/usr/lib/udev/rules.d/60-openrgb.rules'
+        script = setup.read_text()
+        self.assertIn(system_rules, script)
+        setup.write_text(script.replace(system_rules, shlex.quote(str(rules))))
         for name, body in {
             'systemctl': 'printf "systemctl %s\\n" "$*" >> "$TEST_LOG"\n',
             'sudo': 'printf "sudo %s\\n" "$*" >> "$TEST_LOG"\n',
@@ -237,7 +244,15 @@ class DesktopRestoreTests(unittest.TestCase):
         env = dict(self.env, PATH=str(tools) + ':' + os.environ['PATH'], TEST_LOG=str(log))
         subprocess.run(['bash', 'bin/desktop-setup'], cwd=self.repo, env=env, check=True, capture_output=True)
         self.assertFalse(log.exists())
-        subprocess.run(['bash', 'bin/desktop-setup', '--apply', '--serial'], cwd=self.repo, env=env, check=True, capture_output=True)
+        apply = ['bash', 'bin/desktop-setup', '--apply', '--serial']
+        missing = subprocess.run(apply, cwd=self.repo, env=env, text=True, capture_output=True)
+        self.assertEqual(missing.returncode, 1)
+        self.assertIn('Missing OpenRGB udev rules', missing.stderr)
+        self.assertNotIn(' enable ', log.read_text())
+        rules.touch()
+
+        result = subprocess.run(apply, cwd=self.repo, env=env, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
         commands = log.read_text()
         self.assertIn('enable NetworkManager.service', commands)
         self.assertIn('usermod -aG uucp', commands)

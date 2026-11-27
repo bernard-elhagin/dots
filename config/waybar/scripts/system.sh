@@ -2,6 +2,17 @@
 set -euo pipefail
 
 THEME="$HOME/.config/rofi/system.rasi"
+PID_FILE="${XDG_RUNTIME_DIR:-/run/user/$UID}/maelle-menu.pid"
+
+if [[ "${1:-}" == --toggle && -r "$PID_FILE" ]] && menu_pid=$(<"$PID_FILE") && [[ "$menu_pid" =~ ^[1-9][0-9]*$ ]]; then
+  # A leftover PID file can point at a different process after PID reuse.
+  if mapfile -d '' -t menu_args 2>/dev/null <"/proc/$menu_pid/cmdline" &&
+      [[ "${menu_args[0]:-}" == rofi || "${menu_args[0]:-}" == */rofi ]] &&
+      [[ "${menu_args[1]:-}" == -dmenu && "${menu_args[2]:-}" == -pid && "${menu_args[3]:-}" == "$PID_FILE" ]] &&
+      kill -TERM "$menu_pid" 2>/dev/null; then
+    exit 0
+  fi
+fi
 
 host="$(hostnamectl --static 2>/dev/null || hostname)"
 kernel="$(uname -r)"
@@ -55,7 +66,7 @@ choice="$(
   "<span size='13000'></span>" \
   "<span size='13000'>󰒲</span>" \
   "<span size='13000'>⏻</span>" \
-  | rofi -dmenu \
+  | rofi -dmenu -pid "$PID_FILE" \
       -theme "$THEME" \
       -mesg "$info" \
       -markup-rows \

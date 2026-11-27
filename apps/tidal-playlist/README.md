@@ -319,19 +319,10 @@ Import older temporary plans into durable history before removing them:
 operation and plan files private: they contain listening-related metadata,
 although no OAuth tokens are embedded. No automatic state cleanup is performed.
 
-The Perl launcher uses the same state directory, login tokens, plan files,
-recommendation history and linked audio metadata as the original Python CLI.
-The original Python entry point remains available for rollback and old recovery
-records. If an unchanged Python append or delete record fails fingerprint
-validation in Perl due to JSON number formatting, use the original command
-within the existing recovery window:
-
-```sh
-python3 apps/tidal-playlist/tidal_playlist.py append --resume OPERATION.json --yes
-python3 apps/tidal-playlist/tidal_playlist.py delete --resume OPERATION.json --yes
-```
-
-Use the Perl launcher for writes first attempted by Perl.
+The Perl launcher reads existing login tokens, plan files, recommendation
+history and linked audio metadata from the same state directory. If an older
+append or delete record fails fingerprint validation, inspect the saved
+operation and the playlist in TIDAL before attempting another write.
 
 ## Automation and checks
 
@@ -346,7 +337,6 @@ bash -n bin/tidal-playlist
 ```
 
 The Perl tests use temporary state, mocked API responses and synthetic audio.
-The original Python regression suite remains in `tests/` for the legacy CLI.
 The installer links the launcher into `~/.local/bin/tidal-playlist`.
 
 API contract: https://tidal-music.github.io/tidal-api-reference/

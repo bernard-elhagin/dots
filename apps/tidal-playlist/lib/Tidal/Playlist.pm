@@ -413,7 +413,7 @@ sub check_fingerprint( $write, $payload ) {
     my $expected = fingerprint( $write, $payload );
     if ( $write->{fingerprint} && $write->{fingerprint} ne $expected ) {
         die
-            "Saved write fingerprint does not match. For an unchanged Python recovery record, use the legacy CLI.\n"
+            "Saved legacy write fingerprint does not match. Inspect the saved operation and playlist in TIDAL before retrying.\n"
             unless defined $write->{fingerprint_format};
         die "Plan changed after a write attempt. Restore it before retrying.\n";
     }
