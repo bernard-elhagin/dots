@@ -37,6 +37,7 @@ hyprsession
 !vim/doc/tags
 !config/nvim/doc/tags
 *.tmp
+__pycache__/
 apps/arduino*
 bin/arduino*
 *.log

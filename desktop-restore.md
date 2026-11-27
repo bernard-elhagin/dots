@@ -106,6 +106,13 @@ current window placement should replace the saved layout.
 
 ## Verification and limits
 
+Run `./install.sh --check` to check your current home directory against the
+installer's mappings. Add `--desktop-only` to check just the desktop mappings.
+The check reports missing sources or destinations, broken or incorrect links,
+blocked paths, and files a real install would back up. Firefox is skipped when
+it has no registered default profile. Exit status is `0` when nothing needs
+attention, `1` when any changes or fixes are needed, and `2` for invalid usage.
+
 Implementation files:
 
 - `install.sh`: backup-aware links and private copies of application templates.
@@ -115,7 +122,7 @@ Implementation files:
   and Hyprpaper as user services. It requires no sudo.
 - `bin/desktop-backup` and `bin/desktop_backup.py`: private archive creation and restore.
 - `config/systemd/user/arch-update.timer`: the existing update-check schedule.
-- `tests/test_desktop_restore.py`: six isolated regression/rehearsal tests.
+- `tests/test_desktop_restore.py`: isolated regression and rehearsal tests.
 
 Current-machine changes made on 2026-11-17: the login helper and user keyboard
 profiles were linked into place; application preference templates were prepared

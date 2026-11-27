@@ -3,6 +3,58 @@
 set -euo pipefail
 
 DOTS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+check_only=0
+desktop_only=0
+check_ok=0
+check_issues=0
+check_skipped=0
+
+report_check() {
+    local status="$1" path="$2" detail="${3:-}"
+    printf '%-14s %s%s\n' "$status" "$path" "${detail:+ ($detail)}"
+    case "$status" in
+        OK) ((check_ok += 1)) ;;
+        SKIPPED) ((check_skipped += 1)) ;;
+        *) ((check_issues += 1)) ;;
+    esac
+}
+
+report_pending() {
+    local source="$1" destination="$2" action="$3"
+    local parent detail
+    parent="$(dirname -- "$destination")"
+    detail="copy $source"
+    if [[ "$action" == link ]]; then
+        detail="link to $source"
+    fi
+
+    while [[ ! -d "$parent" ]]; do
+        if [[ -e "$parent" || -L "$parent" ]]; then
+            report_check 'BLOCKED' "$destination" "parent is not a directory: $parent"
+            return
+        fi
+        parent="$(dirname -- "$parent")"
+    done
+
+    if [[ -L "$destination" && ! -e "$destination" ]]; then
+        report_check 'BROKEN LINK' "$destination" "would back up the link and $detail"
+    elif [[ -L "$destination" && "$action" == link ]]; then
+        report_check 'WRONG TARGET' "$destination" "points to $(readlink -- "$destination"); would back up the link and $detail"
+    elif [[ -e "$destination" || -L "$destination" ]]; then
+        report_check 'WOULD BACK UP' "$destination" "then $detail"
+    else
+        report_check 'MISSING' "$destination" "would $detail"
+    fi
+}
+
+finish_check() {
+    if (( check_only )); then
+        printf '\nCheck summary: %d OK, %d need attention, %d skipped.\n' "$check_ok" "$check_issues" "$check_skipped"
+        if (( check_issues )); then
+            exit 1
+        fi
+    fi
+}
 
 backup_path() {
     local destination="$1"
@@ -34,13 +86,26 @@ link_path() {
     local destination_dir
 
     if [[ ! -e "$source" ]]; then
+        if (( check_only )); then
+            report_check 'MISSING SOURCE' "$destination" "expected $source"
+            return
+        fi
         printf 'Source does not exist: %s\n' "$source" >&2
         return 1
     fi
 
     if [[ -L "$destination" && "$(readlink -f -- "$destination")" == "$(readlink -f -- "$source")" ]]; then
-        printf 'Already linked: %s\n' "$destination"
+        if (( check_only )); then
+            report_check OK "$destination" "link to $source"
+        else
+            printf 'Already linked: %s\n' "$destination"
+        fi
         return 0
+    fi
+
+    if (( check_only )); then
+        report_pending "$source" "$destination" link
+        return
     fi
 
     destination_dir="$(dirname -- "$destination")"
@@ -63,7 +128,18 @@ link_repo_path() {
 
 copy_repo_config() {
     local source="$DOTS_DIR/$1" destination="$HOME/$2"
+    if (( check_only )) && [[ ! -f "$source" ]]; then
+        report_check 'MISSING SOURCE' "$destination" "expected $source"
+        return
+    fi
     if [[ -f "$destination" && ! -L "$destination" ]] && cmp -s -- "$source" "$destination"; then
+        if (( check_only )); then
+            report_check OK "$destination" "copy matches $source"
+        fi
+        return
+    fi
+    if (( check_only )); then
+        report_pending "$source" "$destination" copy
         return
     fi
     mkdir -p -- "$(dirname -- "$destination")"
@@ -81,15 +157,20 @@ install_tmux() {
 
     # Keep TPM and downloaded plugins in a real home directory. Linking the
     # whole directory would back up the plugins installed by packages.sh.
-    if [[ -L "$destination" ]]; then
-        if [[ -d "$destination/plugins" ]]; then
+    if [[ -L "$destination" || ( -e "$destination" && ! -d "$destination" ) ]]; then
+        if (( check_only )); then
+            report_check 'WOULD BACK UP' "$destination" 'then recreate it as a directory and install the tmux links'
+            link_repo_path tmux/tmuxp .tmuxp
+            return
+        fi
+        if [[ -L "$destination" && -d "$destination/plugins" ]]; then
             plugins="$(readlink -f -- "$destination/plugins")"
         fi
         backup_path "$destination"
-    elif [[ -e "$destination" && ! -d "$destination" ]]; then
-        backup_path "$destination"
     fi
-    mkdir -p -- "$destination"
+    if (( ! check_only )); then
+        mkdir -p -- "$destination"
+    fi
     if [[ -n "$plugins" ]]; then
         link_path "$plugins" "$destination/plugins"
     fi
@@ -101,11 +182,13 @@ install_tmux() {
 
 install_firefox_stylesheet() {
     local root profile
+    local found=0
     for root in "${XDG_CONFIG_HOME:-$HOME/.config}/mozilla/firefox" "$HOME/.mozilla/firefox"; do
         [[ -r "$root/profiles.ini" ]] || continue
         while IFS= read -r profile; do
             [[ "$profile" == /* ]] || profile="$root/$profile"
             [[ -d "$profile" ]] || continue
+            found=1
             link_path "$DOTS_DIR/config/firefox/userContent.css" "$profile/chrome/userContent.css"
         done < <(awk '
             function save_profile() {
@@ -125,6 +208,9 @@ install_firefox_stylesheet() {
             }
         ' "$root/profiles.ini")
     done
+    if (( check_only && ! found )); then
+        report_check 'SKIPPED' 'Firefox stylesheet' 'no registered default profile found'
+    fi
 }
 
 install_desktop() {
@@ -160,27 +246,27 @@ install_desktop() {
     install_firefox_stylesheet
 }
 
-case "${1:-}" in
-    --desktop-only)
-        if (( $# != 1 )); then
-            printf 'Usage: %s [--desktop-only]\n' "$0" >&2
+for option in "$@"; do
+    case "$option" in
+        --check) check_only=1 ;;
+        --desktop-only) desktop_only=1 ;;
+        *)
+            printf 'Usage: %s [--check] [--desktop-only]\n' "$0" >&2
             exit 2
-        fi
-        install_desktop
-        exit 0
-        ;;
-    '') ;;
-    *)
-        printf 'Usage: %s [--desktop-only]\n' "$0" >&2
-        exit 2
-        ;;
-esac
+            ;;
+    esac
+done
+
+if (( desktop_only )); then
+    install_desktop
+    finish_check
+    exit 0
+fi
 
 # Directory configurations
 link_repo_path vim .vim
 # This directory link also installs zsh/my-completions/codex_completion.zsh.
 link_repo_path zsh .zsh
-link_repo_path bin bin
 install_tmux
 
 # Application configurations
@@ -224,3 +310,4 @@ for entry in "${FILES_TO_SYMLINK[@]}"; do
     home_path="${entry#*:}"
     link_repo_path "$repository_path" "$home_path"
 done
+finish_check

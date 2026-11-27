@@ -78,6 +78,40 @@ class DesktopRestoreTests(unittest.TestCase):
         self.assertEqual(conflict.stat().st_mode & 0o777, 0o600)
         broken = [p for p in self.home.rglob('*') if p.is_symlink() and not p.exists()]
         self.assertEqual(broken, [])
+        result = self.run_command('bash', 'install.sh', '--check')
+        self.assertIn('0 need attention, 1 skipped', result.stdout)
+        self.assertIn('copy matches', result.stdout)
+
+    def test_installer_check_reports_drift_without_making_changes(self):
+        self.run_command('bash', 'install.sh')
+        missing = self.home / '.local/bin/tidal-playlist'
+        missing.unlink()
+        broken = self.home / '.tmuxp'
+        broken.unlink()
+        broken.symlink_to(self.home / 'absent')
+        wrong = self.home / '.zshrc'
+        wrong.unlink()
+        wrong.symlink_to(self.repo / 'vimrc')
+        copy = self.home / '.config/haruna/haruna.conf'
+        copy.write_text('local preferences')
+        (self.repo / 'config/rofi/launcher.rasi').unlink()
+
+        result = subprocess.run(
+            ['bash', 'install.sh', '--check'], cwd=self.repo, env=self.env, text=True, capture_output=True
+        )
+        self.assertEqual(result.returncode, 1, result.stderr)
+        reports = result.stdout.splitlines()
+        for status, path in {
+            'MISSING': missing, 'BROKEN LINK': broken, 'WRONG TARGET': wrong,
+            'WOULD BACK UP': copy, 'MISSING SOURCE': self.home / '.config/rofi/launcher.rasi',
+        }.items():
+            self.assertTrue(any(line.startswith(status) and str(path) in line for line in reports), status)
+        self.assertIn('5 need attention, 1 skipped', result.stdout)
+        self.assertFalse(missing.exists())
+        self.assertEqual(broken.readlink(), self.home / 'absent')
+        self.assertEqual(wrong.readlink(), self.repo / 'vimrc')
+        self.assertEqual(copy.read_text(), 'local preferences')
+        self.assertFalse(list(self.home.rglob('*.backup-*')))
 
     def test_desktop_only_includes_helper_bin_and_application_preferences(self):
         self.run_command('bash', 'install.sh', '--desktop-only')
@@ -101,6 +135,16 @@ class DesktopRestoreTests(unittest.TestCase):
         absolute.mkdir()
         legacy.mkdir(parents=True)
         (legacy / 'profiles.ini').write_text(f'[Profile0]\nIsRelative=0\nPath={absolute}\nDefault=1\n')
+
+        preview = subprocess.run(
+            ['bash', 'install.sh', '--desktop-only', '--check'], cwd=self.repo, env=self.env,
+            text=True, capture_output=True
+        )
+        self.assertEqual(preview.returncode, 1, preview.stderr)
+        self.assertIn(f'WOULD BACK UP  {chosen}', preview.stdout)
+        self.assertNotIn('.zshrc', preview.stdout)
+        self.assertEqual(chosen.read_text(), 'local stylesheet')
+        self.assertFalse((absolute / 'chrome').exists())
 
         for _ in range(2):
             self.run_command('bash', 'install.sh', '--desktop-only')
