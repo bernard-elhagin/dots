@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Install audio test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg python3-numpy
+
+      - name: Test the installer and desktop restore
+        run: /usr/bin/python3 -m unittest discover -s tests -v
+
+      - name: Test session restore and command-line helpers
+        run: /usr/bin/python3 -m unittest discover -s bin/tests -v
+
+      - name: Test TIDAL playlist generation in Perl
+        run: prove apps/tidal-playlist/t/port.t
+
+      - name: Test the legacy Python TIDAL CLI and audio analysis
+        run: /usr/bin/python3 -m unittest discover -s apps/tidal-playlist/tests -v
